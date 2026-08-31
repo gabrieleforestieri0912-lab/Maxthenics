@@ -12,7 +12,7 @@ export default function NotificationRenderer() {
   try {
     const chatContext = useChatContext();
     isChatOpen = chatContext.isChatOpen;
-  } catch (e) {
+  } catch (_e) {
     // Ignore error if useChatContext is called outside provider
   }
 

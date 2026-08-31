@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { Trash2, ShoppingBag, ArrowRight, Loader2 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import SEO from "../components/SEO";
 import Image from 'next/image';
 
@@ -14,8 +14,6 @@ const Cart: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
-
   if (authLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">

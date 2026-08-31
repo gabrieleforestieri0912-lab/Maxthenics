@@ -36,11 +36,11 @@ export const RATE_LIMIT_CONFIG = {
  * Get client identifier from request
  */
 export function getClientId(request: Request): string {
-  // Try to get from auth cookie first (for logged-in users)
-  const userCookie = request.headers.get('cookie') || '';
-  const userMatch = userCookie.match(/maxthenicsUser=([^;]+)/);
-  if (userMatch) {
-    return `user_${userMatch[1]}`;
+  // Try to get from auth token cookie first (for logged-in users)
+  const cookieHeader = request.headers.get('cookie') || '';
+  const tokenMatch = cookieHeader.match(/token=([^;]+)/);
+  if (tokenMatch) {
+    return `token_${tokenMatch[1].slice(-20)}`;
   }
 
   // Fallback to IP address (use X-Forwarded-For if behind proxy)

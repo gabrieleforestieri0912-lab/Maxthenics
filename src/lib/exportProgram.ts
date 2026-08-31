@@ -1,4 +1,4 @@
-import type { Program, WeekPlan, TrainingDay, Workout, ExerciseEntry } from '@/types/program';
+import type { Program, WeekPlan } from '@/types/program';
 
 export interface ExerciseExport {
   name: string;

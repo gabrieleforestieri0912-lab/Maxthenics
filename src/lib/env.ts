@@ -31,9 +31,9 @@ const envSchema = z.object({
   // Resend
   RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY is required'),
 
-  // Ollama AI
-  OLLAMA_BASE_URL: z.string().url('OLLAMA_BASE_URL must be a valid URL'),
-  OLLAMA_MODEL: z.string().min(1, 'OLLAMA_MODEL is required'),
+  // OpenAI
+  OPENAI_API_KEY: z.string().min(1, 'OPENAI_API_KEY is required'),
+  OPENAI_MODEL: z.string().min(1, 'OPENAI_MODEL is required'),
 });
 
 /**
@@ -57,8 +57,8 @@ export function validateEnv(): Env {
     CLIENT_URL: process.env.CLIENT_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
-    OLLAMA_BASE_URL: process.env.OLLAMA_BASE_URL,
-    OLLAMA_MODEL: process.env.OLLAMA_MODEL,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    OPENAI_MODEL: process.env.OPENAI_MODEL || 'gpt-4o-mini',
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   };
@@ -77,25 +77,52 @@ export function validateEnv(): Env {
 }
 
 /**
- * Get validated environment or throw if not validated yet
+ * Whether the code is running during a `next build` (not at server runtime).
+ * During the build, server-only secrets (non NEXT_PUBLIC_*) are not yet
+ * available in managed runtimes (e.g. Vercel), so we must not fail the build.
+ */
+function isNextBuild(): boolean {
+  return process.env.NEXT_PHASE === 'phase-production-build';
+}
+
+/**
+ * Validate environment variables or throw if not valid.
+ * Secrets are only strictly validated at runtime (when the server runs),
+ * because managed platforms (Vercel) only expose them at runtime, not during
+ * `next build`. NEXT_PUBLIC_* variables are always required since they are
+ * inlined into the client bundle during the build.
  */
 let validatedEnv: Env | null = null;
 
 export function getEnv(): Env {
-  if (!validatedEnv) {
-    validatedEnv = validateEnv();
+  if (validatedEnv) {
+    return validatedEnv;
   }
-  return validatedEnv;
-}
 
-// Validate immediately on import in production
-if (process.env.NODE_ENV === 'production') {
-  try {
-    validatedEnv = validateEnv();
-    console.log('✅ Environment variables validated successfully');
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('❌ Failed to validate environment variables:', message);
-    process.exit(1);
+  if (isNextBuild()) {
+    // During build, NEXT_PUBLIC_* vars must exist (client inlining); server-only
+    // secrets may be absent and are validated at runtime instead.
+    const buildEnv = {
+      SUPABASE_URL: process.env.SUPABASE_URL || '',
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
+      JWT_SECRET: process.env.JWT_SECRET || '',
+      STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
+      STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',
+      GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || '',
+      CLIENT_URL: process.env.CLIENT_URL || '',
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || '',
+      RESEND_API_KEY: process.env.RESEND_API_KEY || '',
+      OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+      OPENAI_MODEL: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+      NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+    };
+
+    validatedEnv = buildEnv as Env;
+    return validatedEnv;
   }
+
+  validatedEnv = validateEnv();
+  return validatedEnv;
 }

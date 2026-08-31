@@ -26,7 +26,7 @@ interface UserProfile {
 }
 
 /* Sotto-griglia dei programmi: mostra i programmi AI salvati dall'utente + link per crearne di nuovi */
-const DashboardProgramGrid: React.FC<{ profile: UserProfile | null }> = ({ profile }) => {
+const DashboardProgramGrid: React.FC = () => {
   const navigate = useNavigate();
   const [savedPrograms, setSavedPrograms] = useState<SavedProgram[]>([]);
 
@@ -40,7 +40,9 @@ const DashboardProgramGrid: React.FC<{ profile: UserProfile | null }> = ({ profi
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => (res.ok ? res.json() : []))
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .then((serverPrograms: any[]) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const server: SavedProgram[] = serverPrograms.map((p: any) => ({
             id: p._id || p.id,
             userId: p.userId || "",
@@ -77,6 +79,7 @@ const DashboardProgramGrid: React.FC<{ profile: UserProfile | null }> = ({ profi
           if (local.length) setSavedPrograms(local);
         });
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (local.length) setSavedPrograms(local);
     }
   }, []);
@@ -89,7 +92,7 @@ const DashboardProgramGrid: React.FC<{ profile: UserProfile | null }> = ({ profi
           Non hai ancora programmi personalizzati.
         </p>
         <p className="text-zinc-700 text-xs mt-1 mb-6">
-          Usa l'AI per generare il tuo primo piano di allenamento su misura.
+          Usa l&apos;AI per generare il tuo primo piano di allenamento su misura.
         </p>
         <button
           onClick={() => navigate("/create")}
@@ -258,7 +261,7 @@ const Dashboard: React.FC = () => {
                ))}
             </div>
 
-             /* Program Library Section */
+             {/* Program Library Section */}
             <div className="bg-zinc-900/30 border border-white/5 rounded-[3rem] p-8 md:p-12">
               <div className="flex justify-between items-center mb-10">
                 <h2 className="text-2xl font-black uppercase tracking-tighter">I Miei Programmi</h2>
@@ -267,7 +270,7 @@ const Dashboard: React.FC = () => {
                 </Link>
               </div>
 
-              <DashboardProgramGrid profile={profile} />
+              <DashboardProgramGrid />
             </div>
           </div>
 

@@ -84,31 +84,6 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:title" content={pageTitle} />
       <meta name="twitter:description" content={pageDescription} />
       <meta name="twitter:image" content={pageImage} />
-
-      {/* Structured Data -JSON-LD for Website */}
-      <script type="application/ld+json">
-        {JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'WebSite',
-          name: 'Maxthenics',
-          description: pageDescription,
-          url: defaultUrl,
-          image: pageImage,
-          publisher: {
-            '@type': 'Person',
-            name: 'Maxthenics'
-          },
-          potentialAction: {
-            '@type': 'SearchAction',
-            target: {
-              '@type': 'EntryPoint',
-              urlTemplate: `${defaultUrl}/search?q={search_term_string}`
-            },
-            'query-input': 'required name=search_term_string'
-          },
-          inLanguage: 'it-IT'
-        })}
-      </script>
     </Helmet>
   );
 };

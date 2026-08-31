@@ -3,9 +3,9 @@ import Stripe from 'stripe';
 import dbConnect from '@/lib/db';
 import User, { IUser } from '@/models/User';
 import { getEnv } from '@/lib/env';
+import { getStripe } from '@/lib/clients';
 import { isRateLimited, getRateLimitHeaders } from '@/lib/rateLimiter';
 
-const stripe = new Stripe(getEnv().STRIPE_SECRET_KEY);
 const endpointSecret = getEnv().STRIPE_WEBHOOK_SECRET;
 
 const processedEvents = new Set<string>();
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     let event: Stripe.Event;
 
     try {
-      event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
+      event = getStripe().webhooks.constructEvent(body, sig, endpointSecret);
     } catch (err) {
       console.error('Webhook signature verification failed:', err instanceof Error ? err.message : 'Unknown error');
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });

@@ -8,14 +8,7 @@ export async function POST(_request: NextRequest) {
   try {
     const response = NextResponse.json({ success: true });
 
-    // Clear all cookies
-    response.cookies.set('maxthenicsUser', '', {
-      httpOnly: true,
-      path: '/',
-      expires: new Date(0),
-      sameSite: 'lax' as const,
-    });
-
+    // Clear auth cookies
     response.cookies.set('token', '', {
       httpOnly: true,
       path: '/',

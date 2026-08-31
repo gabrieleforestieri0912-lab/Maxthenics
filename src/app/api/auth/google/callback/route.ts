@@ -120,21 +120,8 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax' as const,
     });
 
-    // Set auth cookies with proper security attributes
+    // Set auth cookie with proper security attributes
     const isProd = process.env.NODE_ENV === 'production';
-    clearCookiesResponse.cookies.set('maxthenicsUser', JSON.stringify({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      avatar: user.avatar,
-    }), {
-      httpOnly: true,
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      sameSite: 'lax' as const,
-      secure: isProd,
-    });
-
     clearCookiesResponse.cookies.set('token', token, {
       httpOnly: true,
       path: '/',

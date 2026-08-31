@@ -1,12 +1,54 @@
-'use client';
+import type { Metadata } from "next";
+import AppShell from "../../components/AppShell";
+import CrawlableContent from "../../components/CrawlableContent";
+import StructuredData from "../../components/StructuredData";
+import { getAllPrograms, resolveCatchAllRoute } from "../../lib/seo";
 
-import dynamic from 'next/dynamic';
+interface PageProps {
+  params: Promise<{ slug: string[] }>;
+}
 
-const App = dynamic(() => import('../App'), {
-  ssr: false,
-  loading: () => <div className="min-h-screen bg-black" />,
-});
+const STATIC_SLUGS = [
+  ["programs"],
+  ["guide"],
+  ["calisthenics-room"],
+  ["privacy"],
+  ["terms"],
+  ["login"],
+  ["register"],
+  ["cart"],
+  ["create"],
+  ["dashboard"],
+  ["my-program"],
+  ["my-workouts"],
+  ["purchase-history"],
+  ["chat"],
+  ["auth", "callback"],
+  ["success"],
+  ["feedback"],
+];
 
-export default function CatchAll() {
-  return <App />;
+export async function generateStaticParams() {
+  const programSlugs = getAllPrograms().flatMap((program) => [
+    { slug: ["program", String(program.id)] },
+    { slug: ["program", String(program.id), "content"] },
+  ]);
+  return [...STATIC_SLUGS.map((slug) => ({ slug })), ...programSlugs];
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  return resolveCatchAllRoute(slug).metadata;
+}
+
+export default async function CatchAll({ params }: PageProps) {
+  const { slug } = await params;
+  const route = resolveCatchAllRoute(slug);
+  return (
+    <>
+      <StructuredData data={route.jsonLd} />
+      {route.crawlable && <CrawlableContent content={route.crawlable} />}
+      <AppShell />
+    </>
+  );
 }

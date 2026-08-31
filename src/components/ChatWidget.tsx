@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import {
   X, Send, Trash2, ArrowRight, History, Plus, ChevronDown,
   Copy, Check, Pencil, RefreshCw, Square, Download, CheckCheck,
-  Sparkles, MessageSquare, CornerDownRight, Eye, EyeOff,
+  Sparkles, CornerDownRight, Eye,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
@@ -13,20 +13,20 @@ import { useChatContext, IMessage, Corner } from "../context/ChatContext";
 
 const Typewriter = ({ text, onComplete, isStreaming }: { text: string; onComplete?: () => void; isStreaming?: boolean }) => {
   const [displayedText, setDisplayedText] = useState("");
+  const indexRef = useRef(0);
 
   useEffect(() => {
-    setDisplayedText("");
-    let index = 0;
-    const interval = setInterval(() => {
-      setDisplayedText(text.slice(0, index + 1));
-      index++;
-      if (index >= text.length) {
-        clearInterval(interval);
-        if (onComplete && !isStreaming) onComplete();
-      }
+    if (indexRef.current >= text.length) {
+      if (onComplete && !isStreaming) onComplete();
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      indexRef.current += 1;
+      setDisplayedText(text.slice(0, indexRef.current));
     }, 15);
-    return () => clearInterval(interval);
-  }, [text, onComplete, isStreaming]);
+    return () => clearTimeout(timeout);
+  }, [displayedText, text, onComplete, isStreaming]);
 
   return <FormattedMessage text={displayedText} />;
 };
@@ -71,17 +71,18 @@ const FormattedMessage = ({ text }: { text: string }) => {
 
 const ChatWidget = () => {
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
   return mounted ? <ChatWidgetContent /> : null;
 };
 
 const ChatWidgetContent = () => {
-  const { user, addNotification } = useAuth();
+  const { addNotification } = useAuth();
   const location = useLocation();
   const {
     messages, setMessages, activeChatId, isLoading, isStreaming,
     sendMessage, stopGeneration, editMessage, regenerate,
-    clearChat, history, loadChat, refreshHistory, deleteChat, renameChat,
+    clearChat, history, loadChat, deleteChat, renameChat,
     exportChat, copyChatToClipboard, isChatOpen, setIsChatOpen, chatCorner,
   } = useChatContext();
   const [showHistory, setShowHistory] = React.useState(false);
@@ -134,6 +135,13 @@ const ChatWidgetContent = () => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isChatOpen]);
+
+  // Auto-create new chat when widget opens (except on /chat page)
+  useEffect(() => {
+    if (isChatOpen && location.pathname !== '/chat') {
+      clearChat();
+    }
+  }, [isChatOpen, clearChat, location.pathname]);
 
   useEffect(() => {
     if (isChatOpen && messages.some(m => m.isNew)) {
@@ -205,7 +213,7 @@ const ChatWidgetContent = () => {
     setRenamingChatTitle("");
   };
 
-  const handleRenameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const _handleRenameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") { e.preventDefault(); saveRename(); }
     if (e.key === "Escape") { setRenamingChatId(null); setRenamingChatTitle(""); }
   };
@@ -227,7 +235,7 @@ const ChatWidgetContent = () => {
     setEditingMessageContent("");
   };
 
-  const handleEditKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const _handleEditKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); }
     if (e.key === "Escape") cancelEdit();
   };
@@ -379,7 +387,7 @@ const ChatWidgetContent = () => {
                               {history.length === 0 ? (
                                 <p className="p-4 text-[10px] text-zinc-600 text-center font-bold uppercase tracking-widest">Nessuna cronologia</p>
                               ) : (
-                                history.map((chat: any) => (
+                                history.map((chat: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                                   <div key={chat._id} className="relative group/item">
                                     <button onClick={() => handleSelectChat(chat._id)} className={`w-full text-left p-3 rounded-xl text-[11px] transition-all hover:bg-white/[0.03] ${activeChatId === chat._id ? 'bg-red-600/[0.06] border border-red-500/20 text-red-400' : 'text-zinc-400 border border-transparent'}`}>
                                       {renamingChatId === chat._id ? (
@@ -439,7 +447,7 @@ const ChatWidgetContent = () => {
                   </div>
                 ) : (
                   <>
-                    {messages.map((msg: any, i: number) => {
+                    {messages.map((msg: any, i: number) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                       const isEditing = editingMessageIndex === i;
                       return (
                         <motion.div
@@ -466,6 +474,7 @@ const ChatWidgetContent = () => {
                                     : "bg-white/[0.04] border border-white/[0.06] text-zinc-200 rounded-2xl rounded-tl-md"
                                 }`}>
                                   {msg.role === "assistant" && (msg.isNew || msg.isStreaming) ? (
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     <Typewriter text={msg.content} isStreaming={msg.isStreaming} onComplete={() => setMessages((prev: any[]) => prev.map((m: any, idx: number) => idx === i ? { ...m, isNew: false } : m))} />
                                   ) : (
                                     <FormattedMessage text={msg.content} />

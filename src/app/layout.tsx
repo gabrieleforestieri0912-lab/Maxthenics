@@ -1,9 +1,13 @@
 import "./globals.css";
 import ChatLayoutClient from "../components/ChatLayoutClient";
 import Providers from "../components/Providers";
+import StructuredData from "../components/StructuredData";
 import { Metadata } from 'next';
 import Script from 'next/script';
 import React from 'react';
+import { organizationJsonLd, websiteJsonLd } from '../lib/seo';
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://maxthenics.com"),
@@ -36,11 +40,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-   verification: {
-     google: process.env.NODE_ENV === 'production'
-       ? "REPLACE_WITH_ACTUAL_GOOGLE_VERIFICATION_CODE"
-       : "google-site-verification-code",
-   },
   openGraph: {
     type: "website",
     locale: "it_IT",
@@ -71,10 +70,16 @@ export const metadata: Metadata = {
   },
 };
 
+const googleVerification = process.env.GOOGLE_SITE_VERIFICATION;
+if (googleVerification) {
+  metadata.verification = { google: googleVerification };
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="it">
       <body className="relative antialiased bg-zinc-950 text-gray-200">
+        <StructuredData data={[organizationJsonLd(), websiteJsonLd()]} />
         <Providers>
           <div className="min-h-screen flex flex-col">
             <main className="flex-1">{children}</main>
@@ -89,6 +94,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ChatLayoutClient />
           </div>
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

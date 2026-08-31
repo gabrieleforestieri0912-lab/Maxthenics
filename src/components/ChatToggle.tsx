@@ -4,11 +4,11 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useChatContext } from "../context/ChatContext";
+import { useAuth } from "../context/AuthContext";
 import { Sparkles, Bot } from "lucide-react";
 
 type Corner = "bottom-right" | "bottom-left" | "top-right" | "top-left";
 
-const STORAGE_KEY = "maxthenicsChatCorner";
 const BTN_SIZE = 64;
 const GAP = 20;
 
@@ -45,7 +45,7 @@ function snapCorner(x: number, y: number, w: number, h: number): Corner {
 }
 
 // Section-aware interactive assistant messages
-const SECTION_MESSAGES: Record<string, string[]> = {
+const getSectionMessages = (userName: string | null): Record<string, string[]> => ({
   "how-it-works": [
     "Ecco come funziona il protocollo! ⚙️",
     "Passa con il mouse sulle card! 👆",
@@ -68,13 +68,20 @@ const SECTION_MESSAGES: Record<string, string[]> = {
     "Maxthenics è più di una scheda! 💡",
     "Algoritmo proprietario adattivo 🧠"
   ],
-  "default": [
-    "Ciao! Sono Sthenox AI, il tuo Coach! 👋",
-    "Come posso aiutarti oggi? 🤖",
-    "Hai domande sul tuo allenamento? 💪",
-    "Sono qui per guidare la tua forza! ⚡"
-  ]
-};
+  "default": userName
+    ? [
+        `Ciao ${userName}! Sono Sthenox, il tuo Coach! 👋`,
+        `Bentornato ${userName}! Come posso aiutarti? 🤖`,
+        `${userName}, hai domande sul tuo allenamento? 💪`,
+        `Pronto perallenare, ${userName}? Sono qui! ⚡`
+      ]
+    : [
+        "Ciao! Sono Sthenox AI, il tuo Coach! 👋",
+        "Come posso aiutarti oggi? 🤖",
+        "Hai domande sul tuo allenamento? 💪",
+        "Sono qui per guidare la tua forza! ⚡"
+      ]
+});
 
 interface FaceProps {
   isOpen: boolean;
@@ -107,6 +114,7 @@ function MinimalFace({ isOpen, isHovered, isDragging, isScrolling }: FaceProps) 
   // Talking mouth animation loop when chat is open
   useEffect(() => {
     if (!isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMouthPhase(0);
       return;
     }
@@ -193,6 +201,7 @@ function MinimalFace({ isOpen, isHovered, isDragging, isScrolling }: FaceProps) 
 
 export default function ChatToggle() {
   const { isChatOpen, setIsChatOpen, chatCorner: corner, setChatCorner: setCorner } = useChatContext();
+  const { user } = useAuth();
   const [dragging, setDragging] = useState(false);
   const [snapping, setSnapping] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -242,12 +251,14 @@ export default function ChatToggle() {
   // Proactive Speech Bubble scheduler
   useEffect(() => {
     if (isChatOpen || dragging) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowPreview(false);
       if (previewTimerRef.current) clearTimeout(previewTimerRef.current);
       return;
     }
 
     const triggerBubble = () => {
+      const SECTION_MESSAGES = getSectionMessages(user?.name || null);
       const messages = SECTION_MESSAGES[activeSection] || SECTION_MESSAGES["default"];
       const randomMsg = messages[Math.floor(Math.random() * messages.length)];
       setPreviewMsg(randomMsg);
@@ -265,7 +276,7 @@ export default function ChatToggle() {
       clearTimeout(timer);
       if (previewTimerRef.current) clearInterval(previewTimerRef.current);
     };
-  }, [isChatOpen, dragging, activeSection]);
+  }, [isChatOpen, dragging, activeSection, user?.name]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     hasMoved.current = false;

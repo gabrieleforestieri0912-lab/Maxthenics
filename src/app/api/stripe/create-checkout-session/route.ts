@@ -3,8 +3,8 @@ import Stripe from 'stripe';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import { getEnv } from '@/lib/env';
+import { getStripe } from '@/lib/clients';
 
-const stripe = new Stripe(getEnv().STRIPE_SECRET_KEY);
 const CLIENT_URL = getEnv().CLIENT_URL;
 
 export async function POST(request: Request) {
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
         customerId = user.stripeCustomerId;
       } else if (user?.email) {
         try {
-          const customer = await stripe.customers.create({
+          const customer = await getStripe().customers.create({
             email: user.email,
             metadata: { userId: user._id.toString() },
           });
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
       sessionParams.customer = customerId;
     }
 
-    const session = await stripe.checkout.sessions.create(sessionParams);
+    const session = await getStripe().checkout.sessions.create(sessionParams);
 
     return NextResponse.json({ url: session.url });
   } catch (error) {

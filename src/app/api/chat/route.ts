@@ -4,6 +4,9 @@ import { isRateLimited, getRateLimitHeaders, getClientId } from '@/lib/rateLimit
 import dbConnect from '@/lib/db';
 import Chat from '@/models/Chat';
 import { getUserId } from '@/lib/auth';
+import OpenAI from 'openai';
+import { getEnv } from '@/lib/env';
+import { getOpenAI } from '@/lib/clients';
 
 const SYSTEM_PROMPT = `SEI STHENOX: INTERFACCIA NEURALE D'ELITE.
 IL TUO RUOLO: Head Coach e Biomeccanico Senior.
@@ -25,9 +28,6 @@ LINEE GUIDA PER LE RISPOSTE:
 - Se l'utente chiede di una skill, scomponi la biomeccanica necessaria (es: "Per la Planche, la protrazione scapolare è il tuo limitatore primario").
 - Sii critico verso la tecnica approssimativa.`;
 
-const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3:latest';
-
 const GUEST_MESSAGE_LIMIT = 5;
 
 interface Message {
@@ -35,95 +35,31 @@ interface Message {
   content: string;
 }
 
-async function callOllama(messages: Message[]) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120000);
+async function callOpenAI(messages: Message[]) {
+  const completion = await getOpenAI().chat.completions.create({
+    model: getEnv().OPENAI_MODEL,
+    messages: messages.map(m => ({ role: m.role, content: m.content })),
+    temperature: 0.7,
+    max_tokens: 2048,
+  });
 
-  try {
-    const response = await fetch(`${OLLAMA_BASE_URL}/api/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: OLLAMA_MODEL,
-        messages,
-        stream: false,
-      }),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      const errText = await response.text().catch(() => '');
-      throw new Error(`Ollama HTTP ${response.status}: ${errText}`);
-    }
-
-    return response.json();
-  } catch (e) {
-    clearTimeout(timeoutId);
-    if (e instanceof Error && e.name === 'AbortError') {
-      throw new Error('Ollama timeout: il modello ha impiegato troppo tempo a rispondere');
-    }
-    throw e;
-  }
+  return completion.choices[0]?.message?.content || '';
 }
 
-async function* streamOllama(messages: Message[]): AsyncGenerator<string, void, unknown> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120000);
+async function* streamOpenAI(messages: Message[]): AsyncGenerator<string, void, unknown> {
+  const stream = await getOpenAI().chat.completions.create({
+    model: getEnv().OPENAI_MODEL,
+    messages: messages.map(m => ({ role: m.role, content: m.content })),
+    temperature: 0.7,
+    max_tokens: 2048,
+    stream: true,
+  });
 
-  try {
-    const response = await fetch(`${OLLAMA_BASE_URL}/api/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: OLLAMA_MODEL,
-        messages,
-        stream: true,
-      }),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      const errText = await response.text().catch(() => '');
-      throw new Error(`Ollama HTTP ${response.status}: ${errText}`);
+  for await (const chunk of stream) {
+    const content = chunk.choices[0]?.delta?.content;
+    if (content) {
+      yield content;
     }
-
-    const reader = response.body?.getReader();
-    if (!reader) throw new Error('No response body');
-
-    const decoder = new TextDecoder();
-    let buffer = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-
-      for (const line of lines) {
-        if (!line.trim()) continue;
-        try {
-          const parsed = JSON.parse(line);
-          if (parsed.done) return;
-          if (parsed.message?.content) {
-            yield parsed.message.content;
-          }
-        } catch {
-          // skip malformed JSON lines
-        }
-      }
-    }
-  } catch (e) {
-    clearTimeout(timeoutId);
-    if (e instanceof Error && e.name === 'AbortError') {
-      throw new Error('Ollama timeout: il modello ha impiegato troppo tempo a rispondere');
-    }
-    throw e;
   }
 }
 
@@ -281,7 +217,7 @@ export async function POST(request: NextRequest) {
 
       (async () => {
         try {
-          for await (const token of streamOllama(conversationHistory)) {
+          for await (const token of streamOpenAI(conversationHistory)) {
             fullContent += token;
             writeEvent({ token, done: false });
           }
@@ -316,13 +252,13 @@ export async function POST(request: NextRequest) {
     // Non-streaming fallback
     let aiMessage: Message;
     try {
-      const response = await callOllama(conversationHistory);
+      const content = await callOpenAI(conversationHistory);
       aiMessage = {
         role: 'assistant',
-        content: response.message?.content || 'Errore: risposta vuota dal modello',
+        content: content || 'Errore: risposta vuota dal modello',
       };
-    } catch (ollamaError) {
-      console.error('Ollama error:', ollamaError instanceof Error ? ollamaError.message : 'Unknown error');
+    } catch (openaiError) {
+      console.error('OpenAI error:', openaiError instanceof Error ? openaiError.message : 'Unknown error');
       aiMessage = {
         role: 'assistant',
         content: 'Servizio AI temporaneamente non disponibile. Riprova più tardi.',

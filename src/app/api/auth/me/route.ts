@@ -11,20 +11,18 @@ export async function GET(request: NextRequest) {
   try {
     await dbConnect();
 
-    // Get user from cookies
-    const userCookie = request.cookies.get('maxthenicsUser');
-    const token = request.cookies.get('token');
-
-    if (!userCookie || !token) {
+    const tokenCookie = request.cookies.get('token');
+    if (!tokenCookie) {
       return NextResponse.json({ authenticated: false });
     }
 
     try {
-      // Verify JWT token
-      jwt.verify(token.value, JWT_SECRET);
-      const userData = JSON.parse(userCookie.value);
+      const decoded = jwt.verify(tokenCookie.value, JWT_SECRET) as { userId?: string };
+      if (!decoded.userId) {
+        return NextResponse.json({ authenticated: false });
+      }
 
-      const user = await User.findById(userData._id, '-password');
+      const user = await User.findById(decoded.userId, '-password');
 
       if (!user) {
         return NextResponse.json({ authenticated: false });
@@ -43,7 +41,6 @@ export async function GET(request: NextRequest) {
         },
       });
     } catch {
-      // Invalid token or parse error
       return NextResponse.json({ authenticated: false });
     }
   } catch (error) {

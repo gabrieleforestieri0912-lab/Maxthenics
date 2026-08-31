@@ -54,7 +54,7 @@ const findExercise = (id: string): Exercise | undefined =>
   exerciseDatabase.find((ex) => ex.id === id);
 
 // ─── Workout data builder for every program ───
-const buildWorkoutPlan = (
+const _buildWorkoutPlan = (
   id: number,
   exerciseIds: string[],
   getWorkout: (exercise: Exercise, week: number, dayOfWeek: number) => WorkoutSet,
@@ -89,7 +89,7 @@ const buildWorkoutPlan = (
   return { id, weeks, weeklyOverview: [], warmUp: [], coolDown: [], progressionNotes: [] };
 };
 
-function weekTheme(weekIdx: number, totalWeeks: number, programId: number): string {
+function weekTheme(weekIdx: number, totalWeeks: number, _programId: number): string {
   const third = Math.ceil(totalWeeks / 3);
   if (weekIdx < third) return 'Condizionamento & Adattamento';
   if (weekIdx < third * 2) return 'Intensificazione del Volume';
@@ -109,7 +109,7 @@ const PROGRAM_CONFIG: Record<number, {
     tagline: 'Attivazione neurale e metabolica per principianti assoluti.',
     warmUp: ['Cat-Cow Stretch (10x)', "Child's Pose (30s)", 'Jumping Jacks (1 min)', 'Arm Circles (fwd/bwd 10x)'],
     coolDown: ['Deep Squat Hold (1 min)', 'Pigeon Stretch (1 min/side)', 'Foam Rolling (gambe)'],
-    getWorkout: (ex, week) => ({
+    getWorkout: (ex, _week) => ({
       sets: 3,
       reps: ex.type === 'strength' ? '8-10' : '30-45s',
       rest: '60-90s',
@@ -140,7 +140,7 @@ const PROGRAM_CONFIG: Record<number, {
     tagline: 'Traiettorie tecniche perfette per trazioni, piegamenti e dip.',
     warmUp: ['Scapular Wall Slides (15x)', 'Dynamic Chest Stretch (10x/side)', 'Jumping Jacks (1 min)', 'Wrist Prep (30s/side)'],
     coolDown: ['Deep Squat Hold (1 min)', 'Pigeon Stretch (1 min/side)', 'Thoracic Spine Rotation (10x/side)'],
-    getWorkout: (ex, week, dayId) => {
+    getWorkout: (ex, week, _dayId) => {
       if (ex.id === 'bw-004') { // pull-up day high intensity
         return { sets: 4, reps: week <= 2 ? '5-7' : '6-9', rest: '90-120s', tempo: '2/1/2/0', notes: 'Scapular retraction before each rep' };
       }
@@ -228,7 +228,7 @@ const PROGRAM_CONFIG: Record<number, {
     warmUp: ['Wrist Prep arcobaleno (30s/side)', 'Dislocate al Bastone (presa larga, 10x)', 'Cat-Cow (10x)', 'Dynamic Chest Stretch (10x/side)'],
     coolDown: ['Child\'s Pose (1 min)', 'Deep Squat Hold (30s)', 'Tuck Planche Hold (20s x 2)'],
     getWorkout: (ex, week, dayIndex) => {
-      const isPlancheDay = dayIndex === 1;
+      const _isPlancheDay = dayIndex === 1;
       if (ex.id === 'bw-010') {
         return {
           sets: 4,
@@ -250,7 +250,7 @@ const PROGRAM_CONFIG: Record<number, {
     warmUp: ['Pike Push-up (8x)', 'Wrist Prep (30s/side)', 'Scapular Wall Slides (15x)', 'Push-up incline (10x)'],
     coolDown: ['Child\'s Pose (1 min)', 'Dynamic Chest Stretch (10x/side)', 'Deep Squat Hold (30s)'],
     getWorkout: (ex, week, dayIndex) => {
-      const isPlancheDay = dayIndex === 1;
+      const _isPlancheDay = dayIndex === 1;
       // Periodizzazione ondulata: Week 1-3 volume, Week 4-6 intensità, Week 7-10 picco
       const phase = week <= 3 ? 'volume' : week <= 6 ? 'intensity' : 'peak';
       if (ex.id === 'bw-011') {
@@ -353,7 +353,7 @@ const PROGRAM_CONFIG: Record<number, {
     tagline: 'La catena posteriore completa: German Hang → Tuck → Straddle → Full Back Lever.',
     warmUp: ['German Hang (30s x 2)', 'Hollow Body Rock (25x)', 'Arch Body Rock (25x)', 'Thoracic Spine Rotation (10x/side)', 'Scapular Depression drills (10x)'],
     coolDown: ['Child\'s Pose con torace aperto (1 min)', 'Deep Squat Hold (45s)', 'Foam Rolling catena posteriore completa (3 min)'],
-    getWorkout: (ex, week, dayIndex) => {
+    getWorkout: (ex, week, _dayIndex) => {
       if (ex.id === 'bw-020-tuck' || ex.id === 'bw-020-german') {
         return { sets: 4, reps: week <= 3 ? '10-15s tuck' : week <= 7 ? '15-25s tuck' : '20-35s tuck', rest: '90-120s', tempo: 'isometrico', notes: 'Scapole depresse e addominale contratto' };
       }
@@ -408,7 +408,7 @@ const PROGRAM_CONFIG: Record<number, {
     warmUp: ['Hollow Body Rock (25x)', 'Arch Body Rock (25x)', 'Tuck Dragon Flag (3 x 5s)', 'Plank (60s)'],
     coolDown: ['Child\'s Pose (1 min)', 'Pigeon Stretch (1 min/side)', 'Foam Rolling bassa schiena (2 min)'],
     getWorkout: (ex, week) => {
-      const phase = week <= 2 ? 'tuck' : week <= 4 ? 'adv-tuck' : week <= 5 ? 'straddle' : 'full';
+      const _phase = week <= 2 ? 'tuck' : week <= 4 ? 'adv-tuck' : week <= 5 ? 'straddle' : 'full';
       if (ex.id === 'bw-018-tuck' || ex.id === 'bw-018') {
         const level = week <= 2 ? 'tuck' : week <= 4 ? 'adv-tuck' : week <= 5 ? 'straddle' : 'full';
         return {
@@ -457,8 +457,8 @@ const PROGRAM_CONFIG: Record<number, {
     tagline: 'Costruisci massa con solo il corpo. Split 5 giorni con progressive overload e volume cycling.',
     warmUp: ['Dynamic Chest Stretch (10x/side)', 'Scapular Wall Slides (15x)', 'Arm Circles (10x each way)', 'Bodyweight Squat (15x)', 'Wrist Prep (20s/side)'],
     coolDown: ['Deep Squat Hold (1 min)', 'Pigeon Stretch (1 min/side)', 'Child\'s Pose (1 min)', 'Foam Rolling full body (3 min)'],
-    getWorkout: (ex, week, dayIndex) => {
-      const phases: Record<number, 'accum' | 'intensify' | 'peak'> = {};
+    getWorkout: (ex, week, _dayIndex) => {
+      const _phases: Record<number, 'accum' | 'intensify' | 'peak'> = {};
       const phase = week <= 4 ? 'accum' : week <= 8 ? 'intensify' : 'peak';
       if (ex.id === 'bw-001' || ex.id === 'bw-027') {
         const { s, r, reps: res } = pushDay(phase);
@@ -898,7 +898,7 @@ const ProgramContent: React.FC = () => {
                 <ul className="space-y-2">
                   {cfg.coolDown.map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
-                      <CheckCircle i={i} />
+                      <CheckCircle />
                       {item}
                     </li>
                   ))}
@@ -958,7 +958,7 @@ const ProgramContent: React.FC = () => {
                 <ul className="space-y-3">
                   {cfg.coolDown.map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
-                      <CheckCircle i={i} />
+                      <CheckCircle />
                       <span className="font-medium">{item}</span>
                     </li>
                   ))}
@@ -1011,7 +1011,7 @@ const ProgramContent: React.FC = () => {
   );
 };
 
-const CheckCircle: React.FC<{ i: number }> = ({ i }) => (
+const CheckCircle: React.FC = () => (
   <span className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5">
     <Check size={12} className="text-green-500" />
   </span>

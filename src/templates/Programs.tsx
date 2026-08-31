@@ -207,7 +207,7 @@ function Programs() {
             <span className="text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-700 italic pr-6 pb-2 inline-block">TUO PERCORSO</span>
           </h1>
           <p className="text-zinc-400 text-lg max-w-3xl font-medium leading-relaxed">
-            Dal principiante all'elite, ogni programma è progettato con metodologie biomeccaniche avanzate per trasformare il tuo corpo attraverso la forza a corpo libero.
+            Dal principiante all&apos;elite, ogni programma è progettato con metodologie biomeccaniche avanzate per trasformare il tuo corpo attraverso la forza a corpo libero.
           </p>
         </motion.div>
 

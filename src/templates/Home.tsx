@@ -154,7 +154,7 @@ const Home: React.FC = () => {
               Ogni programma viene costruito partendo da un principio fondamentale: non esistono due corpi uguali. Per questo il nostro algoritmo proprietario elabora i tuoi dati biometrici — età, peso, altezza, sesso, esperienza, infortuni pregressi e obiettivi specifici — per produrre un protocollo che si evolve con te, seduta dopo seduta.
             </p>
             <p>
-              Il risultato è un percorso scientifico che trasforma l'istinto in strategia. Non più tentativi casuali, ma progressioni calibrate al millimetro per portarti dalla prima trazione alla Planche in tempo reale, senza infortuni e senza piattori.
+              Il risultato è un percorso scientifico che trasforma l&apos;istinto in strategia. Non più tentativi casuali, ma progressioni calibrate al millimetro per portarti dalla prima trazione alla Planche in tempo reale, senza infortuni e senza piattori.
             </p>
           </div>
           <div className="mt-12">
@@ -280,10 +280,10 @@ const Home: React.FC = () => {
                   La Calisthenics Room è il nostro servizio di coaching 1:1 premium. Non un corso registrato né una serie di video generici: è un percorso individuale dove ogni seduta viene progettata, monitorata e corretta in tempo reale da un coach dedicato. Il programma non esiste fino a quando non iniziamo a lavorare insieme.
                 </p>
                 <p>
-                  Il processo inizia con un'analisi approfondita: video-analisi della tua tecnica attuale, valutazione dei punti di forza e delle debolezze, identificazione degli squilibri muscolari e definizione degli obiettivi a breve, medio e lungo termine. Da qui costruiamo un protocollo che evolve di settimana in settimana, mai uguale a sé stesso, sempre calibrato sul tuo recupero e sui tuoi progressi reali.
+                  Il processo inizia con un&apos;analisi approfondita: video-analisi della tua tecnica attuale, valutazione dei punti di forza e delle debolezze, identificazione degli squilibri muscolari e definizione degli obiettivi a breve, medio e lungo termine. Da qui costruiamo un protocollo che evolve di settimana in settimana, mai uguale a sé stesso, sempre calibrato sul tuo recupero e sui tuoi progressi reali.
                 </p>
                 <p>
-                  Ogni sessione prevede correzioni in diretta via video, varianti istantanee quando un esercizio non risponde come previsto e un piano di lavoro che integra tecnica, condizionamento e mobilità. Il coach è disponibile su WhatsApp per dubbi, dubbi dell'ultimo minuto e aggiustamenti fuori orario. I posti sono limitati a cinque al mese perché ogni atleta merita attenzione totale, niente schede preconfezionate.
+                  Ogni sessione prevede correzioni in diretta via video, varianti istantanee quando un esercizio non risponde come previsto e un piano di lavoro che integra tecnica, condizionamento e mobilità. Il coach è disponibile su WhatsApp per dubbi, dubbi dell&apos;ultimo minuto e aggiustamenti fuori orario. I posti sono limitati a cinque al mese perché ogni atleta merita attenzione totale, niente schede preconfezionate.
                 </p>
               </div>
 

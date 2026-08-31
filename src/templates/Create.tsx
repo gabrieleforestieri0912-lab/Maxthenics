@@ -157,6 +157,302 @@ const TRAINING_TYPES = [
   { val: "endurance", icon: "🏃", label: "Endurance & High Rep", desc: "Resistenza muscolare, high rep, circuiti" },
 ];
 
+// ─── EXTRACTED COMPONENTS ─────────────────────────────────────────────────
+
+interface StepProgressProps {
+  step: number;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const StepProgress: React.FC<StepProgressProps> = ({ step, setStep }) => (
+  <div className="space-y-4">
+    {[
+      { n: 1, label: "Identità", icon: User },
+      { n: 2, label: "Livello & Esperienza", icon: Award },
+      { n: 3, label: "Logistica", icon: Activity },
+      { n: 4, label: "Obiettivi", icon: Target },
+      { n: 5, label: "Riepilogo", icon: CheckCircle2 },
+    ].map((s) => {
+      const Icon = s.icon;
+      const active = step === s.n;
+      const done = step > s.n;
+      return (
+        <button
+          key={s.n}
+          type="button"
+          onClick={() => s.n <= step && setStep(s.n)}
+          className={`flex items-center gap-4 w-full text-left transition-all group ${
+            s.n > step ? "opacity-40 cursor-default" : "cursor-pointer hover:opacity-100"
+          }`}
+        >
+          <div
+            className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm transition-all shrink-0 ${
+              done
+                ? "bg-red-600 text-white shadow-lg shadow-red-900/30"
+                : active
+                ? "bg-red-600/15 border border-red-600/40 text-red-500 scale-110"
+                : "bg-zinc-800/50 border border-white/5 text-zinc-600 group-hover:border-white/10"
+            }`}
+          >
+            {done ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p
+              className={`text-xs font-black uppercase tracking-widest transition-colors ${
+                done || active ? "text-white" : "text-zinc-600"
+              }`}
+            >
+              {s.label}
+            </p>
+            <div className={`h-0.5 rounded-full mt-2 transition-all duration-500 ${done || active ? "bg-red-600" : "bg-zinc-800"}`}>
+              <div className={`h-full rounded-full ${done || active ? "bg-red-600 w-full" : "w-0"}`} />
+            </div>
+          </div>
+          {active && (
+            <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
+          )}
+        </button>
+      );
+    })}
+  </div>
+);
+
+interface StepHintProps {
+  step: number;
+}
+
+const StepHint: React.FC<StepHintProps> = ({ step }) => {
+  const hints: Record<number, { title: string; body: string }> = {
+    1: {
+      title: "Perché questi dati?",
+      body: "L'IA usa età, peso e altezza per calcolare il carico, il volume e la densità di allenamento ottimale per te.",
+    },
+    2: {
+      title: "Sii onesto con te stesso",
+      body: "Il livello definisce la difficoltà degli esercizi e la densità del programma. Non farti vedere più bravo di quello che sei.",
+    },
+    3: {
+      title: "Logistica vincente",
+      body: "Scegliere i giorni giusti è la chiave della consistenza. L'IA costruisce il programma attorno alla tua disponibilità.",
+    },
+    4: {
+      title: "Più dettagli = programma migliore",
+      body: "Specificare obiettivi e focus permette all'IA di selezionare gli esercizi più efficaci per raggiungere i tuoi risultati.",
+    },
+    5: {
+      title: "Quasi pronto!",
+      body: "L'IA genererà un programma completo con esercizi, serie, ripetizioni, recupero e note tecniche — tutto su misura per te.",
+    },
+  };
+  const hint = hints[step];
+  if (!hint) return null;
+  return (
+    <div className="bg-zinc-950/30 border border-white/5 rounded-2xl p-5">
+      <div className="flex items-start gap-3">
+        <BrainCircuit className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-1">{hint.title}</p>
+          <p className="text-[11px] text-zinc-500 leading-relaxed">{hint.body}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface SavedProgramsPanelProps {
+  programs: SavedProgram[];
+  openExportIdx: number | null;
+  setOpenExportIdx: React.Dispatch<React.SetStateAction<number | null>>;
+  handleEdit: (index: number) => void;
+  handleDelete: (index: number) => void;
+  handleExport: (format: "txt" | "json" | "pdf", program: SavedProgram, index: number) => void;
+  bodyFocus: string[];
+}
+
+const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
+  programs,
+  openExportIdx,
+  setOpenExportIdx,
+  handleEdit,
+  handleDelete,
+  handleExport,
+  bodyFocus,
+}) => (
+  <div className="space-y-4">
+    <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+      <Layout className="w-6 h-6 text-red-500" />
+      I Tuoi Piani
+    </h2>
+    <p className="text-[11px] text-zinc-500">
+      I programmi che hai creato con l&apos;AI. Modifica, esporta o eliminali quando vuoi.
+    </p>
+
+    {programs.length === 0 ? (
+      <div className="bg-zinc-900/20 border border-dashed border-white/8 rounded-[1.5rem] p-10 text-center">
+        <Layout className="mx-auto text-zinc-800 mb-4" size={40} />
+        <p className="text-zinc-600 italic text-sm">Nessun programma creato ancora.</p>
+        <p className="text-zinc-700 text-xs mt-1">Compila il wizard e genera il tuo primo piano!</p>
+      </div>
+    ) : (
+      <div className="space-y-3">
+        {programs.map((p, i) => {
+          const lvlStyle = LEVEL_STYLES[p.level] || LEVEL_STYLES.principiante;
+          return (
+            <div
+              key={i}
+              className="group bg-zinc-900/60 backdrop-blur-sm p-5 rounded-2xl border border-white/8 hover:border-red-500/25 transition-all duration-300 hover:bg-zinc-900/80"
+            >
+              {/* Header row */}
+              <div className="flex justify-between items-start gap-3">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    <span className={`text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full ${lvlStyle.tag}`}>
+                      {p.level}
+                    </span>
+                    {p.focus && (
+                      <span className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
+                        {p.focus}
+                      </span>
+                    )}
+                    {p.intensity && (
+                      <span className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-white/5">
+                        {p.intensity}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-base font-black text-white truncate">{p.title}</p>
+                  <p className="text-[11px] text-zinc-500 mt-1">
+                    {p.daysPerWeek} giorni/sett · {p.sessionDuration}min ·&nbsp;
+                    {p.goals ? `"${p.goals.length > 60 ? p.goals.slice(0, 60) + "..." : p.goals}"` : "Senza obiettivi"}
+                  </p>
+                </div>
+                <div className="flex gap-0.5 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => handleEdit(i)}
+                    className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                    title="Modifica programma"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(i)}
+                    className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-600/10 rounded-xl transition-all"
+                    title="Elimina programma"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                  <div className="relative">
+                    <button
+                      onClick={() => setOpenExportIdx(openExportIdx === i ? null : i)}
+                      className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                      title="Esporta"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                    </button>
+                    {openExportIdx === i && (
+                      <>
+                        <div className="fixed inset-0 z-40" onClick={() => setOpenExportIdx(null)} />
+                        <div className="absolute right-0 top-full mt-1 z-50 w-44 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden">
+                          <button
+                            onClick={() => handleExport("txt", p, i)}
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                          >
+                            <FileText size={14} className="text-zinc-500" />
+                            Esporta TXT
+                          </button>
+                          <button
+                            onClick={() => handleExport("json", p, i)}
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                          >
+                            <FileJson size={14} className="text-zinc-500" />
+                            Esporta JSON
+                          </button>
+                          <button
+                            onClick={() => handleExport("pdf", p, i)}
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                          >
+                            <Printer size={14} className="text-zinc-500" />
+                            Stampa / PDF
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Meta bar */}
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-[10px] text-zinc-600">
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" /> {p.date}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Dumbbell className="w-3 h-3" /> {p.exercises?.length || 0} esercizi
+                </span>
+                {p.age && (
+                  <span className="flex items-center gap-1">
+                    <User className="w-3 h-3" /> {p.age} anni
+                  </span>
+                )}
+                {(bodyFocus || p.bodyFocus || []).length > 0 && (
+                  <span className="flex items-center gap-1">
+                    <Target className="w-3 h-3" /> {(bodyFocus || p.bodyFocus || []).join(", ")}
+                  </span>
+                )}
+              </div>
+
+              {/* Exercise preview */}
+              {p.exercises && p.exercises.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {p.exercises.slice(0, 6).map((ex: any, j: number) => (
+                    <span
+                      key={j}
+                      className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-white/3 text-zinc-600 rounded-full"
+                    >
+                      {ex.name || "Esercizio"}
+                    </span>
+                  ))}
+                  {p.exercises.length > 6 && (
+                    <span className="text-[9px] text-zinc-700">+{p.exercises.length - 6} altri</span>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </div>
+);
+
+interface GenerationProgressBarProps {
+  isGenerating: boolean;
+  generationProgress: number;
+}
+
+const GenerationProgressBar: React.FC<GenerationProgressBarProps> = ({ isGenerating, generationProgress }) => {
+  if (!isGenerating) return null;
+  return (
+    <div className="mt-6 space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-black uppercase tracking-wider text-red-500 flex items-center gap-2">
+          <div className="w-3 h-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+          Generazione in corso...
+        </span>
+        <span className="text-[10px] font-black text-zinc-500">{Math.min(100, Math.round(generationProgress))}%</span>
+      </div>
+      <div className="h-2 bg-zinc-900 rounded-full overflow-hidden border border-white/5">
+        <div
+          className="h-full bg-linear-to-r from-red-600 via-orange-500 to-red-600 rounded-full transition-all duration-500 ease-out shadow-[0_0_20px_rgba(220,38,38,0.4)]"
+          style={{ width: `${Math.min(100, generationProgress)}%` }}
+        />
+      </div>
+    </div>
+  );
+};
+
+// ─── CREATE COMPONENT ───────────────────────────────────────────────────
+
 const Create: React.FC = () => {
   const { user, loading: authLoading, addNotification } = useAuth();
   const navigate = useNavigate();
@@ -475,60 +771,6 @@ const Create: React.FC = () => {
     );
   }
 
-  // ─── PROGRESS INDICATOR COMPONENT ──────────────────────────────────────
-  const StepProgress = () => (
-    <div className="space-y-4">
-      {[
-        { n: 1, label: "Identità", icon: User },
-        { n: 2, label: "Livello & Esperienza", icon: Award },
-        { n: 3, label: "Logistica", icon: Activity },
-        { n: 4, label: "Obiettivi", icon: Target },
-        { n: 5, label: "Riepilogo", icon: CheckCircle2 },
-      ].map((s) => {
-        const Icon = s.icon;
-        const active = step === s.n;
-        const done = step > s.n;
-        return (
-          <button
-            key={s.n}
-            type="button"
-            onClick={() => s.n <= step && setStep(s.n)}
-            className={`flex items-center gap-4 w-full text-left transition-all group ${
-              s.n > step ? "opacity-40 cursor-default" : "cursor-pointer hover:opacity-100"
-            }`}
-          >
-            <div
-              className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm transition-all shrink-0 ${
-                done
-                  ? "bg-red-600 text-white shadow-lg shadow-red-900/30"
-                  : active
-                  ? "bg-red-600/15 border border-red-600/40 text-red-500 scale-110"
-                  : "bg-zinc-800/50 border border-white/5 text-zinc-600 group-hover:border-white/10"
-              }`}
-            >
-              {done ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p
-                className={`text-xs font-black uppercase tracking-widest transition-colors ${
-                  done || active ? "text-white" : "text-zinc-600"
-                }`}
-              >
-                {s.label}
-              </p>
-              <div className={`h-0.5 rounded-full mt-2 transition-all duration-500 ${done || active ? "bg-red-600" : "bg-zinc-800"}`}>
-                <div className={`h-full rounded-full ${done || active ? "bg-red-600 w-full" : "w-0"}`} />
-              </div>
-            </div>
-            {active && (
-              <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
-
   // ─── STEP RENDERING ────────────────────────────────────────────────────
   const renderStep = () => {
     switch (step) {
@@ -647,7 +889,7 @@ const Create: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-xl font-black text-white">Livello & Esperienza</h3>
-                <p className="text-xs text-zinc-500 mt-0.5">Scegli il tuo livello: l'IA lo rispeterà in ogni dettaglio</p>
+                <p className="text-xs text-zinc-500 mt-0.5">Scegli il tuo livello: l&apos;IA lo rispeterà in ogni dettaglio</p>
               </div>
             </div>
 
@@ -1192,192 +1434,6 @@ const Create: React.FC = () => {
     }
   };
 
-  const StepHint = () => {
-    const hints: Record<number, { title: string; body: string }> = {
-      1: {
-        title: "Perché questi dati?",
-        body: "L'IA usa età, peso e altezza per calcolare il carico, il volume e la densità di allenamento ottimale per te.",
-      },
-      2: {
-        title: "Sii onesto con te stesso",
-        body: "Il livello definisce la difficoltà degli esercizi e la densità del programma. Non farti vedere più bravo di quello che sei.",
-      },
-      3: {
-        title: "Logistica vincente",
-        body: "Scegliere i giorni giusti è la chiave della consistenza. L'IA costruisce il programma attorno alla tua disponibilità.",
-      },
-      4: {
-        title: "Più dettagli = programma migliore",
-        body: "Specificare obiettivi e focus permette all'IA di selezionare gli esercizi più efficaci per raggiungere i tuoi risultati.",
-      },
-      5: {
-        title: "Quasi pronto!",
-        body: "L'IA genererà un programma completo con esercizi, serie, ripetizioni, recupero e note tecniche — tutto su misura per te.",
-      },
-    };
-    const hint = hints[step];
-    if (!hint) return null;
-    return (
-      <div className="bg-zinc-950/30 border border-white/5 rounded-2xl p-5">
-        <div className="flex items-start gap-3">
-          <BrainCircuit className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-1">{hint.title}</p>
-            <p className="text-[11px] text-zinc-500 leading-relaxed">{hint.body}</p>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const SavedProgramsPanel = () => (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-        <Layout className="w-6 h-6 text-red-500" />
-        I Tuoi Piani
-      </h2>
-      <p className="text-[11px] text-zinc-500">
-        I programmi che hai creato con l&apos;AI. Modifica, esporta o eliminali quando vuoi.
-      </p>
-
-      {programs.length === 0 ? (
-        <div className="bg-zinc-900/20 border border-dashed border-white/8 rounded-[1.5rem] p-10 text-center">
-          <Layout className="mx-auto text-zinc-800 mb-4" size={40} />
-          <p className="text-zinc-600 italic text-sm">Nessun programma creato ancora.</p>
-          <p className="text-zinc-700 text-xs mt-1">Compila il wizard e genera il tuo primo piano!</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {programs.map((p, i) => {
-            const lvlStyle = LEVEL_STYLES[p.level] || LEVEL_STYLES.principiante;
-            return (
-              <div
-                key={i}
-                className="group bg-zinc-900/60 backdrop-blur-sm p-5 rounded-2xl border border-white/8 hover:border-red-500/25 transition-all duration-300 hover:bg-zinc-900/80"
-              >
-                {/* Header row */}
-                <div className="flex justify-between items-start gap-3">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap gap-1.5 mb-2">
-                      <span className={`text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full ${lvlStyle.tag}`}>
-                        {p.level}
-                      </span>
-                      {p.focus && (
-                        <span className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
-                          {p.focus}
-                        </span>
-                      )}
-                      {p.intensity && (
-                        <span className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-white/5">
-                          {p.intensity}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-base font-black text-white truncate">{p.title}</p>
-                    <p className="text-[11px] text-zinc-500 mt-1">
-                      {p.daysPerWeek} giorni/sett · {p.sessionDuration}min ·&nbsp;
-                      {p.goals ? `"${p.goals.length > 60 ? p.goals.slice(0, 60) + "..." : p.goals}"` : "Senza obiettivi"}
-                    </p>
-                  </div>
-                  <div className="flex gap-0.5 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={() => handleEdit(i)}
-                      className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
-                      title="Modifica programma"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(i)}
-                      className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-600/10 rounded-xl transition-all"
-                      title="Elimina programma"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                    <div className="relative">
-                      <button
-                        onClick={() => setOpenExportIdx(openExportIdx === i ? null : i)}
-                        className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
-                        title="Esporta"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                      </button>
-                      {openExportIdx === i && (
-                        <>
-                          <div className="fixed inset-0 z-40" onClick={() => setOpenExportIdx(null)} />
-                          <div className="absolute right-0 top-full mt-1 z-50 w-44 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden">
-                            <button
-                              onClick={() => handleExport("txt", p, i)}
-                              className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
-                            >
-                              <FileText size={14} className="text-zinc-500" />
-                              Esporta TXT
-                            </button>
-                            <button
-                              onClick={() => handleExport("json", p, i)}
-                              className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
-                            >
-                              <FileJson size={14} className="text-zinc-500" />
-                              Esporta JSON
-                            </button>
-                            <button
-                              onClick={() => handleExport("pdf", p, i)}
-                              className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
-                            >
-                              <Printer size={14} className="text-zinc-500" />
-                              Stampa / PDF
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Meta bar */}
-                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-[10px] text-zinc-600">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" /> {p.date}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Dumbbell className="w-3 h-3" /> {p.exercises?.length || 0} esercizi
-                  </span>
-                  {p.age && (
-                    <span className="flex items-center gap-1">
-                      <User className="w-3 h-3" /> {p.age} anni
-                    </span>
-                  )}
-                  {(bodyFocus || p.bodyFocus || []).length > 0 && (
-                    <span className="flex items-center gap-1">
-                      <Target className="w-3 h-3" /> {(bodyFocus || p.bodyFocus || []).join(", ")}
-                    </span>
-                  )}
-                </div>
-
-                {/* Exercise preview */}
-                {p.exercises && p.exercises.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {p.exercises.slice(0, 6).map((ex: any, j: number) => (
-                      <span
-                        key={j}
-                        className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-white/3 text-zinc-600 rounded-full"
-                      >
-                        {ex.name || "Esercizio"}
-                      </span>
-                    ))}
-                    {p.exercises.length > 6 && (
-                      <span className="text-[9px] text-zinc-700">+{p.exercises.length - 6} altri</span>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-
   const canProceedStep1 = age && weight && height;
   const canProceedStep2 = true;
   const canProceedStep3 = daysPerWeek >= 2;
@@ -1388,27 +1444,6 @@ const Create: React.FC = () => {
     (step === 2 && canProceedStep2) ||
     (step === 3 && canProceedStep3) ||
     (step === 4 && canProceedStep4);
-
-  const GenerationProgressBar = () => {
-    if (!isGenerating) return null;
-    return (
-      <div className="mt-6 space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-black uppercase tracking-wider text-red-500 flex items-center gap-2">
-            <div className="w-3 h-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-            Generazione in corso...
-          </span>
-          <span className="text-[10px] font-black text-zinc-500">{Math.min(100, Math.round(generationProgress))}%</span>
-        </div>
-        <div className="h-2 bg-zinc-900 rounded-full overflow-hidden border border-white/5">
-          <div
-            className="h-full bg-linear-to-r from-red-600 via-orange-500 to-red-600 rounded-full transition-all duration-500 ease-out shadow-[0_0_20px_rgba(220,38,38,0.4)]"
-            style={{ width: `${Math.min(100, generationProgress)}%` }}
-          />
-        </div>
-      </div>
-    );
-  };
 
   // ─── RENDER ────────────────────────────────────────────────────────────
   return (
@@ -1473,7 +1508,7 @@ const Create: React.FC = () => {
                   {renderStep()}
 
                   {/* Progress bar when generating */}
-                  <GenerationProgressBar />
+                  <GenerationProgressBar isGenerating={isGenerating} generationProgress={generationProgress} />
 
                   {/* Action buttons */}
                   <div className="mt-10 flex gap-3">
@@ -1525,14 +1560,22 @@ const Create: React.FC = () => {
 
             {/* ── RIGHT: Sidebar ──────────────────────────────── */}
             <div className="lg:col-span-4 xl:col-span-4 space-y-5">
-              <StepProgress />
-              <StepHint />
+              <StepProgress step={step} setStep={setStep} />
+              <StepHint step={step} />
             </div>
           </div>
 
           {/* ── BOTTOM: Saved Programs ──────────────────────── */}
           <div className="mt-16">
-            <SavedProgramsPanel />
+            <SavedProgramsPanel
+              programs={programs}
+              openExportIdx={openExportIdx}
+              setOpenExportIdx={setOpenExportIdx}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+              handleExport={handleExport}
+              bodyFocus={bodyFocus}
+            />
           </div>
         </div>
       </div>

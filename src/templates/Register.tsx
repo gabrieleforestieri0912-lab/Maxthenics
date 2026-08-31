@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { ArrowLeft, Eye, EyeOff, Globe } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { getSupabaseBrowser } from "../lib/supabase-browser";
 import SEO from "../components/SEO";
+import GoogleIcon from "../components/GoogleIcon";
 
 const Register: React.FC = () => {
   const { register, addNotification } = useAuth();
@@ -200,7 +201,7 @@ const Register: React.FC = () => {
             onClick={handleGoogleRegister}
             className="w-full flex items-center justify-center gap-3 bg-white text-zinc-950 py-2.5 sm:py-3 rounded-xl font-bold text-sm transition-all hover:bg-zinc-200 active:scale-[0.98]"
           >
-            <Globe className="w-4 h-4" />
+            <GoogleIcon className="w-5 h-5" />
             Registrati con Google
           </button>
 

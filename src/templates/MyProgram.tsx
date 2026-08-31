@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Check, Loader2, Edit, X, Plus, Trash2, Search, Dumbbell, Filter, Download, ChevronDown, ChevronRight } from 'lucide-react';
+import { Check, Loader2, Edit, X, Plus, Trash2, Search, Download, ChevronDown } from 'lucide-react';
 import { exerciseDatabase, type Exercise } from '../data/exercises';
 import { downloadTxt, downloadJson, downloadPdf, downloadCsv, downloadWeeksTxt, downloadWeeksCsv, downloadWeeksPdf, downloadWeeksJson } from '../lib/exportProgram';
 import type { ProgramForExport } from '../lib/exportProgram';
@@ -236,6 +236,7 @@ const MyProgram: React.FC = () => {
       rest: '60s',
       notes: '',
       order: newProgram.weeks[weekIdx].days[dayIdx].workouts[workoutIdx].exercises.length,
+    // eslint-disable-next-line react-hooks/purity
     } : { exercise: { id: `custom-${Date.now()}`, name: 'Nuovo Esercizio' }, sets: 3, reps: '10', rest: '60s', notes: '', order: 0 };
     newProgram.weeks[weekIdx].days[dayIdx].workouts[workoutIdx].exercises.push(newEx);
     setEditedProgram(newProgram);
@@ -364,7 +365,7 @@ const MyProgram: React.FC = () => {
       description: program.description || '',
       level: program.level || '',
       price: 0,
-      exercises: flatExercises.map((ex, i) => ({
+      exercises: flatExercises.map((ex) => ({
         name: ex.exercise.name,
         sets: ex.sets,
         reps: ex.reps,
@@ -636,22 +637,8 @@ const MyProgram: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-4 md:p-8 bg-black text-white min-h-screen">
-        <div className="flex justify-between items-center mb-10">
-          <div className="h-12 bg-zinc-800 rounded w-1/3 animate-pulse" />
-        </div>
-        <div className="space-y-6">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-zinc-900/30 border border-white/10 rounded-2xl p-6 space-y-4">
-              <div className="h-6 bg-zinc-800 rounded w-1/4 animate-pulse" />
-              <div className="space-y-2">
-                <div className="h-4 bg-zinc-800 rounded animate-pulse" />
-                <div className="h-4 bg-zinc-800 rounded animate-pulse" />
-                <div className="h-4 bg-zinc-800 rounded w-3/4 animate-pulse" />
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="container mx-auto p-4 md:p-8 bg-black text-white min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-zinc-800 border-t-red-600 animate-spin" />
       </div>
     );
   }
@@ -729,6 +716,7 @@ const MyProgram: React.FC = () => {
           </div>
         </div>
 
+        {/* eslint-disable-next-line react-hooks/refs */}
         {renderProgramContent(isEditing ? editedProgram : program, isEditing)}
       </div>
 

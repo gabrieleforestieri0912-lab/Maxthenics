@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Crown,
@@ -25,7 +25,6 @@ import {
   Brain,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import Image from "next/image";
 import SEO from "../components/SEO";
 import { useAuth } from "../context/AuthContext";
 
@@ -48,13 +47,78 @@ interface Plan {
   highlight?: boolean;
 }
 
+const StepPopup = ({ item, index, anchorEl, onClose }: {
+  item: any;
+  index: number;
+  anchorEl: HTMLDivElement;
+  onClose: () => void;
+}) => {
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    const rect = anchorEl.getBoundingClientRect();
+    const gap = 16;
+    if (index === 2) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPos({ top: rect.top, left: rect.left - gap - 260 });
+    } else {
+      setPos({ top: rect.top, left: rect.right + gap });
+    }
+  }, [anchorEl, index]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: index === 2 ? -10 : 10, scale: 0.97 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: index === 2 ? -10 : 10, scale: 0.97 }}
+      transition={{ duration: 0.2 }}
+      className="fixed z-50 hidden lg:block"
+      style={{ top: pos.top, left: pos.left, width: 260 }}
+      onMouseEnter={() => {}} // keep visible when inside popup
+      onMouseLeave={onClose}
+    >
+      <div className="bg-zinc-900 border border-red-500/20 rounded-2xl p-5 shadow-2xl shadow-black/60">
+        <div className={`absolute top-6 w-3 h-3 bg-zinc-900 border-t border-b rotate-45 ${
+          index === 2 ? "-left-1.5 border-l border-r-0" : "-right-1.5 border-r border-l-0"
+        } border-red-500/20`}
+          style={index === 2
+            ? { borderRight: 'none', marginLeft: -1 }
+            : { borderLeft: 'none', marginRight: -1 }
+          }
+        />
+        <div className="flex items-center gap-2 mb-4">
+          <span className="w-7 h-7 rounded-lg bg-red-600/10 flex items-center justify-center text-red-500 font-black text-xs">{item.step}</span>
+          <span className="text-xs font-black text-white uppercase tracking-tight">{item.title}</span>
+        </div>
+        <ul className="space-y-2.5">
+          {item.details.map((d: string, di: number) => (
+            <li key={di} className="flex items-start gap-2.5 text-xs text-zinc-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" />
+              {d}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </motion.div>
+  );
+};
+
 const CalisthenicsRoom: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const [hasSubscription, setHasSubscription] = useState(false);
   const [loading, setLoading] = useState(true);
   const [expandedModule, setExpandedModule] = useState(0);
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
+  const [hoveredCardEl, setHoveredCardEl] = useState<HTMLDivElement | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    if (hoveredStep !== null) {
+      setHoveredCardEl(cardRefs.current[hoveredStep]);
+    } else {
+      setHoveredCardEl(null);
+    }
+  }, [hoveredStep]);
 
   const courseModules: Module[] = [
     {
@@ -150,61 +214,6 @@ const CalisthenicsRoom: React.FC = () => {
     }
   };
 
-  const StepPopup = ({ item, index, anchorEl, onClose }: {
-    item: any;
-    index: number;
-    anchorEl: HTMLDivElement;
-    onClose: () => void;
-  }) => {
-    const [pos, setPos] = useState({ top: 0, left: 0 });
-
-    useEffect(() => {
-      const rect = anchorEl.getBoundingClientRect();
-      const gap = 16;
-      if (index === 2) {
-        setPos({ top: rect.top, left: rect.left - gap - 260 });
-      } else {
-        setPos({ top: rect.top, left: rect.right + gap });
-      }
-    }, [anchorEl, index]);
-
-    return (
-      <motion.div
-        initial={{ opacity: 0, x: index === 2 ? -10 : 10, scale: 0.97 }}
-        animate={{ opacity: 1, x: 0, scale: 1 }}
-        exit={{ opacity: 0, x: index === 2 ? -10 : 10, scale: 0.97 }}
-        transition={{ duration: 0.2 }}
-        className="fixed z-50 hidden lg:block"
-        style={{ top: pos.top, left: pos.left, width: 260 }}
-        onMouseEnter={() => {}} // keep visible when inside popup
-        onMouseLeave={onClose}
-      >
-        <div className="bg-zinc-900 border border-red-500/20 rounded-2xl p-5 shadow-2xl shadow-black/60">
-          <div className={`absolute top-6 w-3 h-3 bg-zinc-900 border-t border-b rotate-45 ${
-            index === 2 ? "-left-1.5 border-l border-r-0" : "-right-1.5 border-r border-l-0"
-          } border-red-500/20`}
-            style={index === 2
-              ? { borderRight: 'none', marginLeft: -1 }
-              : { borderLeft: 'none', marginRight: -1 }
-            }
-          />
-          <div className="flex items-center gap-2 mb-4">
-            <span className="w-7 h-7 rounded-lg bg-red-600/10 flex items-center justify-center text-red-500 font-black text-xs">{item.step}</span>
-            <span className="text-xs font-black text-white uppercase tracking-tight">{item.title}</span>
-          </div>
-          <ul className="space-y-2.5">
-            {item.details.map((d: string, di: number) => (
-              <li key={di} className="flex items-start gap-2.5 text-xs text-zinc-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" />
-                {d}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </motion.div>
-    );
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -267,7 +276,7 @@ const CalisthenicsRoom: React.FC = () => {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.3em] mb-8"
             >
               <Sparkles size={12} />
-              Coaching d'Élite — Posti Limitati
+              Coaching d&apos;Élite — Posti Limitati
             </motion.div>
 
             <motion.h1
@@ -433,11 +442,11 @@ const CalisthenicsRoom: React.FC = () => {
                     </div>
 
                     {/* Floating popup positioned next to hovered card */}
-                    {hoveredStep !== null && cardRefs.current[hoveredStep] && (
+                    {hoveredStep !== null && hoveredCardEl && (
                       <StepPopup
                         item={steps[hoveredStep]}
                         index={hoveredStep}
-                        anchorEl={cardRefs.current[hoveredStep]!}
+                        anchorEl={hoveredCardEl}
                         onClose={() => setHoveredStep(null)}
                       />
                     )}

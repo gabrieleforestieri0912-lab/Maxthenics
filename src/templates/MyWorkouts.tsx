@@ -5,7 +5,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ChevronRight,
   ChevronDown,
   Calendar,
   Clock,
@@ -53,7 +52,7 @@ const MyWorkouts: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [exportOpenId, setExportOpenId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode] = useState<"grid" | "list">("grid");
   const [filterLevel, setFilterLevel] = useState<string | null>(null);
   const [lastEdited, setLastEdited] = useState<string | null>(null);
 
@@ -104,6 +103,7 @@ const MyWorkouts: React.FC = () => {
           if (local.length) setPrograms(local);
         });
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (local.length) setPrograms(local);
     }
   }, []);
@@ -118,6 +118,7 @@ const MyWorkouts: React.FC = () => {
     const sub = localStorage.getItem("maxthenicsProgramsUpdated");
     if (sub) {
       const id = sub;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLastEdited(id);
       const t = setTimeout(() => setLastEdited(null), 3000);
       return () => clearTimeout(t);
@@ -162,8 +163,7 @@ const MyWorkouts: React.FC = () => {
 
   const handleExport = (
     format: "txt" | "json" | "pdf" | "csv" | "weeks-txt" | "weeks-csv" | "weeks-pdf" | "weeks-json",
-    program: SavedProgram,
-    cardId: string
+    program: SavedProgram
   ) => {
     setExportOpenId(null);
     const flatExercises: ExerciseExport[] = (program.exercises || []).map((ex: any) => ({
@@ -223,8 +223,6 @@ const MyWorkouts: React.FC = () => {
 
   // ─── PROGRESS DERIVED FROM PROGRAM DATA ───────────────────────────────────
   const getProgressData = (p: SavedProgram): TrendData[] => {
-    const totalExercises = p.exercises?.length || 0;
-    const dur = parseInt(p.sessionDuration || "60");
     const intensityFactor = p.intensity === "alta" ? 0.88 : p.intensity === "baja" ? 0.70 : 0.79;
 
     // Slightly "improve performance" each week based on level and intensity
@@ -381,7 +379,7 @@ const MyWorkouts: React.FC = () => {
                   accent: "from-amber-500/10 to-amber-600/5",
                   border: "border-amber-500/15",
                 },
-              ].map((s, i) => (
+              ].map((s) => (
                 <div key={s.label} className={`rounded-2xl border ${s.border} p-5 bg-linear-to-br ${s.accent} relative overflow-hidden`}>
                   <div className={`absolute inset-0 bg-linear-to-br ${s.accent} pointer-events-none`} />
                   <div className="relative z-10 flex items-center justify-between">
@@ -583,38 +581,38 @@ const MyWorkouts: React.FC = () => {
                                 <div className="absolute right-0 top-full mt-1 z-50 w-52 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden">
                                   <div className="p-1.5">
                                     <p className="text-[9px] text-zinc-500 uppercase tracking-wider px-2 py-1 font-bold">Esporta semplice</p>
-                                    <button onClick={() => handleExport("txt", p, p.id)}
+                                    <button onClick={() => handleExport("txt", p)}
                                       className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">
                                       <FileText size={13} className="text-zinc-500" /> TXT
                                     </button>
-                                    <button onClick={() => handleExport("csv", p, p.id)}
+                                    <button onClick={() => handleExport("csv", p)}
                                       className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">
                                       <FileText size={13} className="text-zinc-500" /> CSV
                                     </button>
-                                    <button onClick={() => handleExport("json", p, p.id)}
+                                    <button onClick={() => handleExport("json", p)}
                                       className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">
                                       <FileJson size={13} className="text-zinc-500" /> JSON
                                     </button>
-                                    <button onClick={() => handleExport("pdf", p, p.id)}
+                                    <button onClick={() => handleExport("pdf", p)}
                                       className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">
                                       <Printer size={13} className="text-zinc-500" /> PDF / Stampa
                                     </button>
                                   </div>
                                   <div className="border-t border-white/5 p-1.5">
                                     <p className="text-[9px] text-zinc-500 uppercase tracking-wider px-2 py-1 font-bold">Completo (settimane)</p>
-                                    <button onClick={() => handleExport("weeks-txt", p, p.id)}
+                                    <button onClick={() => handleExport("weeks-txt", p)}
                                       className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">
                                       <FileText size={13} className="text-zinc-500" /> TXT
                                     </button>
-                                    <button onClick={() => handleExport("weeks-csv", p, p.id)}
+                                    <button onClick={() => handleExport("weeks-csv", p)}
                                       className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">
                                       <FileText size={13} className="text-zinc-500" /> CSV
                                     </button>
-                                    <button onClick={() => handleExport("weeks-json", p, p.id)}
+                                    <button onClick={() => handleExport("weeks-json", p)}
                                       className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">
                                       <FileJson size={13} className="text-zinc-500" /> JSON
                                     </button>
-                                    <button onClick={() => handleExport("weeks-pdf", p, p.id)}
+                                    <button onClick={() => handleExport("weeks-pdf", p)}
                                       className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">
                                       <Printer size={13} className="text-zinc-500" /> PDF / Stampa
                                     </button>

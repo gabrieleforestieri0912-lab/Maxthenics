@@ -1,132 +1,63 @@
 import { MetadataRoute } from 'next';
-import { programData } from '@/data/programs';
+import { getAllPrograms } from '@/lib/seo';
 
 type ChangeFrequency = 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
 
-// Static pages - public routes only (exclude auth-protected pages)
-const staticPages = [
+// Stable lastmod: content changes rarely, keep the sitemap cacheable.
+const LAST_MOD = '2026-08-19T00:00:00.000Z';
+
+interface SitemapEntry {
+  url: string;
+  changefreq: ChangeFrequency;
+  priority: number;
+  lastmod: string;
+}
+
+// Static public pages (exclude auth-protected and noindex pages)
+const staticPages: SitemapEntry[] = [
   {
     url: '/',
     changefreq: 'daily',
     priority: 1.0,
-    lastmod: new Date().toISOString(),
+    lastmod: LAST_MOD,
   },
   {
     url: '/programs',
     changefreq: 'weekly',
-    priority: 0.8,
-    lastmod: new Date().toISOString(),
+    priority: 0.9,
+    lastmod: LAST_MOD,
   },
   {
     url: '/guide',
     changefreq: 'weekly',
-    priority: 0.7,
-    lastmod: new Date().toISOString(),
+    priority: 0.8,
+    lastmod: LAST_MOD,
   },
   {
-    url: '/cart',
+    url: '/calisthenics-room',
     changefreq: 'monthly',
-    priority: 0.5,
-    lastmod: new Date().toISOString(),
-  },
-  {
-    url: '/login',
-    changefreq: 'monthly',
-    priority: 0.3,
-    lastmod: new Date().toISOString(),
-  },
-  {
-    url: '/register',
-    changefreq: 'monthly',
-    priority: 0.3,
-    lastmod: new Date().toISOString(),
-  },
-  {
-    url: '/privacy',
-    changefreq: 'yearly',
-    priority: 0.2,
-    lastmod: new Date().toISOString(),
-  },
-  {
-    url: '/terms',
-    changefreq: 'yearly',
-    priority: 0.2,
-    lastmod: new Date().toISOString(),
+    priority: 0.6,
+    lastmod: LAST_MOD,
   },
 ];
 
-// Generate dynamic program pages from programData
-function generateProgramPages() {
-  const pages: Array<{ url: string; lastmod: string; changefreq: string; priority: number }> = [];
-
-  // Process workout programs
-  if (programData?.workout) {
-    programData.workout.forEach((program) => {
-      pages.push({
-        url: `/programs/${program.id}`,
-        changefreq: 'weekly',
-        priority: 0.8,
-        lastmod: new Date().toISOString(),
-      });
-      pages.push({
-        url: `/program/${program.id}/content`,
-        changefreq: 'weekly',
-        priority: 0.6,
-        lastmod: new Date().toISOString(),
-      });
-    });
-  }
-
-  // Process front lever programs
-  if (programData?.frontLever) {
-    programData.frontLever.forEach((program) => {
-      pages.push({
-        url: `/programs/${program.id}`,
-        changefreq: 'weekly',
-        priority: 0.7,
-        lastmod: new Date().toISOString(),
-      });
-      pages.push({
-        url: `/program/${program.id}/content`,
-        changefreq: 'weekly',
-        priority: 0.6,
-        lastmod: new Date().toISOString(),
-      });
-    });
-  }
-
-  // Process planche programs
-  if (programData?.planche) {
-    programData.planche.forEach((program) => {
-      pages.push({
-        url: `/programs/${program.id}`,
-        changefreq: 'weekly',
-        priority: 0.7,
-        lastmod: new Date().toISOString(),
-      });
-      pages.push({
-        url: `/program/${program.id}/content`,
-        changefreq: 'weekly',
-        priority: 0.6,
-        lastmod: new Date().toISOString(),
-      });
-    });
-  }
-
-  return pages;
+// Dynamic program pages generated from programData (all categories)
+function generateProgramPages(): SitemapEntry[] {
+  return getAllPrograms().map((program) => ({
+    url: `/program/${program.id}`,
+    changefreq: 'weekly',
+    priority: 0.8,
+    lastmod: LAST_MOD,
+  }));
 }
 
-// Combine all URLs
-const allUrls = [
-  ...staticPages,
-  ...generateProgramPages(),
-];
+const allUrls = [...staticPages, ...generateProgramPages()];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return allUrls.map((page) => ({
     url: `https://maxthenics.com${page.url}`,
     lastModified: page.lastmod,
-    changeFrequency: page.changefreq as ChangeFrequency,
+    changeFrequency: page.changefreq,
     priority: page.priority,
   }));
 }

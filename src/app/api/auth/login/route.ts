@@ -85,18 +85,6 @@ export async function POST(request: Request) {
       email: user.email,
     });
 
-    response.cookies.set('maxthenicsUser', JSON.stringify({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-    }), {
-      httpOnly: true,
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      sameSite: 'lax' as const,
-      secure: isProd,
-    });
-
     response.cookies.set('token', token, {
       httpOnly: true,
       path: '/',

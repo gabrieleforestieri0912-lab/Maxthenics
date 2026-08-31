@@ -5,8 +5,7 @@ import type { NextRequest } from 'next/server';
 const UUID_REGEX = /^[0-9a-fA-F-]{36}$/;
 
 export function getUserId(request: NextRequest | Request): string | null {
-  let userId: string | null = null;
-
+  // Check Authorization header first
   const authHeader = request.headers.get('authorization');
   if (authHeader?.startsWith('Bearer ')) {
     try {
@@ -14,28 +13,28 @@ export function getUserId(request: NextRequest | Request): string | null {
       if (!token) return null;
       const decoded = jwt.verify(token, getEnv().JWT_SECRET) as { userId?: string };
       if (decoded.userId && UUID_REGEX.test(decoded.userId)) {
-        userId = decoded.userId;
+        return decoded.userId;
       }
     } catch {
       // Token invalid or expired
     }
   }
 
-  if (!userId) {
-    const userCookie = 'maxthenicsUser';
-    const cookieHeader = request.headers.get('cookie') || '';
-    const match = cookieHeader.match(new RegExp(`${userCookie}=([^;]+)`));
-    if (match) {
-      try {
-        const userData = JSON.parse(decodeURIComponent(match[1]));
-        if (userData._id && typeof userData._id === 'string' && UUID_REGEX.test(userData._id)) {
-          userId = userData._id;
-        }
-      } catch { /* ... */ }
+  // Fallback to token cookie
+  const cookieHeader = request.headers.get('cookie') || '';
+  const tokenMatch = cookieHeader.match(/token=([^;]+)/);
+  if (tokenMatch) {
+    try {
+      const decoded = jwt.verify(tokenMatch[1], getEnv().JWT_SECRET) as { userId?: string };
+      if (decoded.userId && UUID_REGEX.test(decoded.userId)) {
+        return decoded.userId;
+      }
+    } catch {
+      // Token invalid or expired
     }
   }
 
-  return userId;
+  return null;
 }
 
 export function getGuestId(request: NextRequest | Request): string | null {

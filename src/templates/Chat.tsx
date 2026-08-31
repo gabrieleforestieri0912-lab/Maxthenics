@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Send,
   Plus,
@@ -41,26 +41,25 @@ interface TypewriterProps {
 
 const Typewriter: React.FC<TypewriterProps> = ({ text, speed = 20, onComplete, isStreaming }) => {
   const [displayedText, setDisplayedText] = useState("");
-  const [index, setIndex] = useState(0);
+  const indexRef = useRef(0);
   const prevTextRef = useRef(text);
 
   useEffect(() => {
     if (text !== prevTextRef.current) {
       prevTextRef.current = text;
-      setDisplayedText("");
-      setIndex(0);
-      return;
     }
-    if (index >= text.length) {
+
+    if (indexRef.current >= text.length) {
       if (onComplete && !isStreaming) onComplete();
       return;
     }
+
     const timeout = setTimeout(() => {
-      setDisplayedText(text.slice(0, index + 1));
-      setIndex(index + 1);
+      indexRef.current += 1;
+      setDisplayedText(text.slice(0, indexRef.current));
     }, speed);
     return () => clearTimeout(timeout);
-  }, [index, text, speed, onComplete, isStreaming]);
+  }, [displayedText, text, speed, onComplete, isStreaming]);
 
   return <RenderContent content={displayedText} />;
 };
@@ -305,6 +304,7 @@ const Chat: React.FC = () => {
   const [editingMessageContent, setEditingMessageContent] = useState("");
   const [renamingChatId, setRenamingChatId] = useState<string | null>(null);
   const [renamingChatTitle, setRenamingChatTitle] = useState("");
+  const [renamingChatOriginalTitle, setRenamingChatOriginalTitle] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [searchResults, setSearchResults] = useState<{ message: IMessage; index: number }[]>([]);
@@ -315,6 +315,7 @@ const Chat: React.FC = () => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const exportMenuRef = useRef<HTMLDivElement>(null);
 
   // Auto-resize textarea
   const autoResizeTextarea = useCallback(() => {
@@ -335,20 +336,25 @@ const Chat: React.FC = () => {
     }
   }, [messages]);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (user) {
       localStorage.removeItem('guest_message_count');
       setGuestMessageCount(0);
     }
   }, [user]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!hasAutoGreeted && messages.length === 0 && !isLoading) {
       setHasAutoGreeted(true);
       sendMessage("", true);
     }
   }, [hasAutoGreeted, messages.length, isLoading, sendMessage]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (messages.length > 0) {
       const lastMsg = messages[messages.length - 1];
@@ -359,6 +365,19 @@ const Chat: React.FC = () => {
       }
     }
   }, [messages]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  // Close export menu on click outside
+  useEffect(() => {
+    if (!exportMenuOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target as Node)) {
+        setExportMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [exportMenuOpen]);
 
   const handleScroll = useCallback(() => {
     if (!messagesContainerRef.current) return;
@@ -485,14 +504,16 @@ const Chat: React.FC = () => {
   const startRename = (chatId: string, currentTitle: string) => {
     setRenamingChatId(chatId);
     setRenamingChatTitle(currentTitle);
+    setRenamingChatOriginalTitle(currentTitle);
   };
 
   const saveRename = async () => {
-    if (renamingChatId && renamingChatTitle.trim()) {
+    if (renamingChatId && renamingChatTitle.trim() && renamingChatTitle.trim() !== renamingChatOriginalTitle) {
       await renameChat(renamingChatId, renamingChatTitle.trim());
     }
     setRenamingChatId(null);
     setRenamingChatTitle("");
+    setRenamingChatOriginalTitle("");
   };
 
   const handleRenameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -521,10 +542,27 @@ const Chat: React.FC = () => {
   const navigateSearchResult = (direction: 'up' | 'down') => {
     if (searchResults.length === 0) return;
     setActiveSearchIndex(prev => {
-      if (direction === 'down') return (prev + 1) % searchResults.length;
-      return (prev - 1 + searchResults.length) % searchResults.length;
+      const next = direction === 'down'
+        ? (prev + 1) % searchResults.length
+        : (prev - 1 + searchResults.length) % searchResults.length;
+      // Scroll to the result
+      const resultMsg = searchResults[next];
+      if (resultMsg) {
+        const el = messagesContainerRef.current?.querySelector(`[data-msg-index="${resultMsg.index}"]`);
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return next;
     });
   };
+
+  // Scroll to active search result when it changes
+  useEffect(() => {
+    if (searchResults.length > 0 && searchResults[activeSearchIndex]) {
+      const resultMsg = searchResults[activeSearchIndex];
+      const el = messagesContainerRef.current?.querySelector(`[data-msg-index="${resultMsg.index}"]`);
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [activeSearchIndex, searchResults]);
 
   // Export handlers
   const handleExportText = async () => {
@@ -549,7 +587,7 @@ const Chat: React.FC = () => {
 
   const hasMessages = messages.length > 0;
 
-  const groupedMessages = groupMessagesByDate(messages);
+  const groupedMessages = useMemo(() => groupMessagesByDate(messages), [messages]);
 
   const formatTime = (dateStr?: string) => {
     const date = dateStr ? new Date(dateStr) : new Date();
@@ -859,7 +897,7 @@ const Chat: React.FC = () => {
                   >
                     <Search size={15} />
                   </button>
-                  <div className="relative">
+                  <div className="relative" ref={exportMenuRef}>
                     <button
                       onClick={() => setExportMenuOpen(!exportMenuOpen)}
                       className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl transition-all"
@@ -976,7 +1014,7 @@ const Chat: React.FC = () => {
               </motion.div>
             ) : (
               <div className="max-w-4xl mx-auto space-y-8 pb-48 w-full">
-                {groupedMessages.map((group, groupIdx) => (
+                {groupedMessages.map((group) => (
                   <div key={group.date}>
                     <div className="flex items-center gap-3 mb-6">
                       <div className="flex-1 h-px bg-white/5" />
@@ -993,6 +1031,7 @@ const Chat: React.FC = () => {
                         return (
                           <motion.div
                             key={msg.id || globalIdx}
+                            data-msg-index={globalIdx}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{
                               opacity: 1,

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import Chat from '@/models/Chat';
-import { getUserIdOrGuestId, requireAuth } from '@/lib/auth';
+import { requireAuth } from '@/lib/auth';
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
