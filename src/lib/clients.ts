@@ -11,11 +11,18 @@ export function getStripe(): Stripe {
   return stripeInstance;
 }
 
-let openaiInstance: OpenAI | null = null;
+// xKiro — unico provider AI. Usa l'SDK OpenAI puntato al gateway xKiro
+// (https://api.xkiro.com/v1), che espone tutti i modelli con un'unica chiave.
+const XKIRO_BASE_URL = 'https://api.xkiro.com/v1';
 
-export function getOpenAI(): OpenAI {
-  if (!openaiInstance) {
-    openaiInstance = new OpenAI({ apiKey: getEnv().OPENAI_API_KEY });
+let aiInstance: OpenAI | null = null;
+
+export function getAI(): OpenAI {
+  if (!aiInstance) {
+    aiInstance = new OpenAI({
+      apiKey: getEnv().XKIRO_API_KEY,
+      baseURL: XKIRO_BASE_URL,
+    });
   }
-  return openaiInstance;
+  return aiInstance;
 }

@@ -11,6 +11,19 @@ export interface ProgramDataItem {
   stripePriceId?: string;
 }
 
+export interface ProgramBundle {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  originalPrice: number;
+  level: string;
+  image: string;
+  duration: string;
+  intensity: string;
+  programIds: number[];
+}
+
 export interface ProgramData {
   workout: ProgramDataItem[];
   frontLever: ProgramDataItem[];
@@ -59,7 +72,7 @@ export const programData: ProgramData = {
       id: 201, 
       title: 'Retrazione & Depressione Scapolare', 
       description: 'Sviluppo della forza specifica dei retrattori scapolari. La base bioenergetica per il Front Lever.', 
-      price: 49, 
+      price: 9.99, 
       level: 'Intermedio', 
       image: '/Img/front-lever.jpg',
       features: ['Forza Scapolare', 'Propedeutiche FL', 'Accesso 24/7', 'Aggiornamenti Vitalizi'],
@@ -70,7 +83,7 @@ export const programData: ProgramData = {
       id: 202, 
       title: 'Dinamiche Straddle Lever', 
       description: 'Transizione avanzata verso la leva completa. Utilizzo di carichi isoinerziali e progressioni basate sull\'RPE.', 
-      price: 79, 
+      price: 14.99, 
       level: 'Avanzato', 
       image: '/Img/front-lever-touch.jpg',
       features: ['Progressioni Straddle', 'Esercizi Complementari', 'Video Analisi Biomeccanica', 'Piano di Recupero'],
@@ -81,7 +94,7 @@ export const programData: ProgramData = {
       id: 203, 
       title: 'Meccanica di Trazione Elite', 
       description: 'Il culmine della forza di trazione. Full Front Lever e ottimizzazione del reclutamento delle unità motorie.', 
-      price: 129, 
+      price: 19.99, 
       level: 'Elite', 
       image: '/Img/one-arm-front-lever.jpg',
       features: ['Mastery Full FL', 'Pull-ups in FL', 'Programma Personalizzato', 'Coaching Privato'],
@@ -94,7 +107,7 @@ export const programData: ProgramData = {
       id: 301, 
       title: 'Protrazione & Resilienza Polsi', 
       description: 'Condizionamento specifico dei serrati anteriori e resilienza tendinea dei polsi. Fondamenta per la spinta.', 
-      price: 59, 
+      price: 9.99, 
       level: 'Intermedio', 
       image: '/Img/undulating-periodization.png',
       features: ['Rinforzo Polsi', 'Lean & Tuck Planche', 'Mobilità Spalle', 'Supporto Discord Elite'],
@@ -105,7 +118,7 @@ export const programData: ProgramData = {
       id: 302, 
       title: 'Periodizzazione Ipertrofica Push', 
       description: 'Dalla Tuck alla Straddle. Periodizzazione ondulata per il volume specifico e la forza esplosiva.', 
-      price: 89, 
+      price: 14.99, 
       level: 'Avanzato', 
       image: '/Img/linear-periodization.png',
       features: ['Straddle Planche', 'Condizionamento Tendineo', 'Metodi di Intensità', 'FAQ & Risposte'],
@@ -116,7 +129,7 @@ export const programData: ProgramData = {
       id: 303, 
       title: 'Bio-Ottimizzazione Full Planche', 
       description: 'Dominio totale della gravità. Full Planche analizzata attraverso la scomposizione dei momenti di forza.', 
-      price: 149, 
+      price: 19.99, 
       level: 'Elite', 
       image: '/Img/programs.jpg',
       features: ['Full Planche', 'Planche Pushups', 'Accesso a Vita', 'Certificato Mastery'],
@@ -129,7 +142,7 @@ export const programData: ProgramData = {
       id: 401,
       title: 'Handstand Mastery — Inversione di Gravità',
       description: 'Il programma più completo sul mercato per padroneggiare l\'handstand libero. Dalla preparazione dei polsi alla walk progressiva e alle HSPU. Ogni movimento è analizzato fase per fase.',
-      price: 79,
+      price: 14.99,
       level: 'Intermedio',
       image: '/Img/content.jpg',
       features: [
@@ -147,7 +160,7 @@ export const programData: ProgramData = {
       id: 402,
       title: 'Back Lever & German Hang — Decompressione Spinale',
       description: 'Il programma che completa la catena posteriore. Dal German Hang al Full Back Lever, con focus sulla salute della spalla e ilriequilibrio tra catena anteriore e posteriore.',
-      price: 89,
+      price: 14.99,
       level: 'Avanzato',
       image: '/Img/front-lever.jpg',
       features: [
@@ -165,7 +178,7 @@ export const programData: ProgramData = {
       id: 403,
       title: 'Human Flag & Maltese — Dominanza Orizzontale',
       description: 'Il programma definitivo per la forza laterale e la dominanza orizzontale. Human Flag → Straddle Maltese → Full Maltese. Include una consulenza video feedback inclusa.',
-      price: 169,
+      price: 19.99,
       level: 'Elite',
       image: '/Img/one-arm-front-lever.jpg',
       features: [
@@ -183,7 +196,7 @@ export const programData: ProgramData = {
       id: 404,
       title: 'Dragon Flag — Corazza del Core',
       description: 'Il programma strutturato per padroneggiare la Dragon Flag di Bruce Lee. Tuck → Advanced Tuck → Straddle → Full. Costruisci il core più resistente della tua vita.',
-      price: 49,
+      price: 9.99,
       level: 'Intermedio',
       image: '/Img/undulating-periodization.png',
       features: [
@@ -201,7 +214,7 @@ export const programData: ProgramData = {
       id: 405,
       title: 'Prehab & Longevità — Protocollo Articolare',
       description: 'Il programma rolling per atleti di calisthenics che vogliono allenare più a lungo, senza infortuni. Protocolli settimanali per spalle, gomiti, polsi, ginocchia e schiena.',
-      price: 39,
+      price: 7.99,
       level: 'Principiante',
       image: '/Img/linear-periodization.png',
       features: [
@@ -219,7 +232,7 @@ export const programData: ProgramData = {
       id: 406,
       title: 'Ipertrofia Calisthenics — Massa a Corpo Libero',
       description: 'Costruisci massa muscolare con solo il corpo libero. Periodrizzazione 5-day split con progressive overload, tempo manipulation e volume cycling. 40+ esercizi unici.',
-      price: 59,
+      price: 9.99,
       level: 'Principiante',
       image: '/Img/motor-unit-recruitment.png',
       features: [
@@ -235,3 +248,42 @@ export const programData: ProgramData = {
     },
   ],
 };
+
+export const programBundles: ProgramBundle[] = [
+  {
+    id: 901,
+    title: 'Bundle Trazione Totale',
+    description: 'Tutto il percorso Front Lever in un unico acquisto: dalle scapole alla full lever, con progressioni RPE e recupero programmato.',
+    price: 19.99,
+    originalPrice: 44.97,
+    level: 'Bundle',
+    image: '/Img/front-lever.jpg',
+    duration: '30 Settimane',
+    intensity: 'Alta/Elite',
+    programIds: [201, 202, 203],
+  },
+  {
+    id: 902,
+    title: 'Bundle Spinta Totale',
+    description: 'Tutto il percorso Planche in un unico acquisto: polsi, straddle e full planche con condizionamento tendineo completo.',
+    price: 19.99,
+    originalPrice: 44.97,
+    level: 'Bundle',
+    image: '/Img/one-arm-front-lever.jpg',
+    duration: '32 Settimane',
+    intensity: 'Alta/Elite',
+    programIds: [301, 302, 303],
+  },
+  {
+    id: 903,
+    title: 'Bundle Fondamenta Complete',
+    description: 'Il pacchetto ideale per costruire un fisico completo e duraturo: core d\u2019acciaio, articolazioni sane e massa a corpo libero.',
+    price: 14.99,
+    originalPrice: 27.97,
+    level: 'Bundle',
+    image: '/Img/programs.jpg',
+    duration: '30 Settimane',
+    intensity: 'Media/Alta',
+    programIds: [404, 405, 406],
+  },
+];

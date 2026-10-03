@@ -5,7 +5,7 @@ import { getEnv } from '@/lib/env';
 import { getUserId } from '@/lib/auth';
 import { z } from 'zod';
 import { isRateLimited, getRateLimitHeaders, getClientId } from '@/lib/rateLimiter';
-import { getOpenAI } from '@/lib/clients';
+import { getAI } from '@/lib/clients';
 
 const PROGRAM_PROMPT = `Sei un personal trainer specializzato in Calisthenics. Genera un programma di allenamento in formato JSON con questa struttura esatta:
 {
@@ -158,8 +158,8 @@ Genera almeno 4-6 esercizi per giorno con dettagli precisi su serie, ripetizioni
 
 
     try {
-      const completion = await getOpenAI().chat.completions.create({
-        model: getEnv().OPENAI_MODEL,
+      const completion = await getAI().chat.completions.create({
+        model: getEnv().XKIRO_MODEL,
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
         max_tokens: 4096,
@@ -192,7 +192,7 @@ Genera almeno 4-6 esercizi per giorno con dettagli precisi su serie, ripetizioni
       const program = await Program.create({
         ...programData,
         userId: userId || undefined,
-        price: programData.level === 'Advanced' ? 49.99 : programData.level === 'Intermediate' ? 29.99 : 19.99,
+        price: programData.level === 'Advanced' ? 19.99 : programData.level === 'Intermediate' ? 12.99 : 7.99,
         createdAt: new Date(),
       });
 
@@ -203,8 +203,8 @@ Genera almeno 4-6 esercizi per giorno con dettagli precisi su serie, ripetizioni
       });
 
       return apiResponse;
-    } catch (openaiError) {
-      console.error('OpenAI error:', openaiError instanceof Error ? openaiError.message : 'Unknown error');
+    } catch (aiError) {
+      console.error('xKiro AI error:', aiError instanceof Error ? aiError.message : 'Unknown error');
       return NextResponse.json(
         { message: 'Servizio AI non disponibile. Riprova più tardi.' },
         { status: 503 }

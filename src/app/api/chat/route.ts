@@ -4,9 +4,8 @@ import { isRateLimited, getRateLimitHeaders, getClientId } from '@/lib/rateLimit
 import dbConnect from '@/lib/db';
 import Chat from '@/models/Chat';
 import { getUserId } from '@/lib/auth';
-import OpenAI from 'openai';
 import { getEnv } from '@/lib/env';
-import { getOpenAI } from '@/lib/clients';
+import { getAI } from '@/lib/clients';
 
 const SYSTEM_PROMPT = `SEI STHENOX: INTERFACCIA NEURALE D'ELITE.
 IL TUO RUOLO: Head Coach e Biomeccanico Senior.
@@ -35,9 +34,9 @@ interface Message {
   content: string;
 }
 
-async function callOpenAI(messages: Message[]) {
-  const completion = await getOpenAI().chat.completions.create({
-    model: getEnv().OPENAI_MODEL,
+async function callAI(messages: Message[]) {
+  const completion = await getAI().chat.completions.create({
+    model: getEnv().XKIRO_MODEL,
     messages: messages.map(m => ({ role: m.role, content: m.content })),
     temperature: 0.7,
     max_tokens: 2048,
@@ -46,9 +45,9 @@ async function callOpenAI(messages: Message[]) {
   return completion.choices[0]?.message?.content || '';
 }
 
-async function* streamOpenAI(messages: Message[]): AsyncGenerator<string, void, unknown> {
-  const stream = await getOpenAI().chat.completions.create({
-    model: getEnv().OPENAI_MODEL,
+async function* streamAI(messages: Message[]): AsyncGenerator<string, void, unknown> {
+  const stream = await getAI().chat.completions.create({
+    model: getEnv().XKIRO_MODEL,
     messages: messages.map(m => ({ role: m.role, content: m.content })),
     temperature: 0.7,
     max_tokens: 2048,
@@ -217,7 +216,7 @@ export async function POST(request: NextRequest) {
 
       (async () => {
         try {
-          for await (const token of streamOpenAI(conversationHistory)) {
+          for await (const token of streamAI(conversationHistory)) {
             fullContent += token;
             writeEvent({ token, done: false });
           }
@@ -252,13 +251,13 @@ export async function POST(request: NextRequest) {
     // Non-streaming fallback
     let aiMessage: Message;
     try {
-      const content = await callOpenAI(conversationHistory);
+      const content = await callAI(conversationHistory);
       aiMessage = {
         role: 'assistant',
         content: content || 'Errore: risposta vuota dal modello',
       };
-    } catch (openaiError) {
-      console.error('OpenAI error:', openaiError instanceof Error ? openaiError.message : 'Unknown error');
+    } catch (aiError) {
+      console.error('xKiro AI error:', aiError instanceof Error ? aiError.message : 'Unknown error');
       aiMessage = {
         role: 'assistant',
         content: 'Servizio AI temporaneamente non disponibile. Riprova più tardi.',

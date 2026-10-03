@@ -31,9 +31,9 @@ const envSchema = z.object({
   // Resend
   RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY is required'),
 
-  // OpenAI
-  OPENAI_API_KEY: z.string().min(1, 'OPENAI_API_KEY is required'),
-  OPENAI_MODEL: z.string().min(1, 'OPENAI_MODEL is required'),
+  // xKiro — unico provider AI (API OpenAI-compatible: https://api.xkiro.com/v1)
+  XKIRO_API_KEY: z.string().min(1, 'XKIRO_API_KEY is required'),
+  XKIRO_MODEL: z.string().min(1, 'XKIRO_MODEL is required'),
 });
 
 /**
@@ -57,8 +57,8 @@ export function validateEnv(): Env {
     CLIENT_URL: process.env.CLIENT_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-    OPENAI_MODEL: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+    XKIRO_API_KEY: process.env.XKIRO_API_KEY,
+    XKIRO_MODEL: process.env.XKIRO_MODEL || 'openai/gpt-5-mini',
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   };
@@ -113,8 +113,8 @@ export function getEnv(): Env {
       CLIENT_URL: process.env.CLIENT_URL || '',
       NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || '',
       RESEND_API_KEY: process.env.RESEND_API_KEY || '',
-      OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
-      OPENAI_MODEL: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+      XKIRO_API_KEY: process.env.XKIRO_API_KEY || '',
+      XKIRO_MODEL: process.env.XKIRO_MODEL || 'openai/gpt-5-mini',
       NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
       NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
     };

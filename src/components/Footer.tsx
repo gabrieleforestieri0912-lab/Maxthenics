@@ -110,7 +110,7 @@ function Footer() {
                 { icon: <YoutubeIcon size={16} />, href: "https://www.youtube.com/@maxthenics" },
                 {
                   icon: <Mail size={16} />,
-                  href: "mailto:info@maxthenics.com",
+                  href: "mailto:gabriele.forestieri0912@gmail.com",
                 },
               ].map((social, i) => (
                 <a

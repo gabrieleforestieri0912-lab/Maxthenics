@@ -46,7 +46,7 @@ export async function POST(request: Request) {
             name: `Maxthenics ${plan.name}`,
             description: plan.description,
           },
-          unit_amount: plan.price * 100, // Cents
+          unit_amount: Math.round(plan.price * 100), // Cents
           recurring: {
             interval: (plan.period?.toLowerCase() === 'anno' ? 'year' : 'month'),
           },

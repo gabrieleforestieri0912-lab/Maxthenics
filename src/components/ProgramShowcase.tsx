@@ -2,7 +2,7 @@
 
 import { Link } from "react-router-dom";
 import { motion, useMotionValue, useMotionTemplate } from "framer-motion";
-import { ArrowRight, Clock, Star, Users, Zap } from "lucide-react";
+import { ArrowRight, Clock, Users, Zap } from "lucide-react";
 import Image from "next/image";
 
 interface ShowcaseProgram {
@@ -13,7 +13,6 @@ interface ShowcaseProgram {
   image: string;
   description: string;
   students: number;
-  rating: number;
   price: number;
 }
 
@@ -81,12 +80,6 @@ const ProgramCard = ({ program, index }: { program: ShowcaseProgram; index: numb
               {program.level}
             </span>
           </div>
-
-          {/* Rating Badge */}
-          <div className="absolute top-6 left-6 z-30 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10">
-            <Star size={11} className="text-amber-400 fill-amber-400" />
-            <span className="text-[11px] font-bold text-white">{program.rating}</span>
-          </div>
         </div>
 
         {/* Content */}
@@ -133,8 +126,7 @@ const ProgramShowcase = () => {
       image: "/Img/front-lever.jpg",
       description: "Il percorso completo per dominare la Front Lever, dalla retrazione scapolare alla full extension.",
       students: 340,
-      rating: 4.9,
-      price: 129,
+      price: 14.99,
     },
     {
       id: 301,
@@ -144,8 +136,7 @@ const ProgramShowcase = () => {
       image: "/Img/one-arm-front-lever.jpg",
       description: "Dalla tuck planche alla full planche: periodizzazione ipertrofica per la massima spinta.",
       students: 280,
-      rating: 4.8,
-      price: 149,
+      price: 19.99,
     },
     {
       id: 101,
@@ -155,7 +146,6 @@ const ProgramShowcase = () => {
       image: "/Img/programs.jpg",
       description: "Protocollo d'ingresso per costruire le basi biomeccaniche e attivare il potenziale motorio.",
       students: 510,
-      rating: 4.9,
       price: 0,
     },
   ];
