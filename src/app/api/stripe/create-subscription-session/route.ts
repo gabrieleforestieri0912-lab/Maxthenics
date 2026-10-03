@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     }
 
     const successUrl = `${CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${CLIENT_URL}/pricing`;
+    const cancelUrl = `${CLIENT_URL}/#pricing`;
 
     const sessionParams: any = {
       payment_method_types: ['card'],

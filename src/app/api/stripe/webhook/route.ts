@@ -89,7 +89,7 @@ export async function POST(request: Request) {
             }
 
             await User.findByIdAndUpdate(userId, updateData);
-            console.log(`✅ Checkout completed for user ${userId}`);
+            console.log(`Checkout completed for user ${userId}`);
           } catch (updateError) {
             console.error('Failed to update user after checkout:', updateError instanceof Error ? updateError.message : 'Unknown error');
           }
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
               subscriptionStatus: subscription.status === 'active' ? 'active' : 'inactive',
               subscriptionTier: tier || 'free',
             });
-            console.log(`✅ Subscription updated for user ${userId}: ${subscription.status}`);
+            console.log(`Subscription updated for user ${userId}: ${subscription.status}`);
           } catch (updateError) {
             console.error('Failed to update user subscription:', updateError instanceof Error ? updateError.message : 'Unknown error');
           }
@@ -127,7 +127,7 @@ export async function POST(request: Request) {
               subscriptionStatus: 'canceled',
               subscriptionTier: 'free',
             });
-            console.log(`❌ Subscription canceled for user ${userId}`);
+            console.log(`Subscription canceled for user ${userId}`);
           } catch (updateError) {
             console.error('Failed to update user after cancellation:', updateError instanceof Error ? updateError.message : 'Unknown error');
           }

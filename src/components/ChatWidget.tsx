@@ -149,7 +149,7 @@ const ChatWidgetContent = () => {
     }
   }, [isChatOpen, messages, setMessages]);
 
-  const hiddenPaths = ['/chat', '/login', '/register'];
+  const hiddenPaths = ['/chat', '/login', '/register', '/'];
   const isHidden = hiddenPaths.includes(location.pathname);
 
   const autoResize = useCallback(() => {

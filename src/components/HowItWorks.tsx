@@ -185,7 +185,7 @@ const HowItWorks: React.FC = () => {
             className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-none uppercase"
           >
             COME <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-b from-white via-zinc-200 to-zinc-600 italic">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500 italic">
               FUNZIONA
             </span>
           </motion.h2>

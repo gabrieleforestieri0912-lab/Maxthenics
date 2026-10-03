@@ -648,7 +648,7 @@ const MyProgram: React.FC = () => {
       <div className="container mx-auto p-4 md:p-8 bg-black text-white min-h-screen">
         <p className="text-red-500 text-center text-lg">{error}</p>
         <div className="text-center mt-8">
-          <button onClick={() => navigate('/questionnaire')} className="px-6 py-3 rounded-xl font-bold text-base uppercase tracking-widest text-white bg-red-600 hover:bg-red-500 transition">
+          <button onClick={() => navigate('/create')} className="px-6 py-3 rounded-xl font-bold text-base uppercase tracking-widest text-white bg-red-600 hover:bg-red-500 transition">
             Torna al Profilo
           </button>
         </div>
@@ -669,7 +669,7 @@ const MyProgram: React.FC = () => {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-4xl font-bold text-transparent bg-clip-text bg-linear-to-b from-white to-red-500"
+            className="text-4xl font-bold text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500"
           >
             Il Tuo Programma di Allenamento
           </motion.h1>

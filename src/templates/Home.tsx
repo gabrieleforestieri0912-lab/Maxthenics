@@ -68,7 +68,7 @@ const Home: React.FC = () => {
             className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] text-white uppercase mb-8 max-w-5xl"
           >
             Sblocca il Potenziale del Tuo Corpo e <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-red-500 to-orange-500 italic block mt-1 drop-shadow-[0_0_30px_rgba(239,68,68,0.2)]">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500 italic block mt-1 drop-shadow-[0_0_30px_rgba(239,68,68,0.2)]">
               Domina le Skill d&apos;Elite
             </span>
           </motion.h1>
@@ -204,7 +204,7 @@ const Home: React.FC = () => {
               
               <h2 className="text-4xl md:text-6xl font-black mb-8 text-white uppercase italic tracking-tighter leading-[0.9]">
                 PROGRAMMA <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-400 to-zinc-600 pr-2">PERSONALIZZATO</span>
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500 pr-2">PERSONALIZZATO</span>
               </h2>
               
               <div className="space-y-6 text-base md:text-lg text-zinc-400 font-medium leading-relaxed text-left md:text-center max-w-3xl mx-auto mb-12">

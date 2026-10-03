@@ -11,6 +11,8 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,6 +25,25 @@ const Login: React.FC = () => {
     const success = await login(email, password);
     if (success) {
       navigate(redirectTo, { replace: true });
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setGoogleError(null);
+    setGoogleLoading(true);
+    try {
+      const sb = getSupabaseBrowser();
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+      // Redirect to Google happens automatically — keep spinner until navigation
+    } catch (err) {
+      setGoogleError(err instanceof Error ? err.message : "Accesso con Google non riuscito. Riprova.");
+      setGoogleLoading(false);
     }
   };
 
@@ -77,7 +98,7 @@ const Login: React.FC = () => {
                   Password
                 </label>
                 <Link
-                  to="#"
+                  to="/feedback"
                   className="text-xs text-red-500 hover:text-red-400 transition-colors"
                 >
                   Dimenticata?
@@ -125,20 +146,20 @@ const Login: React.FC = () => {
 
           <button
             type="button"
-            onClick={async () => {
-              const sb = getSupabaseBrowser();
-              await sb.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                  redirectTo: `${window.location.origin}/auth/callback`,
-                },
-              });
-            }}
-            className="w-full flex items-center justify-center gap-3 bg-white text-zinc-950 py-2.5 sm:py-3 rounded-xl font-bold text-sm transition-all hover:bg-zinc-200 active:scale-[0.98]"
+            onClick={handleGoogleLogin}
+            disabled={googleLoading}
+            className="w-full flex items-center justify-center gap-3 bg-white text-zinc-950 py-2.5 sm:py-3 rounded-xl font-bold text-sm transition-all hover:bg-zinc-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-wait"
           >
-            <GoogleIcon className="w-5 h-5" />
-            Accedi con Google
+            {googleLoading ? (
+              <span className="w-5 h-5 border-2 border-zinc-400 border-t-zinc-950 rounded-full animate-spin" />
+            ) : (
+              <GoogleIcon className="w-5 h-5" />
+            )}
+            {googleLoading ? "Reindirizzamento..." : "Accedi con Google"}
           </button>
+          {googleError && (
+            <p className="mt-2 text-center text-xs text-red-400 font-medium">{googleError}</p>
+          )}
 
           <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-white/10 text-center">
             <p className="text-zinc-400 text-xs">

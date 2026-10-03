@@ -39,9 +39,9 @@ interface TrendData {
 }
 
 const LEVEL_CONFIG: Record<string, { color: string; bg: string; bar: string; label: string }> = {
-  principiante: { color: "text-emerald-400", bg: "bg-emerald-500/10", bar: "bg-emerald-500", label: "Principiante" },
+  principiante: { color: "text-orange-400", bg: "bg-orange-500/10", bar: "bg-orange-500", label: "Principiante" },
   intermedio: { color: "text-red-400", bg: "bg-red-500/10", bar: "bg-red-500", label: "Intermedio" },
-  avanzato: { color: "text-amber-400", bg: "bg-amber-500/10", bar: "bg-amber-500", label: "Avanzato" },
+  avanzato: { color: "text-red-400", bg: "bg-red-500/10", bar: "bg-linear-to-r from-red-500 to-orange-500", label: "Avanzato" },
 };
 
 const MyWorkouts: React.FC = () => {
@@ -356,10 +356,10 @@ const MyWorkouts: React.FC = () => {
                   val: stats.beginner,
                   label: "Principianti",
                   icon: Award,
-                  col: "text-emerald-400",
-                  bg: "bg-linear-to-br from-emerald-950/40 to-zinc-900",
-                  accent: "from-emerald-500/10 to-emerald-600/5",
-                  border: "border-emerald-500/15",
+                  col: "text-orange-400",
+                  bg: "bg-linear-to-br from-orange-950/40 to-zinc-900",
+                  accent: "from-orange-500/10 to-orange-600/5",
+                  border: "border-orange-500/15",
                 },
                 {
                   val: stats.intermediate,
@@ -374,10 +374,10 @@ const MyWorkouts: React.FC = () => {
                   val: stats.advanced,
                   label: "Avanzati",
                   icon: Star,
-                  col: "text-amber-400",
-                  bg: "bg-linear-to-br from-amber-950/40 to-zinc-900",
-                  accent: "from-amber-500/10 to-amber-600/5",
-                  border: "border-amber-500/15",
+                  col: "text-red-400",
+                  bg: "bg-linear-to-br from-red-950/40 to-zinc-900",
+                  accent: "from-red-500/10 to-orange-600/5",
+                  border: "border-red-500/15",
                 },
               ].map((s) => (
                 <div key={s.label} className={`rounded-2xl border ${s.border} p-5 bg-linear-to-br ${s.accent} relative overflow-hidden`}>
@@ -526,7 +526,7 @@ const MyWorkouts: React.FC = () => {
                     }`}
                   >
                     {/* Top accent gradient */}
-                    <div className={`h-1 bg-linear-to-r ${p.level === "avanzato" ? "from-amber-500 to-red-500" : p.level === "intermedio" ? "from-red-500 to-orange-500" : "from-emerald-500 to-teal-500"}`} />
+                    <div className={`h-1 bg-linear-to-r ${p.level === "avanzato" ? "from-red-600 to-orange-500" : p.level === "intermedio" ? "from-red-500 to-orange-500" : "from-orange-500 to-orange-400"}`} />
 
                     <div className="p-5 sm:p-6">
                       {/* Card header */}
@@ -730,7 +730,7 @@ const MyWorkouts: React.FC = () => {
                                         </div>
                                         {/* Current bar overlay */}
                                         <div
-                                          className={`absolute bottom-0 w-full ${p.level === "avanzato" ? "bg-amber-500" : p.level === "intermedio" ? "bg-red-500" : "bg-emerald-500"} rounded-t-sm transition-all`}
+                                          className={`absolute bottom-0 w-full ${p.level === "avanzato" ? "bg-linear-to-t from-red-600 to-orange-500" : p.level === "intermedio" ? "bg-red-500" : "bg-orange-500"} rounded-t-sm transition-all`}
                                           style={{
                                             height: `${(pt.current / pt.target) * (pt.target * 0.12)}rem`,
                                             minHeight: pt.current > 0 ? "4px" : "0",

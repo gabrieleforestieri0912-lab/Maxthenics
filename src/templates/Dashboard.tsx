@@ -112,10 +112,10 @@ const DashboardProgramGrid: React.FC = () => {
       {displayed.map((p, i) => {
         const lvlCls =
           p.level === "avanzato"
-            ? "text-amber-400 bg-amber-500/10 border-amber-500/20"
+            ? "text-red-400 bg-red-500/10 border-red-500/20"
             : p.level === "intermedio"
             ? "text-red-400 bg-red-500/10 border-red-500/20"
-            : "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
+            : "text-orange-400 bg-orange-500/10 border-orange-500/20";
         return (
           <div
             key={p.id + i}
@@ -287,10 +287,10 @@ const Dashboard: React.FC = () => {
             <div className="bg-zinc-900/30 border border-white/5 p-8 rounded-[3rem] space-y-4">
                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 mb-6">Impostazioni Account</h4>
                {[
-                 { label: 'Modifica Profilo', icon: User, path: '/questionnaire' },
+                 { label: 'Modifica Profilo', icon: User, path: '/create' },
                  { label: 'Cronologia Acquisti', icon: History, path: '/purchase-history' },
-                 { label: 'Metodi di Pagamento', icon: CreditCard, path: '#' },
-                 { label: 'Sicurezza Account', icon: Settings, path: '#' },
+                 { label: 'Metodi di Pagamento', icon: CreditCard, path: '/purchase-history' },
+                 { label: 'Sicurezza Account', icon: Settings, path: '/feedback' },
                ].map((item, i) => (
                  <Link key={i} to={item.path} className="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors group">
                     <div className="flex items-center gap-4">

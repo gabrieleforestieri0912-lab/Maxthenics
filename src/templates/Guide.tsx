@@ -167,7 +167,7 @@ const Guide: React.FC = () => {
             </span>
             <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[0.85] mb-8">
               DOMINA IL TUO <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-700">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">
                 CORPO
               </span>
             </h1>

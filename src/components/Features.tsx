@@ -76,7 +76,7 @@ const Features = () => {
             className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-none"
           >
             POTENZA <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-600 italic pr-2">SENZA LIMITI</span>
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500 italic pr-2">SENZA LIMITI</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 15 }}

@@ -72,7 +72,7 @@ function Navbar() {
 
   const navLinks: NavLink[] = [
     { name: "Funzionalità", to: "/#features" },
-    { name: "Piani", to: "/pricing" },
+    { name: "Piani", to: "/#pricing" },
     { name: "Programmi", to: "/programs" },
     { name: "Guida", to: "/guide" },
   ];

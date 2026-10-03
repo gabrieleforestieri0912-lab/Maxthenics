@@ -66,7 +66,7 @@ export function validateEnv(): Env {
   const result = envSchema.safeParse(rawEnv);
 
   if (!result.success) {
-    console.error('❌ Environment validation failed:');
+    console.error('Environment validation failed:');
     result.error.issues.forEach((err) => {
       console.error(`   - ${err.path.join('.')}: ${err.message}`);
     });

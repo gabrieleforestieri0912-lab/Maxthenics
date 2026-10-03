@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   User,
+  Users,
   Award,
   Activity,
   Target,
@@ -37,7 +38,22 @@ import {
   Ruler,
   Scale,
   Calendar,
+  Flame,
+  Sprout,
+  Crown,
+  Trophy,
+  HeartPulse,
+  PersonStanding,
+  Lock,
+  Building2,
+  Wind,
+  CircleDot,
+  Timer,
+  Waves,
+  Minus,
+  Ban,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { downloadTxt, downloadJson, downloadPdf } from "../lib/exportProgram";
 import type { ProgramForExport } from "../lib/exportProgram";
 import SEO from "../components/SEO";
@@ -45,7 +61,7 @@ import type { SavedProgram } from "../types/program";
 
 interface ExperienceOption {
   label: string;
-  icon: string;
+  icon: LucideIcon;
   color: string;
   desc: string;
 }
@@ -60,24 +76,24 @@ interface WorkoutIntensity {
 interface FocusOption {
   val: string;
   label: string;
-  icon: string;
+  icon: LucideIcon;
   desc: string;
   gradient: string;
 }
 
 interface GenderOption {
   val: string;
-  icon: string;
+  icon: LucideIcon;
   label: string;
 }
 
 const LEVEL_STYLES: Record<string, { bg: string; border: string; glow: string; accent: string; tag: string }> = {
   principiante: {
-    bg: "bg-emerald-600/8",
-    border: "border-emerald-500/30",
-    glow: "shadow-[0_0_30px_rgba(16,185,129,0.12)]",
-    accent: "text-emerald-400",
-    tag: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+    bg: "bg-orange-600/8",
+    border: "border-orange-500/30",
+    glow: "shadow-[0_0_30px_rgba(249,115,22,0.12)]",
+    accent: "text-orange-400",
+    tag: "bg-orange-500/15 text-orange-400 border-orange-500/30",
   },
   intermedio: {
     bg: "bg-red-600/8",
@@ -87,56 +103,56 @@ const LEVEL_STYLES: Record<string, { bg: string; border: string; glow: string; a
     tag: "bg-red-500/15 text-red-400 border-red-500/30",
   },
   avanzato: {
-    bg: "bg-amber-600/8",
-    border: "border-amber-500/30",
-    glow: "shadow-[0_0_30px_rgba(245,158,11,0.12)]",
-    accent: "text-amber-400",
-    tag: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+    bg: "bg-red-600/8",
+    border: "border-orange-500/30",
+    glow: "shadow-[0_0_30px_rgba(249,115,22,0.15)]",
+    accent: "text-orange-400",
+    tag: "bg-orange-500/15 text-orange-400 border-orange-500/30",
   },
 };
 
 const FOCUS_OPTIONS: FocusOption[] = [
-  { val: "ipertrofia", icon: "💪", label: "Ipertrofia", desc: "Aumenta la massa muscolare e definizione", gradient: "from-red-600/20 to-red-500/5" },
-  { val: "forza", icon: "🏋️", label: "Forza Pura", desc: "Rafforza il sistema neuromuscolare e la potenza", gradient: "from-blue-600/20 to-blue-500/5" },
-  { val: "resistenza", icon: "🏃", label: "Resistenza", desc: "Migliora la resistenza cardiovascolare e muscolare", gradient: "from-green-600/20 to-green-500/5" },
-  { val: "skills", icon: "🌟", label: "Skills & Moves", desc: "Padroneggia le mosse avanzate", gradient: "from-violet-600/20 to-violet-500/5" },
-  { val: "dimagrimento", icon: "🔥", label: "Dimagrimento", desc: "Riduci la massa grassa con allenamenti intensi", gradient: "from-orange-600/20 to-orange-500/5" },
-  { val: "mobilita", icon: "🧘", label: "Mobilità & Recupero", desc: "Aumenta la flessibilità articolare e previeni infortuni", gradient: "from-cyan-600/20 to-cyan-500/5" },
+  { val: "ipertrofia", icon: Dumbbell, label: "Ipertrofia", desc: "Aumenta la massa muscolare e definizione", gradient: "from-red-600/20 to-orange-500/5" },
+  { val: "forza", icon: Zap, label: "Forza Pura", desc: "Rafforza il sistema neuromuscolare e la potenza", gradient: "from-red-600/20 to-orange-500/5" },
+  { val: "resistenza", icon: Activity, label: "Resistenza", desc: "Migliora la resistenza cardiovascolare e muscolare", gradient: "from-orange-600/20 to-orange-500/5" },
+  { val: "skills", icon: Star, label: "Skills & Moves", desc: "Padroneggia le mosse avanzate", gradient: "from-red-600/15 to-orange-600/5" },
+  { val: "dimagrimento", icon: Flame, label: "Dimagrimento", desc: "Riduci la massa grassa con allenamenti intensi", gradient: "from-orange-600/20 to-red-500/5" },
+  { val: "mobilita", icon: HeartPulse, label: "Mobilità & Recupero", desc: "Aumenta la flessibilità articolare e previeni infortuni", gradient: "from-orange-500/15 to-red-500/5" },
 ];
 
 const INTENSITY_OPTIONS: WorkoutIntensity[] = [
-  { value: "baja", label: "Bassa", desc: "Sessione leggera, ideale per recupero o principianti", barColor: "bg-emerald-500" },
-  { value: "media", label: "Media", desc: "Allenamento bilanciato — adatto alla maggior parte", barColor: "bg-amber-500" },
+  { value: "baja", label: "Bassa", desc: "Sessione leggera, ideale per recupero o principianti", barColor: "bg-orange-500/70" },
+  { value: "media", label: "Media", desc: "Allenamento bilanciato — adatto alla maggior parte", barColor: "bg-orange-500" },
   { value: "alta", label: "Alta", desc: "Massimo impegno — richiede esperienza", barColor: "bg-red-500" },
 ];
 
 const EXPERIENCE_OPTIONS: ExperienceOption[] = [
-  { label: "0-1 anni", icon: "🌱", color: "text-emerald-400", desc: "Inizio del percorso" },
-  { label: "1-3 anni", icon: "⚡", color: "text-red-400", desc: "Fondamenti solidi" },
-  { label: "3-5 anni", icon: "🔥", color: "text-orange-400", desc: "Consolidamento" },
-  { label: "5+ anni", icon: "👑", color: "text-amber-400", desc: "Livello esperto" },
+  { label: "0-1 anni", icon: Sprout, color: "text-orange-400", desc: "Inizio del percorso" },
+  { label: "1-3 anni", icon: Zap, color: "text-red-400", desc: "Fondamenti solidi" },
+  { label: "3-5 anni", icon: Flame, color: "text-orange-400", desc: "Consolidamento" },
+  { label: "5+ anni", icon: Crown, color: "text-red-400", desc: "Livello esperto" },
 ];
 
-const BODY_FOCUS_OPTIONS = [
-  { label: "Petto", icon: "💪", group: "Upper" },
-  { label: "Schiena", icon: "🔙", group: "Upper" },
-  { label: "Spalle", icon: "🎯", group: "Upper" },
-  { label: "Bicipiti", icon: "💪", group: "Upper" },
-  { label: "Tricipiti", icon: "💪", group: "Upper" },
-  { label: "Addominali", icon: "🔥", group: "Core" },
-  { label: "Core", icon: "🎯", group: "Core" },
-  { label: "Quadricipiti", icon: "🦵", group: "Lower" },
-  { label: "Femorali", icon: "🦵", group: "Lower" },
-  { label: "Glutei", icon: "🍑", group: "Lower" },
-  { label: "Polpacci", icon: "🦶", group: "Lower" },
-  { label: "Gambe Completo", icon: "🏗️", group: "Lower" },
+const BODY_FOCUS_OPTIONS: { label: string; icon: LucideIcon; group: string }[] = [
+  { label: "Petto", icon: Dumbbell, group: "Upper" },
+  { label: "Schiena", icon: TrendingUp, group: "Upper" },
+  { label: "Spalle", icon: Target, group: "Upper" },
+  { label: "Bicipiti", icon: Dumbbell, group: "Upper" },
+  { label: "Tricipiti", icon: Dumbbell, group: "Upper" },
+  { label: "Addominali", icon: Flame, group: "Core" },
+  { label: "Core", icon: Target, group: "Core" },
+  { label: "Quadricipiti", icon: Activity, group: "Lower" },
+  { label: "Femorali", icon: Activity, group: "Lower" },
+  { label: "Glutei", icon: Heart, group: "Lower" },
+  { label: "Polpacci", icon: PersonStanding, group: "Lower" },
+  { label: "Gambe Completo", icon: Building2, group: "Lower" },
 ];
 
 const GENDER_OPTIONS: GenderOption[] = [
-  { val: "male", icon: "♂️", label: "Maschile" },
-  { val: "female", icon: "♀️", label: "Femminile" },
-  { val: "other", icon: "⚧", label: "Altro" },
-  { val: "prefer-not-say", icon: "🔒", label: "Preferisco non dire" },
+  { val: "male", icon: User, label: "Maschile" },
+  { val: "female", icon: Users, label: "Femminile" },
+  { val: "other", icon: PersonStanding, label: "Altro" },
+  { val: "prefer-not-say", icon: Lock, label: "Preferisco non dire" },
 ];
 
 const DURATION_OPTIONS = [
@@ -147,14 +163,14 @@ const DURATION_OPTIONS = [
   { val: "90", label: "90 min", sub: "Massimale su tutto" },
 ];
 
-const TRAINING_TYPES = [
-  { val: "street-workout", icon: "🏙️", label: "Street Workout", desc: "Esplosività, tricking, muscle-up, movimenti dinamici" },
-  { val: "skill-work", icon: "🎯", label: "Skill Work", desc: "Front Lever, Planche, Handstand, progressioni tecniche" },
-  { val: "freestyle", icon: "🌀", label: "Freestyle & Flow", desc: "Combinazioni creative, transizioni fluide, stile libero" },
-  { val: "power", icon: "💥", label: "Power & Static Holds", desc: "Massimale isometrico, tenute statiche, forza bruta" },
-  { val: "rings", icon: "⭕", label: "Anelli & Gymnastics", desc: "Lavoro agli anelli, elementi olimpici, controllo" },
-  { val: "hypertrophy", icon: "💪", label: "Ipertrofia & Estetica", desc: "Volume alto, definizione, scheda estetica classica" },
-  { val: "endurance", icon: "🏃", label: "Endurance & High Rep", desc: "Resistenza muscolare, high rep, circuiti" },
+const TRAINING_TYPES: { val: string; icon: LucideIcon; label: string; desc: string }[] = [
+  { val: "street-workout", icon: Building2, label: "Street Workout", desc: "Esplosività, tricking, muscle-up, movimenti dinamici" },
+  { val: "skill-work", icon: Target, label: "Skill Work", desc: "Front Lever, Planche, Handstand, progressioni tecniche" },
+  { val: "freestyle", icon: Wind, label: "Freestyle & Flow", desc: "Combinazioni creative, transizioni fluide, stile libero" },
+  { val: "power", icon: Zap, label: "Power & Static Holds", desc: "Massimale isometrico, tenute statiche, forza bruta" },
+  { val: "rings", icon: CircleDot, label: "Anelli & Gymnastics", desc: "Lavoro agli anelli, elementi olimpici, controllo" },
+  { val: "hypertrophy", icon: Dumbbell, label: "Ipertrofia & Estetica", desc: "Volume alto, definizione, scheda estetica classica" },
+  { val: "endurance", icon: Timer, label: "Endurance & High Rep", desc: "Resistenza muscolare, high rep, circuiti" },
 ];
 
 // ─── EXTRACTED COMPONENTS ─────────────────────────────────────────────────
@@ -533,11 +549,11 @@ const Create: React.FC = () => {
     container.innerHTML = "";
     const COLORS = [
       "from-red-500 to-orange-400",
-      "from-orange-500 to-yellow-400",
+      "from-orange-500 to-red-400",
       "from-red-600 to-red-400",
-      "from-white to-red-400",
-      "from-amber-500 to-yellow-400",
-      "from-emerald-500 to-teal-400",
+      "from-red-500 to-orange-500",
+      "from-orange-400 to-red-500",
+      "from-red-600 to-orange-600",
     ];
     const N = 120;
     for (let idx = 0; idx < N; idx++) {
@@ -794,7 +810,9 @@ const Create: React.FC = () => {
                 Sesso <span className="text-zinc-600 font-normal ml-1">(opzionale)</span>
               </label>
               <div className="grid grid-cols-4 gap-2">
-                {GENDER_OPTIONS.map((g) => (
+                {GENDER_OPTIONS.map((g) => {
+                  const GIcon = g.icon;
+                  return (
                   <button
                     key={g.val}
                     type="button"
@@ -805,10 +823,13 @@ const Create: React.FC = () => {
                         : "bg-zinc-950/40 border-white/5 hover:border-white/15"
                     }`}
                   >
-                    <div className="text-xl mb-1">{g.icon}</div>
+                    <div className="mb-1 flex justify-center text-zinc-300">
+                      <GIcon className="w-5 h-5" />
+                    </div>
                     <p className="text-[10px] font-bold text-zinc-300 leading-tight">{g.label}</p>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -832,8 +853,8 @@ const Create: React.FC = () => {
                   icon: Scale,
                   unit: "kg",
                   ph: "Es. 75",
-                  cls: "bg-linear-to-br from-blue-600/5 to-red-600/5",
-                  iconCls: "text-blue-400",
+                  cls: "bg-linear-to-br from-red-600/5 to-orange-600/5",
+                  iconCls: "text-orange-400",
                 },
                 {
                   val: height,
@@ -842,8 +863,8 @@ const Create: React.FC = () => {
                   icon: Ruler,
                   unit: "cm",
                   ph: "Es. 180",
-                  cls: "bg-linear-to-br from-emerald-600/5 to-blue-600/5",
-                  iconCls: "text-emerald-400",
+                  cls: "bg-linear-to-br from-orange-600/5 to-red-600/5",
+                  iconCls: "text-red-400",
                 },
               ].map((field) => {
                 const FI = field.icon;
@@ -868,7 +889,7 @@ const Create: React.FC = () => {
 
             {(age || weight || height) && (
               <div className="bg-zinc-900/30 border border-white/5 rounded-2xl p-4 flex items-center gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-red-500 shrink-0" />
                 <p className="text-xs text-zinc-400">
                   Usiamo questi dati per calcolare <span className="text-white font-bold">metabolismo</span>,{" "}
                   <span className="text-white font-bold">carico di lavoro</span> e{" "}
@@ -900,7 +921,7 @@ const Create: React.FC = () => {
                 {[
                   {
                     val: "principiante",
-                    icon: "🌱",
+                    icon: Sprout,
                     title: "Principiante",
                     subt: "0 – 1 anni di esperienza",
                     points: ["Fondamenti posturali", "Progressioni graduali", "Volume moderato"],
@@ -908,7 +929,7 @@ const Create: React.FC = () => {
                   },
                   {
                     val: "intermedio",
-                    icon: "⚡",
+                    icon: Zap,
                     title: "Intermedio",
                     subt: "1 – 3 anni di esperienza",
                     points: ["Tecniche complesse", "Periodizzazione", "Volume progressivo"],
@@ -916,13 +937,15 @@ const Create: React.FC = () => {
                   },
                   {
                     val: "avanzato",
-                    icon: "🔥",
+                    icon: Flame,
                     title: "Avanzato",
                     subt: "3+ anni di esperienza",
                     points: ["Skills avanzate", "Massimo volume", "Periodizzazione completa"],
                     style: LEVEL_STYLES.avanzato,
                   },
-                ].map((lvl: any) => (
+                ].map((lvl: any) => {
+                  const LvlIcon = lvl.icon as LucideIcon;
+                  return (
                   <button
                     key={lvl.val}
                     type="button"
@@ -938,7 +961,7 @@ const Create: React.FC = () => {
                         level === lvl.val ? "opacity-40" : "opacity-0"
                       }`}
                     />
-                    <div className="text-3xl mb-3">{lvl.icon}</div>
+                    <div className="mb-3 text-zinc-200"><LvlIcon className="w-7 h-7" /></div>
                     <p className={`font-black text-base mb-0.5 transition-colors ${level === lvl.val ? lvl.style.accent : "text-white"}`}>
                       {lvl.title}
                     </p>
@@ -961,7 +984,8 @@ const Create: React.FC = () => {
                       </div>
                     )}
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -971,26 +995,30 @@ const Create: React.FC = () => {
                 Anni di Allenamento
               </label>
               <div className="flex gap-2">
-                {EXPERIENCE_OPTIONS.map((exp) => (
+                {EXPERIENCE_OPTIONS.map((exp) => {
+                  const ExpIcon = exp.icon;
+                  const expActive = experience === exp.label.split(" ")[0];
+                  return (
                   <button
                     key={exp.label}
                     type="button"
                     onClick={() => setExperience(exp.label.split(" ")[0])}
                     className={`flex-1 py-4 rounded-2xl border transition-all text-center group ${
-                      experience === exp.label.split(" ")[0]
+                      expActive
                         ? "bg-red-600/12 border-red-600/40 shadow-[0_0_20px_rgba(220,38,38,0.1)]"
                         : "bg-zinc-950/40 border-white/5 hover:border-white/15"
                     }`}
                   >
-                    <div className={`text-2xl mb-1.5 ${experience === exp.label.split(" ")[0] ? "scale-125 transition-transform" : ""}`}>
-                      {exp.icon}
+                    <div className={`mb-1.5 flex justify-center ${expActive ? "scale-125 transition-transform" : ""}`}>
+                      <ExpIcon className="w-6 h-6 text-zinc-200" />
                     </div>
-                    <p className={`text-xs font-black transition-colors ${experience === exp.label.split(" ")[0] ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"}`}>
+                    <p className={`text-xs font-black transition-colors ${expActive ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"}`}>
                       {exp.label}
                     </p>
                     <p className="text-[10px] text-zinc-600 mt-0.5">{exp.desc}</p>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -1084,7 +1112,9 @@ const Create: React.FC = () => {
                 Tipo di Allenamento
               </label>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                {TRAINING_TYPES.map((t) => (
+                {TRAINING_TYPES.map((t) => {
+                  const TIcon = t.icon;
+                  return (
                   <button
                     key={t.val}
                     type="button"
@@ -1095,15 +1125,16 @@ const Create: React.FC = () => {
                         : "bg-zinc-950/40 border-white/5 hover:border-white/15"
                     }`}
                   >
-                    <div className={`text-2xl mb-1 transition-transform ${trainingType === t.val ? "scale-125" : ""}`}>
-                      {t.icon}
+                    <div className={`mb-1 flex justify-center transition-transform ${trainingType === t.val ? "scale-125" : ""}`}>
+                      <TIcon className="w-6 h-6 text-zinc-200" />
                     </div>
                     <p className={`text-[11px] font-black leading-tight ${trainingType === t.val ? "text-white" : "text-zinc-400"}`}>
                       {t.label}
                     </p>
                     <p className="text-[9px] text-zinc-600 mt-1 leading-snug">{t.desc}</p>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -1114,15 +1145,17 @@ const Create: React.FC = () => {
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[
-                  { val: "nessuna", icon: "🏋️", label: "Solo Corpo Libero", sub: "Nessun attrezzo" },
-                  { val: "sbarra", icon: "🏗️", label: "Sbarra Trazioni", sub: "Pull-up bar" },
-                  { val: "parallele", icon: "〰️", label: "Parallette", sub: "Dip bars / P-bars" },
-                  { val: "anelli", icon: "⭕", label: "Anelli", sub: "Gymnastics Rings" },
-                  { val: "bande", icon: "🔄", label: "Bande Elastiche", sub: "Resistance Bands" },
-                  { val: "zavorra", icon: "🏋️‍♂️", label: "Zavorra", sub: "Weight Vest / Cintura" },
-                  { val: "base", icon: "🏗️", label: "Set Base", sub: "Sbarra + Parallele" },
-                  { val: "completo", icon: "🏟️", label: "Completo", sub: "Tutto disponibile" },
-                ].map((eq) => (
+                  { val: "nessuna", icon: Ban, label: "Solo Corpo Libero", sub: "Nessun attrezzo" },
+                  { val: "sbarra", icon: TrendingUp, label: "Sbarra Trazioni", sub: "Pull-up bar" },
+                  { val: "parallele", icon: Minus, label: "Parallette", sub: "Dip bars / P-bars" },
+                  { val: "anelli", icon: CircleDot, label: "Anelli", sub: "Gymnastics Rings" },
+                  { val: "bande", icon: Waves, label: "Bande Elastiche", sub: "Resistance Bands" },
+                  { val: "zavorra", icon: Dumbbell, label: "Zavorra", sub: "Weight Vest / Cintura" },
+                  { val: "base", icon: Building2, label: "Set Base", sub: "Sbarra + Parallele" },
+                  { val: "completo", icon: Trophy, label: "Completo", sub: "Tutto disponibile" },
+                ].map((eq) => {
+                  const EqIcon = eq.icon;
+                  return (
                   <button
                     key={eq.val}
                     type="button"
@@ -1133,13 +1166,14 @@ const Create: React.FC = () => {
                         : "bg-zinc-950/40 border-white/5 hover:border-white/15"
                     }`}
                   >
-                    <div className={`text-xl mb-1 transition-transform ${equipment === eq.val ? "scale-125" : ""}`}>
-                      {eq.icon}
+                    <div className={`mb-1 flex justify-center transition-transform ${equipment === eq.val ? "scale-125" : ""}`}>
+                      <EqIcon className="w-5 h-5 text-zinc-200" />
                     </div>
                     <p className={`text-[10px] font-bold leading-tight ${equipment === eq.val ? "text-white" : "text-zinc-400"}`}>{eq.label}</p>
                     <p className="text-[9px] text-zinc-600 mt-0.5">{eq.sub}</p>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -1194,7 +1228,9 @@ const Create: React.FC = () => {
                 Focus Principale
               </label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {FOCUS_OPTIONS.map((opt) => (
+                {FOCUS_OPTIONS.map((opt) => {
+                  const FocusIcon = opt.icon;
+                  return (
                   <button
                     key={opt.val}
                     type="button"
@@ -1205,7 +1241,7 @@ const Create: React.FC = () => {
                   >
                     <div className={`absolute inset-0 bg-linear-to-br ${opt.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
                     <div className="relative z-10">
-                      <div className="text-2xl mb-1.5">{opt.icon}</div>
+                      <div className="mb-1.5 flex justify-center"><FocusIcon className="w-6 h-6 text-zinc-100" /></div>
                       <p className={`text-xs font-black ${focus === opt.val ? "text-white" : "text-zinc-400 group-hover:text-zinc-200"}`}>
                         {opt.label}
                       </p>
@@ -1219,7 +1255,8 @@ const Create: React.FC = () => {
                       </div>
                     )}
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -1238,6 +1275,7 @@ const Create: React.FC = () => {
               <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
                 {BODY_FOCUS_OPTIONS.map((bf) => {
                   const active = bodyFocus.includes(bf.label);
+                  const BfIcon = bf.icon;
                   return (
                     <button
                       key={bf.label}
@@ -1249,7 +1287,7 @@ const Create: React.FC = () => {
                           : "bg-zinc-950/40 border-white/5 text-zinc-500 hover:text-zinc-300 hover:border-white/10"
                       }`}
                     >
-                      <span className="text-lg">{bf.icon}</span>
+                      <span className="flex justify-center"><BfIcon className="w-5 h-5" /></span>
                       <p className="text-[10px] font-bold mt-1">{bf.label}</p>
                     </button>
                   );
@@ -1339,9 +1377,9 @@ const Create: React.FC = () => {
               <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                   { label: "Età", value: `${age} anni`, col: "text-red-400" },
-                  { label: "Peso", value: `${weight} kg`, col: "text-blue-400" },
-                  { label: "Altezza", value: `${height} cm`, col: "text-emerald-400" },
-                  { label: "Esperienza", value: `${experience} anni`, col: "text-amber-400" },
+                  { label: "Peso", value: `${weight} kg`, col: "text-orange-400" },
+                  { label: "Altezza", value: `${height} cm`, col: "text-red-400" },
+                  { label: "Esperienza", value: `${experience} anni`, col: "text-orange-400" },
                 ].map((stat) => (
                   <div key={stat.label} className="bg-zinc-950/60 rounded-xl p-3.5 border border-white/5">
                     <p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 mb-1">{stat.label}</p>
@@ -1372,7 +1410,7 @@ const Create: React.FC = () => {
                         label: "Aree Focus",
                         value: bodyFocus.join(", "),
                         icon: Target,
-                        iconCol: "text-emerald-400",
+                        iconCol: "text-orange-400",
                       },
                     ]
                   : []),

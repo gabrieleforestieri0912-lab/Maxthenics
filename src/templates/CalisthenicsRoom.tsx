@@ -581,7 +581,7 @@ const CalisthenicsRoom: React.FC = () => {
                       ))}
                     </div>
 
-                    <div className="mt-10 p-6 bg-gradient-to-r from-red-600/10 to-amber-600/10 border border-red-500/20 rounded-2xl flex items-center justify-between flex-wrap gap-4">
+                    <div className="mt-10 p-6 bg-gradient-to-r from-red-600/10 to-orange-600/10 border border-red-500/20 rounded-2xl flex items-center justify-between flex-wrap gap-4">
                       <div>
                         <p className="text-xs font-black uppercase tracking-[0.3em] text-red-500 mb-2">Valore Totale</p>
                         <div className="flex items-baseline gap-4">

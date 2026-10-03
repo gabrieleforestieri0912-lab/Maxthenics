@@ -94,7 +94,7 @@ const PurchaseHistoryPage: React.FC = () => {
                     <span className="text-red-600 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block">Billing</span>
                     <h1 className="text-4xl md:text-6xl font-black text-white leading-[0.85] tracking-tighter mb-6">
                         I TUOI <br />
-                        <span className="text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-700 italic pr-2">ACQUISTI</span>
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500 italic pr-2">ACQUISTI</span>
                     </h1>
                     <p className="text-zinc-500 text-lg max-w-2xl font-medium leading-relaxed">
                         Consulta lo storico dei tuoi ordini e verifica i protocolli di allenamento che hai sbloccato nel tuo account.

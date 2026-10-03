@@ -16,7 +16,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
 
 function Pricing() {
   return (
-    <div className="section-padding relative overflow-hidden bg-transparent">
+    <div id="pricing" className="section-padding relative overflow-hidden bg-transparent scroll-mt-24">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.05)_0%,transparent_70%)] pointer-events-none" />
 
       <div className="text-center max-w-3xl mx-auto mb-16 lg:mb-20 relative z-10">
@@ -29,7 +29,7 @@ function Pricing() {
         </motion.span>
         <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-8 text-white tracking-tighter leading-none px-4">
           Domina la <br />
-          <span className="text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-500">Gravità</span>
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">Gravità</span>
         </h2>
       </div>
 

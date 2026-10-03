@@ -31,7 +31,7 @@ export default function NotFound() {
             transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
             className="relative inline-block mb-8"
           >
-            <span className="text-[10rem] sm:text-[14rem] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-zinc-700 to-zinc-900 select-none">
+            <span className="text-[10rem] sm:text-[14rem] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-red-500 to-orange-500 select-none">
               404
             </span>
             <span className="absolute inset-0 text-[10rem] sm:text-[14rem] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-red-500/20 to-transparent blur-sm select-none">

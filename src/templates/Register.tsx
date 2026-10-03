@@ -19,6 +19,8 @@ const Register: React.FC = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,13 +48,21 @@ const Register: React.FC = () => {
   };
 
   const handleGoogleRegister = async () => {
-    const sb = getSupabaseBrowser();
-    await sb.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    setGoogleError(null);
+    setGoogleLoading(true);
+    try {
+      const sb = getSupabaseBrowser();
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (err) {
+      setGoogleError(err instanceof Error ? err.message : "Registrazione con Google non riuscita. Riprova.");
+      setGoogleLoading(false);
+    }
   };
 
   return (
@@ -199,11 +209,19 @@ const Register: React.FC = () => {
           <button
             type="button"
             onClick={handleGoogleRegister}
-            className="w-full flex items-center justify-center gap-3 bg-white text-zinc-950 py-2.5 sm:py-3 rounded-xl font-bold text-sm transition-all hover:bg-zinc-200 active:scale-[0.98]"
+            disabled={googleLoading}
+            className="w-full flex items-center justify-center gap-3 bg-white text-zinc-950 py-2.5 sm:py-3 rounded-xl font-bold text-sm transition-all hover:bg-zinc-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-wait"
           >
-            <GoogleIcon className="w-5 h-5" />
-            Registrati con Google
+            {googleLoading ? (
+              <span className="w-5 h-5 border-2 border-zinc-400 border-t-zinc-950 rounded-full animate-spin" />
+            ) : (
+              <GoogleIcon className="w-5 h-5" />
+            )}
+            {googleLoading ? "Reindirizzamento..." : "Registrati con Google"}
           </button>
+          {googleError && (
+            <p className="mt-2 text-center text-xs text-red-400 font-medium">{googleError}</p>
+          )}
 
           <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-white/10 text-center">
             <p className="text-zinc-400 text-xs">

@@ -204,7 +204,7 @@ function Programs() {
           <span className="text-red-600 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block">Programmi di Allenamento</span>
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-[0.85] tracking-tighter mb-8 px-4">
             SCEGLI IL <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-700 italic pr-6 pb-2 inline-block">TUO PERCORSO</span>
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500 italic pr-6 pb-2 inline-block">TUO PERCORSO</span>
           </h1>
           <p className="text-zinc-400 text-lg max-w-3xl font-medium leading-relaxed">
             Dal principiante all&apos;elite, ogni programma è progettato con metodologie biomeccaniche avanzate per trasformare il tuo corpo attraverso la forza a corpo libero.
