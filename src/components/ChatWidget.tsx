@@ -3,11 +3,12 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import {
-  X, Send, Trash2, ArrowRight, History, Plus, ChevronDown,
-  Copy, Check, Pencil, RefreshCw, Square, Download, CheckCheck,
+  X, Trash2, ArrowRight, History, Plus, ChevronDown,
+  Copy, Check, Pencil, RefreshCw, Download, CheckCheck,
   Sparkles, CornerDownRight, Eye,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import ChatInputBar from "./ChatInputBar";
 import { useAuth } from "../context/AuthContext";
 import { useChatContext, IMessage, Corner } from "../context/ChatContext";
 
@@ -508,33 +509,25 @@ const ChatWidgetContent = () => {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* ── Stop generation ── */}
-              {isStreaming && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-4 pb-0">
-                  <button onClick={stopGeneration} className="w-full flex items-center justify-center gap-2 py-2 bg-red-600/10 hover:bg-red-600/20 text-red-400 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border border-red-500/10">
-                    <Square size={10} /> Stop
-                  </button>
-                </motion.div>
-              )}
-
-              {/* ── Footer / Input ── */}
+              {/* ── Footer / Input — AI Mode style ── */}
               <div className="px-3 pb-3 pt-1 relative">
                 <div className="absolute top-0 left-3 right-3 h-[1px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
-                <form onSubmit={handleSend} className="relative">
-                  <textarea
-                    ref={inputRef}
+                <div className="pt-2">
+                  <ChatInputBar
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
+                    onChange={setInput}
+                    onSubmit={handleSend}
                     onKeyDown={handleKeyDown}
-                    placeholder={showSearch ? "Cerca..." : "Scrivi un messaggio..."}
-                    rows={1}
-                    className="w-full bg-white/[0.04] border border-white/[0.06] text-white pl-4 pr-12 py-3 rounded-2xl text-xs focus:outline-none focus:border-red-500/30 focus:bg-white/[0.06] transition-all placeholder:text-zinc-600 resize-none overflow-hidden"
-                    style={{ minHeight: '44px', maxHeight: '120px' }}
+                    placeholder={showSearch ? "Cerca..." : "Chiedi qualsiasi cosa..."}
+                    isLoading={isLoading}
+                    isStreaming={isStreaming}
+                    onStop={stopGeneration}
+                    onNewChat={handleNewChat}
+                    textareaRef={inputRef}
+                    compact
+                    maxHeight={120}
                   />
-                  <button type="submit" disabled={isLoading || !input.trim()} className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-lg shadow-red-900/30 hover:shadow-red-900/50 disabled:opacity-20 disabled:shadow-none transition-all">
-                    <Send size={14} />
-                  </button>
-                </form>
+                </div>
                 <div className="flex items-center justify-between mt-2 px-1">
                   <div className="flex items-center gap-2">
                     {messages.length > 0 && (
