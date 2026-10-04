@@ -245,13 +245,6 @@ const CalisthenicsRoom: React.FC = () => {
       "Template Guida completa sul Calisthenics",
     ];
 
-    const results = [
-      { stat: "+40%", label: "Forza in 90 giorni" },
-      { stat: "12", label: "Skill sbloccate" },
-      { stat: "100%", label: "Personalizzato" },
-      { stat: "24/7", label: "Supporto diretto" },
-    ];
-
     return (
       <div className="min-h-screen bg-zinc-950 text-white selection:bg-red-500/30">
         <SEO
@@ -276,7 +269,7 @@ const CalisthenicsRoom: React.FC = () => {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.3em] mb-8"
             >
               <Sparkles size={12} />
-              Coaching d&apos;Élite — Posti Limitati
+              Coaching d&apos;Élite
             </motion.div>
 
             <motion.h1
@@ -312,25 +305,6 @@ const CalisthenicsRoom: React.FC = () => {
               <a href="#features" className="px-10 py-4 border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white font-black rounded-2xl text-sm uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95">
                 Scopri di Più
               </a>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ── RESULTS BANNER ── */}
-        <section className="px-6 relative z-10 -mt-16">
-          <div className="max-w-5xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-[2rem] overflow-hidden border border-white/5"
-            >
-              {results.map((r, i) => (
-                <div key={i} className="bg-zinc-900/80 backdrop-blur-md p-8 text-center group hover:bg-zinc-900 transition-colors">
-                  <p className="text-3xl md:text-4xl font-black text-red-500 mb-1 group-hover:scale-110 transition-transform">{r.stat}</p>
-                  <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">{r.label}</p>
-                </div>
-              ))}
             </motion.div>
           </div>
         </section>
@@ -469,22 +443,16 @@ const CalisthenicsRoom: React.FC = () => {
                   title: "Coaching 1:1",
                   desc: "Correzioni video e feedback personalizzati direttamente da me ogni settimana. Ogni tua ripetizione viene analizzata.",
                   icon: <PlayCircle />,
-                  metric: "48h",
-                  metricLabel: "Tempo medio risposta",
                 },
                 {
                   title: "Protocolli Elite",
                   desc: "Accesso totale a tutti i programmi Mastery: Planche, Front Lever, Handstand. Segui il percorso giusto per ogni skill.",
                   icon: <Award />,
-                  metric: "50+",
-                  metricLabel: "Programmi esclusivi",
                 },
                 {
                   title: "Mindset & Disciplina",
                   desc: "Strategie psicologiche per eliminare la procrastinazione e costruire abitudini incrollabili. La mente comanda il corpo.",
                   icon: <Crown />,
-                  metric: "100%",
-                  metricLabel: "Atleti più consistenti",
                 },
               ].map((item, i) => (
                 <motion.div
@@ -501,10 +469,6 @@ const CalisthenicsRoom: React.FC = () => {
                     </div>
                     <h3 className="text-2xl font-black mb-4 uppercase tracking-tight">{item.title}</h3>
                     <p className="text-zinc-400 text-sm leading-relaxed max-w-xs mx-auto">{item.desc}</p>
-                  </div>
-                  <div className="text-center pt-6 border-t border-white/5">
-                    <p className="text-3xl font-black text-red-500">{item.metric}</p>
-                    <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.2em]">{item.metricLabel}</p>
                   </div>
                 </motion.div>
               ))}
@@ -581,18 +545,11 @@ const CalisthenicsRoom: React.FC = () => {
                       ))}
                     </div>
 
-                    <div className="mt-10 p-6 bg-gradient-to-r from-red-600/10 to-amber-600/10 border border-red-500/20 rounded-2xl flex items-center justify-between flex-wrap gap-4">
-                      <div>
-                        <p className="text-xs font-black uppercase tracking-[0.3em] text-red-500 mb-2">Valore Totale</p>
-                        <div className="flex items-baseline gap-4">
-                          <span className="text-4xl font-black text-white">€847</span>
-                          <span className="text-lg font-black text-zinc-500 line-through">€1.200+</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 text-amber-500 text-[10px] font-black uppercase tracking-[0.2em]">
-                        <Sparkles size={12} />
-                        Inclusi in tutti i piani
-                      </div>
+                    <div className="mt-10 p-6 bg-gradient-to-r from-red-600/10 to-amber-600/10 border border-red-500/20 rounded-2xl flex items-center gap-3">
+                      <Sparkles size={16} className="text-amber-500 shrink-0" />
+                      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-300">
+                        Bonus inclusi in tutti i piani
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -686,7 +643,7 @@ const CalisthenicsRoom: React.FC = () => {
                     "Tutto del piano Progression",
                     "1 anno di MIND PROJECT incluso",
                     "Videochiamate gruppo registrate",
-                    "Guida Completa PDF (100+ pagine)",
+                    "Guida Completa PDF",
                     "Certificato Mastery",
                     "Priorità supporto 24/7",
                   ],
@@ -920,32 +877,6 @@ const CalisthenicsRoom: React.FC = () => {
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-6 pb-32 space-y-20">
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { label: "Lezioni Disponibili", value: "12", icon: <PlayCircle size={16} /> },
-            { label: "Guide Scaricabili", value: "5", icon: <BookOpen size={16} /> },
-            { label: "Ore di Contenuti", value: "24+", icon: <Clock size={16} /> },
-            { label: "Community", value: "Attiva", icon: <Users size={16} /> },
-          ].map((s, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + i * 0.05 }}
-              className="p-4 bg-zinc-900/40 border border-white/5 rounded-2xl flex items-center gap-3"
-            >
-              <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500">
-                {s.icon}
-              </div>
-              <div>
-                <p className="text-sm font-black text-white">{s.value}</p>
-                <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">{s.label}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
         {/* Resource Cards */}
         <section>
           <div className="flex items-center gap-3 mb-8">
@@ -957,13 +888,13 @@ const CalisthenicsRoom: React.FC = () => {
             {[
               {
                 title: "Guida Completa al Calisthenics Moderno",
-                desc: "Oltre 100 pagine di scienza applicata, programmazione avanzata e protocolli di recupero.",
+                desc: "Scienza applicata, programmazione avanzata e protocolli di recupero.",
                 action: "Scarica PDF",
                 icon: <BookOpen size={32} />,
               },
               {
                 title: "Template Scheda Settimanale",
-                desc: "Il planner settimanale usato dagli atleti Elite per tracciare volume, intensità e recupero.",
+                desc: "Il planner settimanale per tracciare volume, intensità e recupero.",
                 action: "Scarica Template",
                 icon: <Target size={32} />,
               },

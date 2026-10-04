@@ -36,7 +36,7 @@ export const subscriptionPlans: SubscriptionPlan[] = [
     price: 19,
     iconName: 'Dumbbell',
     features: [
-      '12 programmi skill (Planche, FL, HS, OAP)',
+      'Tutti i programmi skill (Planche, Front Lever, Handstand)',
       'Pianificazione settimanale automatica',
       'Storico illimitato pesi e volumi',
       'Grafici progressione per esercizio',
@@ -54,11 +54,11 @@ export const subscriptionPlans: SubscriptionPlan[] = [
     price: 39,
     iconName: 'Star',
     features: [
-      '50+ programmi skill e forza',
+      'Tutti i programmi skill e forza',
       'Generazione programmi con AI',
       'Analisi video con feedback biomeccanico',
       'Sthenox AI: analisi RPE e auto-regolazione',
-      'Tutte le video-lezioni 4K (25h+)',
+      'Tutte le video-lezioni 4K',
       'Piani nutrizionali personalizzati',
       'Supporto prioritario risposta 12h',
     ],

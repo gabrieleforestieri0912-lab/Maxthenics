@@ -48,7 +48,7 @@ const Home: React.FC = () => {
             transition={{ duration: 0.4 }}
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-zinc-900 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-wider mb-6"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-red-600" /> Calisthenics · dal 2019 · 1.200+ atleti
+            <span className="w-1.5 h-1.5 rounded-full bg-red-600" /> Calisthenics · Programmi su misura
           </motion.div>
 
           {/* Main H1 Title (Max 2 Lines, Balanced Size) */}
@@ -105,7 +105,7 @@ const Home: React.FC = () => {
           >
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 rounded-lg overflow-hidden border border-white/10 max-w-4xl mx-auto text-left">
               {[
-                { label: "1.200+ atleti", sub: "usano un programma Maxthenics oggi." },
+                { label: "15 programmi", sub: "Workout, skill, forza e mobilità." },
                 { label: "7 stili", sub: "Street, Skill, Rings, Power, e altri." },
                 { label: "15 dati", sub: "età, livello, attrezzatura, infortuni." },
                 { label: "Coach vero", sub: "risposta umana entro 24h nei piani Pro." },
@@ -271,7 +271,7 @@ const Home: React.FC = () => {
                   Il processo inizia con un&apos;analisi approfondita: video-analisi della tua tecnica attuale, valutazione dei punti di forza e delle debolezze, identificazione degli squilibri muscolari e definizione degli obiettivi a breve, medio e lungo termine. Da qui costruiamo un protocollo che evolve di settimana in settimana, mai uguale a sé stesso, sempre calibrato sul tuo recupero e sui tuoi progressi reali.
                 </p>
                 <p>
-                  Ogni sessione prevede correzioni in diretta via video, varianti istantanee quando un esercizio non risponde come previsto e un piano di lavoro che integra tecnica, condizionamento e mobilità. Il coach è disponibile su WhatsApp per dubbi, dubbi dell&apos;ultimo minuto e aggiustamenti fuori orario. I posti sono limitati a cinque al mese perché ogni atleta merita attenzione totale, niente schede preconfezionate.
+                  Ogni sessione prevede correzioni in diretta via video, varianti istantanee quando un esercizio non risponde come previsto e un piano di lavoro che integra tecnica, condizionamento e mobilità. Il coach è disponibile su WhatsApp per dubbi, dubbi dell&apos;ultimo minuto e aggiustamenti fuori orario. L&apos;accesso è su richiesta perché ogni atleta merita attenzione totale, niente schede preconfezionate.
                 </p>
               </div>
 
@@ -280,7 +280,7 @@ const Home: React.FC = () => {
                   { label: "Live Coaching", sub: "Ogni sessione è in diretta con video-analisi frame-by-frame della tua tecnica. Correggiamo l'esecuzione in tempo reale, non a posteriori." },
                   { label: "Supporto H24", sub: "Accesso diretto via WhatsApp per qualsiasi necessità: variazioni dell'ultimo minuto, dubbi sul recupero, ripensamenti sul programma." },
                   { label: "Protocolli Live", sub: "Il piano si modifica seduta dopo seduta in base alla tua risposta. Se un esercizio non funziona, lo sostituiamo subito." },
-                  { label: "Posti Limitati", sub: "Massimo 5 atleti seguiti contemporaneamente. Ogni coaching riceve attenzione esclusiva e continuità nel tempo." },
+                  { label: "Attenzione esclusiva", sub: "Ogni coaching riceve attenzione dedicata e continuità nel tempo." },
                 ].map((item, i) => (
                   <div key={i} className="p-5 bg-zinc-900/50 rounded-xl border border-white/5 text-left hover:border-red-500/20 transition-colors">
                     <p className="text-sm font-black text-white uppercase tracking-tight mb-1.5">{item.label}</p>

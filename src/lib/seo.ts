@@ -146,7 +146,7 @@ export function coachingMetadata(): Metadata {
   return makeMetadata({
     title: "Calisthenics Room - Coaching 1:1",
     description:
-      "Coaching 1:1 premium di calisthenics. Percorso individuale con video-analisi, correzioni live e posti limitati a 5 atleti al mese.",
+      "Coaching 1:1 premium di calisthenics. Percorso individuale con video-analisi e correzioni live.",
     path: "/calisthenics-room",
   });
 }

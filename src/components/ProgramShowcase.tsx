@@ -2,7 +2,7 @@
 
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Clock, Users } from "lucide-react";
+import { ArrowRight, Clock } from "lucide-react";
 import Image from "next/image";
 
 interface ShowcaseProgram {
@@ -12,7 +12,6 @@ interface ShowcaseProgram {
   duration: string;
   image: string;
   description: string;
-  students: number;
   price: number;
 }
 
@@ -74,10 +73,6 @@ const ProgramCard = ({ program, index }: { program: ShowcaseProgram; index: numb
 
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
-                <Users size={13} />
-                {program.students}
-              </div>
-              <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
                 <Clock size={13} />
                 {program.duration}
               </div>
@@ -98,7 +93,6 @@ const ProgramShowcase = () => {
       duration: "12 Settimane",
       image: "/Img/front-lever.jpg",
       description: "Il percorso completo per dominare la Front Lever, dalla retrazione scapolare alla full extension.",
-      students: 340,
       price: 129,
     },
     {
@@ -108,7 +102,6 @@ const ProgramShowcase = () => {
       duration: "16 Settimane",
       image: "/Img/one-arm-front-lever.jpg",
       description: "Dalla tuck planche alla full planche: periodizzazione ipertrofica per la massima spinta.",
-      students: 280,
       price: 149,
     },
     {
@@ -118,7 +111,6 @@ const ProgramShowcase = () => {
       duration: "4 Settimane",
       image: "/Img/programs.jpg",
       description: "Protocollo d'ingresso per costruire le basi biomeccaniche e attivare il potenziale motorio.",
-      students: 510,
       price: 0,
     },
   ];

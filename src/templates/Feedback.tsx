@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Star, ArrowLeft, ChevronDown, Check } from 'lucide-react';
+import { Send, ArrowLeft, ChevronDown, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 
@@ -20,7 +20,6 @@ const categories: Category[] = [
 ];
 
 const Feedback: React.FC = () => {
-    const [rating, setOpenRating] = useState(5);
     const [submitted, setSubmitted] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<Category>(categories[0]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -90,25 +89,6 @@ const Feedback: React.FC = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6 bg-zinc-900/20 border border-white/10 p-6 md:p-10 rounded-[2.5rem] backdrop-blur-xl shadow-2xl">
-                    {/* Star Rating */}
-                    <div className="space-y-3">
-                        <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 px-1 text-center block w-full">Valutazione Esperienza</label>
-                        <div className="flex justify-center gap-2">
-                            {[1, 2, 3, 4, 5].map((num) => (
-                                <button
-                                    key={num}
-                                    type="button"
-                                    onClick={() => setOpenRating(num)}
-                                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                                        rating >= num ? 'bg-red-600 text-white shadow-lg shadow-red-900/30' : 'bg-zinc-800/50 text-zinc-600 hover:bg-zinc-800'
-                                    }`}
-                                >
-                                    <Star size={18} fill={rating >= num ? "currentColor" : "none"} />
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
                     {/* Custom Dropdown */}
                     <div className="space-y-2 relative" ref={dropdownRef}>
                         <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 px-1 block">Categoria</label>
