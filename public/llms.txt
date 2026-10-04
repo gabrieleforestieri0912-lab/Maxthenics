@@ -1,0 +1,53 @@
+# Maxthenics
+
+> Maxthenics è la piattaforma d'élite per il calisthenics: programmi scientifici personalizzati, tracking avanzato e coach AI Sthenox per sbloccare skills come Front Lever, Planche e Handstand.
+
+Maxthenics (https://maxthenics.com) è un ecosistema di allenamento a corpo libero basato su biomeccanica, periodizzazione e reclutamento neurale. Ogni programma include progressioni scientifiche, video tutorial, accesso a vita e aggiornamenti. I prezzi sono in euro (EUR) e l'accesso una tantum è a vita, salvo dove indicato.
+
+## Key pages
+
+- [Home](https://maxthenics.com/): panoramica della piattaforma, filosofia, programmi e FAQ.
+- [Programmi Calisthenics](https://maxthenics.com/programs): catalogo completo dell'Accademia Maxthenics.
+- [Guida Calisthenics](https://maxthenics.com/guide): guida educativa su tecniche, intensità (RIR), periodizzazione, ipertrofia, recupero e alimentazione.
+- [Calisthenics Room](https://maxthenics.com/calisthenics-room): coaching 1:1 premium, posti limitati a 5 atleti al mese, video-analisi e correzioni live.
+- [Privacy Policy](https://maxthenics.com/privacy): informativa sul trattamento dei dati personali.
+- [Termini e Condizioni](https://maxthenics.com/terms): condizioni di utilizzo della piattaforma.
+
+## Programmi gratuiti (Workout Zero)
+
+- [Attivazione Metabolica & Neurale](https://maxthenics.com/program/101): protocollo di attivazione metabolica e neurale; ottimizzazione delle catene cinetiche ad alta tensione. Principiante, 4 settimane, gratuito.
+- [Stabilità Strutturale del Core](https://maxthenics.com/program/102): analisi biomeccanica della stabilità del core e integrazione dei muscoli profondi. Intermedio, 3 settimane, gratuito.
+- [Biomeccanica Fondamentale](https://maxthenics.com/program/103): scomposizione tecnica di Trazioni, Piegamenti e Dip con focus sulla longevità articolare. Principiante, 6 settimane, gratuito.
+
+## Programmi Front Lever
+
+- [Retrazione & Depressione Scapolare](https://maxthenics.com/program/201): forza specifica dei retrattori scapolari, base bioenergetica del Front Lever. Intermedio, 8 settimane, 49 €.
+- [Dinamiche Straddle Lever](https://maxthenics.com/program/202): transizione verso la leva completa con progressioni isoinerziali e RPE. Avanzato, 10 settimane, 79 €.
+- [Meccanica di Trazione Elite](https://maxthenics.com/program/203): Full Front Lever e reclutamento delle unità motorie. Elite, 12 settimane, 129 €.
+
+## Programmi Planche
+
+- [Protrazione & Resilienza Polsi](https://maxthenics.com/program/301): condizionamento dei serrati anteriori e resilienza tendinea dei polsi. Intermedio, 8 settimane, 59 €.
+- [Periodizzazione Ipertrofica Push](https://maxthenics.com/program/302): dalla Tuck alla Straddle con periodizzazione ondulata. Avanzato, 10 settimane, 89 €.
+- [Bio-Ottimizzazione Full Planche](https://maxthenics.com/program/303): Full Planche tramite scomposizione dei momenti di forza. Elite, 14 settimane, 149 €.
+
+## Programmi Skills
+
+- [Handstand Mastery](https://maxthenics.com/program/401): handstand libero, HSPU, mobilità spalle e polsi. Intermedio, 8 settimane, 79 €.
+- [Back Lever & German Hang](https://maxthenics.com/program/402): catena posteriore dal German Hang al Full Back Lever. Avanzato, 10 settimane, 89 €.
+- [Human Flag & Maltese](https://maxthenics.com/program/403): forza laterale e dominanza orizzontale con consulenza video inclusa. Elite, 12 settimane, 169 €.
+- [Dragon Flag](https://maxthenics.com/program/404): core stability eccentrica controllata, scala completa della Dragon Flag. Intermedio, 6 settimane, 49 €.
+- [Prehab & Longevità](https://maxthenics.com/program/405): protocolli articolari per spalle, gomiti, polsi, ginocchia e schiena. Principiante, 12 settimane, 39 €.
+- [Ipertrofia Calisthenics](https://maxthenics.com/program/406): massa muscolare a corpo libero, split 5 giorni, 40+ esercizi. Principiante, 12 settimane, 59 €.
+
+## FAQ
+
+- Cos'è Maxthenics? Una piattaforma d'élite per il calisthenics che combina programmi scientifici, tracking automatico e coach AI Sthenox per sbloccare skills come Planche e Front Lever.
+- Adatto ai principianti? Sì, i protocolli partono da zero assoluto con progressioni graduali per ogni livello.
+- Servono attrezzature? Dipende dal programma: i piani Zero solo corpo libero; i piani Base richiedono sbarra e parallele; Elite presuppone attrezzatura completa.
+- Come funziona Sthenox AI? È il coach AI integrato per consigli tecnici, calcolo del carico, varianti di esercizi e routine di mobilità personalizzate.
+- Posso annullare l'abbonamento? Sì, in qualsiasi momento dal profilo, con accesso attivo fino alla fine del periodo pagato.
+
+## Lingua
+
+La piattaforma è in lingua italiana. Tutti i contenuti, i programmi e l'assistenza sono erogati in italiano.

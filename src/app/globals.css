@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-nav: 1000px;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --z-overlay: 9999;
+  --z-modal: 150;
+  --spacing-section: 7rem;
+  --spacing-section-lg: 9rem;
+  --radius-card: 1.5rem;
+  --radius-card-lg: 2rem;
+}
+
+@layer base {
+  :root {
+    --brand-red: #dc2626;
+    --brand-orange: #f97316;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    @apply bg-zinc-950 text-gray-200 antialiased selection:bg-red-500/30 selection:text-red-200 overflow-x-hidden;
+    
+    /* Premium background with subtle depth */
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(220, 38, 38, 0.12), transparent 40%),
+      radial-gradient(circle at 0% 50%, rgba(249, 115, 22, 0.05), transparent 30%),
+      radial-gradient(circle at 100% 100%, rgba(220, 38, 38, 0.05), transparent 30%);
+    background-attachment: fixed;
+  }
+
+  /* Typography reset */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight text-white;
+    margin: 0;
+  }
+
+  p {
+    @apply text-zinc-400 leading-relaxed;
+    margin: 0;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-zinc-950;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-800 rounded-full border-2 border-zinc-950 hover:bg-red-600 transition-colors;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+  }
+
+  .glass-card {
+    @apply bg-zinc-900/40 backdrop-blur-md border border-white/10 hover:border-red-500/30 transition-all duration-300;
+  }
+
+  .bg-grid {
+    background-size: 40px 40px;
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  }
+
+  .mask-gradient {
+    mask-image: linear-gradient(to bottom, black, transparent);
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility section-padding {
+  @apply py-20 lg:py-24 px-6 lg:px-8;
+}
+
+@utility container-max {
+  @apply max-w-7xl mx-auto;
+}
+
+@utility card-hover {
+  @apply transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(220,38,38,0.1)];
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 15s ease infinite;
+}
+
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 5s infinite;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slideInUp {
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
