@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Verifica Google Search Console</title>
+</head>
+<body>
+  <p>Per verificare il tuo sito su Google Search Console, segui uno di questi metodi:</p>
+
+  <h2>Metodo 1: Meta Tag (raccomandato)</h2>
+  <p>Il meta tag è già presente nel file <code>src/app/layout.tsx</code> alla riga 40-42:</p>
+  <pre>
+  verification: {
+    google: "google-site-verification-code",
+  },
+  </pre>
+  <p>Sostituisci <code>google-site-verification-code</code> con il codice di verifica fornito da Google Search Console.</p>
+
+  <h2>Metodo 2: File HTML</h2>
+  <p>Carica il file fornito da Google nella directory <code>public/</code> del progetto. Il file sarà accessibile all'indirizzo:</p>
+  <p><code>https://maxthenics.com/NOME_FILE.html</code></p>
+
+  <p><strong>Nota:</strong> Questo file è solo un placeholder. Usa il file effettivo scaricato da Google Search Console.</p>
+</body>
+</html>
