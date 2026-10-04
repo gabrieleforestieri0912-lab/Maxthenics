@@ -21,7 +21,6 @@ import {
   Dumbbell,
 } from "lucide-react";
 import Image from "next/image";
-import LanguageToggle from "./LanguageToggle";
 import { useLanguage } from "../context/LanguageContext";
 
 interface NavLink {
@@ -147,8 +146,6 @@ function Navbar() {
                 </span>
               )}
             </Link>
-
-            <LanguageToggle compact />
 
             {user ? (
               <div className="flex items-center gap-3 lg:gap-4">
@@ -315,9 +312,6 @@ function Navbar() {
 
           <div className="relative z-10 min-h-screen flex flex-col">
             <div className="flex-1 px-6 pt-24 pb-4 space-y-1">
-              <div className="pb-2">
-                <LanguageToggle />
-              </div>
               {navLinks.map((link) => (
                 <div key={link.name}>
                   <Link
