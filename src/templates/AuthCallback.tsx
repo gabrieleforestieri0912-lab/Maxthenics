@@ -73,7 +73,7 @@ const AuthCallback: React.FC = () => {
           </p>
           <button
             onClick={() => navigate("/login", { replace: true })}
-            className="px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all"
+            className="px-8 py-4 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all"
           >
             Torna al Login
           </button>
@@ -84,9 +84,9 @@ const AuthCallback: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#050505]">
-      <div className="text-center">
+      <div className="text-center max-w-sm mx-auto px-6">
         <div className="w-16 h-16 bg-zinc-900 border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-          <div className="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
         </div>
         <p className="text-sm text-zinc-400 font-bold uppercase tracking-widest">
           Accesso in corso...

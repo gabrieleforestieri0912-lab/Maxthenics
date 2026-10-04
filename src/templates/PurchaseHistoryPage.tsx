@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Package, Clock, ShoppingBag, ArrowRight, Loader2 } from 'lucide-react';
+import { Package, Clock, ShoppingBag, ArrowRight } from 'lucide-react';
 import SEO from '../components/SEO';
 
 interface PurchaseItem {
@@ -103,9 +103,13 @@ const PurchaseHistoryPage: React.FC = () => {
 
                 {/* Loading State */}
                 {loading && (
-                    <div className="flex flex-col justify-center items-center h-64 gap-4">
-                        <Loader2 className="w-8 h-8 text-red-500 animate-spin" />
-                        <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs">Sincronizzazione dati in corso...</p>
+                    <div className="space-y-3 mt-10" aria-hidden="true">
+                        {[0, 1, 2].map((i) => (
+                            <div key={i} className="bg-zinc-900/30 border border-white/5 p-6 rounded-2xl animate-pulse">
+                                <div className="h-4 w-1/3 bg-white/10 rounded mb-3" />
+                                <div className="h-3 w-2/3 bg-white/5 rounded" />
+                            </div>
+                        ))}
                     </div>
                 )}
 

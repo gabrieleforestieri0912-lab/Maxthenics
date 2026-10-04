@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
@@ -17,7 +16,7 @@ const Cart: React.FC = () => {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="w-10 h-10 text-red-500 animate-spin" />
+        <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -47,7 +46,7 @@ const Cart: React.FC = () => {
             </p>
             <Link
               to="/login?redirect=/cart"
-              className="inline-block w-full bg-red-600 hover:bg-red-500 text-white font-black py-3 sm:py-4 rounded-xl transition-all text-sm uppercase tracking-widest"
+              className="inline-block w-full bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black py-3 sm:py-4 rounded-xl transition-all text-sm uppercase tracking-widest"
             >
               Accedi
             </Link>
@@ -248,7 +247,7 @@ const Cart: React.FC = () => {
                 <button
                   onClick={handleCheckout}
                   disabled={loading}
-                  className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 sm:py-5 rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 sm:gap-3 transition-all shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                  className="w-full bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-bold py-3 sm:py-5 rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 sm:gap-3 transition-all shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   {loading ? (
                     <>

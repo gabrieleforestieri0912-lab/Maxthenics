@@ -314,7 +314,7 @@ const MyWorkouts: React.FC = () => {
               </div>
               <button
                 onClick={navigateToCreate}
-                className="shrink-0 bg-red-600 hover:bg-red-500 text-white px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-[0.15em] transition-all shadow-lg shadow-red-900/20 hover:shadow-red-900/40 flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
+                className="shrink-0 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-[0.15em] transition-all shadow-lg shadow-red-900/20 hover:shadow-red-900/40 flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
               >
                 <Plus className="w-4 h-4" />
                 Nuovo Programma
@@ -475,7 +475,7 @@ const MyWorkouts: React.FC = () => {
               </p>
               <button
                 onClick={navigateToCreate}
-                className="bg-red-600 hover:bg-red-500 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-[0.15em] transition-all shadow-xl shadow-red-900/20 hover:shadow-red-900/40 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 mx-auto"
+                className="bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-[0.15em] transition-all shadow-xl shadow-red-900/20 hover:shadow-red-900/40 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 mx-auto"
               >
                 <Plus className="w-5 h-5" />
                 Crea il Tuo Primo Programma

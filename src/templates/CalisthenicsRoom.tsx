@@ -8,7 +8,6 @@ import {
   ArrowRight,
   Crown,
   PlayCircle,
-  Loader2,
   ChevronDown,
   ChevronRight,
   Clock,
@@ -106,7 +105,7 @@ const StepPopup = ({ item, index, anchorEl, onClose }: {
 const CalisthenicsRoom: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const [hasSubscription, setHasSubscription] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [expandedModule, setExpandedModule] = useState(0);
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
   const [hoveredCardEl, setHoveredCardEl] = useState<HTMLDivElement | null>(null);
@@ -220,15 +219,7 @@ const CalisthenicsRoom: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-red-500" />
-      </div>
-    );
-  }
-
-  // ─── NON-SUBSCRIBER VIEW ──────────────────────────────────────────────────
+  // ─── NON-SUBSCRIBER VIEW ──────────────────────────────────────────────────────
   if (!isAuthenticated || !hasSubscription) {
     const allFeatures = [
       { icon: <Video className="text-red-500" />, text: "Videochiamata settimanale 1 a 1 con me" },
@@ -259,7 +250,7 @@ const CalisthenicsRoom: React.FC = () => {
         />
 
         {/* ── HERO ── */}
-        <section className="relative min-h-[120vh] flex items-center justify-center px-6 pt-24 pb-20 overflow-hidden">
+        <section className="relative min-h-[92vh] flex items-center justify-center px-6 pt-28 pb-16 overflow-hidden">
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.18)_0%,transparent_60%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(249,115,22,0.1)_0%,transparent_50%)]" />
@@ -282,7 +273,7 @@ const CalisthenicsRoom: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.8] mb-8"
+              className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.85] mb-8"
             >
               <span className="text-white">CALISTHENICS</span>
               <br />
@@ -305,7 +296,7 @@ const CalisthenicsRoom: React.FC = () => {
               transition={{ delay: 0.5 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <a href="#offers" className="px-10 py-4 bg-red-600 hover:bg-red-500 text-white font-black rounded-2xl text-sm uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-red-900/30">
+              <a href="#offers" className="px-10 py-4 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black rounded-2xl text-sm uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-red-900/30">
                 Inizia il Percorso
               </a>
               <a href="#features" className="px-10 py-4 border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white font-black rounded-2xl text-sm uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95">
@@ -316,7 +307,7 @@ const CalisthenicsRoom: React.FC = () => {
         </section>
 
         {/* ── HOW IT WORKS ── */}
-        <section id="features" className="py-32 px-6 relative">
+        <section id="features" className="py-20 lg:py-24 px-6 lg:px-8 relative">
           <div className="max-w-5xl mx-auto relative">
             <div className="text-center mb-16">
               <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Il Metodo</span>
@@ -483,7 +474,7 @@ const CalisthenicsRoom: React.FC = () => {
         </section>
 
         {/* ── FEATURES + BONUSES ── */}
-        <section id="offers" className="py-32 px-6 relative">
+        <section id="offers" className="py-20 lg:py-24 px-6 lg:px-8 relative">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
               <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Cosa Ottieni</span>
@@ -565,7 +556,7 @@ const CalisthenicsRoom: React.FC = () => {
         </section>
 
         {/* ── PRICING ── */}
-        <section className="pb-32 px-6" id="pricing">
+        <section className="pb-20 lg:pb-24 px-6 lg:px-8" id="pricing">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Investimento</span>
@@ -760,7 +751,7 @@ const CalisthenicsRoom: React.FC = () => {
                       className={`w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all relative z-10 ${
                         plan.highlight
                           ? "bg-white text-black hover:bg-zinc-100 shadow-xl"
-                          : "bg-red-600 text-white hover:bg-red-500 shadow-lg shadow-red-900/20 hover:shadow-xl hover:shadow-red-900/30"
+                          : "bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white shadow-lg shadow-red-900/20 hover:shadow-xl hover:shadow-red-900/30"
                       } hover:scale-[1.02] active:scale-95`}
                     >
                       {plan.cta}
@@ -800,7 +791,7 @@ const CalisthenicsRoom: React.FC = () => {
         </section>
 
         {/* ── FAQ ── */}
-        <section className="pb-32 px-6">
+        <section className="pb-20 lg:pb-24 px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-16">
               <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Dubbi?</span>
@@ -929,7 +920,7 @@ const CalisthenicsRoom: React.FC = () => {
                   </div>
                   <h3 className="text-xl font-black mb-3 leading-tight">{res.title}</h3>
                   <p className="text-zinc-500 text-sm mb-8 leading-relaxed">{res.desc}</p>
-                  <Link to={res.to} className="inline-flex items-center gap-3 px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-black rounded-2xl transition-all text-xs tracking-widest uppercase shadow-lg shadow-red-900/20">
+                  <Link to={res.to} className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black rounded-2xl transition-all text-xs tracking-widest uppercase shadow-lg shadow-red-900/20">
                     {res.action} <ArrowRight size={14} />
                   </Link>
                 </div>

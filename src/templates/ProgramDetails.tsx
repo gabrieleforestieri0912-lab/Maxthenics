@@ -236,7 +236,7 @@ const ProgramDetails: React.FC = () => {
                           });
                           addNotification('Aggiunto al carrello!', 'success');
                         }}
-                        className="bg-red-600 hover:bg-red-500 text-white font-black py-4 px-8 rounded-2xl flex items-center justify-center gap-2 transition-all text-sm uppercase tracking-widest shadow-xl shadow-red-900/20"
+                        className="bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black py-4 px-8 rounded-2xl flex items-center justify-center gap-2 transition-all text-sm uppercase tracking-widest shadow-xl shadow-red-900/20"
                       >
                         {t('AGGIUNGI', 'ADD')}
                         <ShoppingCart className="w-4 h-4" />

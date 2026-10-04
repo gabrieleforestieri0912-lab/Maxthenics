@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   User,
@@ -754,10 +755,21 @@ const Create: React.FC = () => {
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
   // ─── AUTH GUARD ─────────────────────────────────────────────────────────
-  if (authLoading || !user) {
+  // While auth resolves the wizard renders immediately; actions requiring
+  // a user are guarded at submit time. Logged-out users get a login prompt.
+  if (!authLoading && !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="h-12 w-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center bg-black px-6">
+        <div className="text-center max-w-sm">
+          <h2 className="text-2xl font-black text-white mb-3">Accedi per creare</h2>
+          <p className="text-zinc-500 text-sm mb-6">Devi accedere per generare il tuo programma personalizzato.</p>
+          <Link
+            to="/login"
+            className="inline-block px-8 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-900/30"
+          >
+            Accedi
+          </Link>
+        </div>
       </div>
     );
   }
@@ -1518,7 +1530,7 @@ const Create: React.FC = () => {
                         type="button"
                         onClick={nextStep}
                         disabled={!canNext}
-                        className={`flex-1 bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-black transition-all shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed ${
+                        className={`flex-1 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white py-4 rounded-2xl font-black transition-all shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed ${
                           step === totalSteps - 1 ? "from-red-600 via-orange-600 to-red-600 bg-[length:200%_100%] animate-gradient" : ""
                         }`}
                       >

@@ -661,20 +661,12 @@ const MyProgram: React.FC = () => {
     );
   };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto p-4 md:p-8 bg-black text-white min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-zinc-800 border-t-red-600 animate-spin" />
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="container mx-auto p-4 md:p-8 bg-black text-white min-h-screen">
         <p className="text-red-500 text-center text-lg">{error}</p>
         <div className="text-center mt-8">
-          <button onClick={() => navigate('/create')} className="px-6 py-3 rounded-xl font-bold text-base uppercase tracking-widest text-white bg-red-600 hover:bg-red-500 transition">
+          <button onClick={() => navigate('/create')} className="px-6 py-3 rounded-xl font-bold text-base uppercase tracking-widest text-white bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 transition">
             Crea il tuo programma
           </button>
         </div>

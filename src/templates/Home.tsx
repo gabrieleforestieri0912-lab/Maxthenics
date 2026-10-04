@@ -81,7 +81,7 @@ const Home: React.FC = () => {
           >
             <Link
               to="/programs"
-              className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-red-600 text-white text-sm font-bold rounded-lg hover:bg-red-500 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white text-sm font-bold rounded-lg transition-colors"
             >
               Vedi i programmi
               <ArrowRight size={17} />
@@ -289,7 +289,7 @@ const Home: React.FC = () => {
                 ))}
               </div>
 
-              <Link to="/calisthenics-room" className="group bg-red-600 text-white hover:bg-red-500 px-8 py-4 rounded-xl text-xs font-black transition-all hover:scale-105 inline-flex items-center gap-4 uppercase tracking-[0.2em] shadow-lg shadow-red-900/40">
+              <Link to="/calisthenics-room" className="group bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-8 py-4 rounded-xl text-xs font-black transition-all hover:scale-105 inline-flex items-center gap-4 uppercase tracking-[0.2em] shadow-lg shadow-red-900/40">
                 Richiedi Accesso{" "}
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>

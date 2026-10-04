@@ -96,7 +96,7 @@ const DashboardProgramGrid: React.FC = () => {
         </p>
         <button
           onClick={() => navigate("/create")}
-          className="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-red-900/20"
+          className="bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-6 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-red-900/20"
         >
           Crea il Tuo Primo Programma
         </button>
@@ -169,7 +169,7 @@ const DashboardProgramGrid: React.FC = () => {
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -202,14 +202,6 @@ const Dashboard: React.FC = () => {
 
     fetchProfile();
   }, [navigate]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   const tierInfo = {
     free: { icon: Zap, label: 'Free Plan', color: 'text-zinc-500', bg: 'bg-zinc-500/10' },

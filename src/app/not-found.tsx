@@ -75,7 +75,7 @@ export default function NotFound() {
           >
             <Link
               href="/"
-              className="w-full sm:w-auto px-8 py-3.5 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl transition-all hover:scale-[1.03] active:scale-[0.98] text-sm uppercase tracking-widest shadow-xl shadow-red-900/30"
+              className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black rounded-xl transition-all hover:scale-[1.03] active:scale-[0.98] text-sm uppercase tracking-widest shadow-xl shadow-red-900/30"
             >
               Torna alla Home
             </Link>

@@ -199,7 +199,7 @@ const Register: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full bg-red-600 hover:bg-red-500 text-white py-2.5 sm:py-3 mt-3 sm:mt-4 rounded-xl font-bold text-sm sm:text-base transition-all hover:scale-[1.02] shadow-lg shadow-red-900/20 active:scale-[0.98]"
+              className="w-full bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white py-2.5 sm:py-3 mt-3 sm:mt-4 rounded-xl font-bold text-sm sm:text-base transition-all hover:scale-[1.02] shadow-lg shadow-red-900/20 active:scale-[0.98]"
             >
               Crea Account
             </button>

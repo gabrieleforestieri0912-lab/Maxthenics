@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Check, Zap, Star, ShieldCheck, Dumbbell, Loader2 } from 'lucide-react';
+import { Check, Zap, Star, ShieldCheck, Dumbbell } from 'lucide-react';
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
 import { subscriptionPlans, SubscriptionPlan } from '../config/plans';
 
@@ -191,15 +191,20 @@ function PricingCard({ plan, IconComponent, index }: PricingCardProps) {
           ))}
         </ul>
 
-        <button
+<button
           onClick={handleSubscription}
           disabled={loading}
           className={`w-full block py-3.5 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] text-center transition-all disabled:opacity-50 disabled:cursor-not-allowed ${plan.highlight
-              ? 'bg-red-600 text-white shadow-xl shadow-red-900/20 hover:bg-red-500 hover:scale-[1.02]'
+              ? 'bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white shadow-xl shadow-red-900/20 hover:bg-red-500 hover:scale-[1.02]'
               : 'bg-white text-black hover:bg-zinc-200 active:scale-95'
             }`}
         >
-          {loading ? <Loader2 className="w-4 h-4 mx-auto animate-spin" /> : plan.cta}
+          {loading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1" />
+              Caricamento...
+            </>
+          ) : plan.cta}
         </button>
       </div>
     </motion.div>
