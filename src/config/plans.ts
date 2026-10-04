@@ -33,7 +33,7 @@ export const subscriptionPlans: SubscriptionPlan[] = [
   {
     id: 'base',
     name: 'Base',
-    price: 19,
+    price: 7.99,
     iconName: 'Dumbbell',
     features: [
       'Tutti i programmi skill (Planche, Front Lever, Handstand)',
@@ -51,7 +51,7 @@ export const subscriptionPlans: SubscriptionPlan[] = [
   {
     id: 'pro',
     name: 'Pro',
-    price: 39,
+    price: 9.99,
     iconName: 'Star',
     features: [
       'Tutti i programmi skill e forza',
@@ -71,7 +71,7 @@ export const subscriptionPlans: SubscriptionPlan[] = [
   {
     id: 'elite',
     name: 'Elite',
-    price: 79,
+    price: 14.99,
     iconName: 'ShieldCheck',
     features: [
       'Sessioni 1:1 mensili con coach',
