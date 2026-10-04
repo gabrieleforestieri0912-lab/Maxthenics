@@ -32,7 +32,7 @@ const Success: React.FC = () => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="max-w-xl w-full bg-zinc-900/50 border border-white/10 rounded-[3rem] p-8 md:p-16 text-center relative z-10 backdrop-blur-xl shadow-2xl"
+        className="max-w-xl w-full bg-zinc-900/50 border border-white/10 rounded-[2.5rem] p-8 md:p-16 text-center relative z-10 backdrop-blur-xl shadow-2xl"
       >
         <motion.div
           initial={{ scale: 0 }}

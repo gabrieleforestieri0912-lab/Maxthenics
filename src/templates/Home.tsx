@@ -176,7 +176,7 @@ const Home: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative rounded-[3rem] p-8 md:p-16 lg:p-20 border border-white/10 overflow-hidden bg-gradient-to-br from-zinc-900 to-black shadow-2xl"
+            className="relative rounded-[2.5rem] p-8 md:p-16 lg:p-20 border border-white/10 overflow-hidden bg-gradient-to-br from-zinc-900 to-black shadow-2xl"
           >
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(220,38,38,0.15)_0%,transparent_60%)] pointer-events-none" />
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[100px] pointer-events-none" />
@@ -249,7 +249,7 @@ const Home: React.FC = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="container-max">
-          <div className="bg-zinc-950 rounded-[3rem] border border-white/5 p-8 md:p-16 relative overflow-hidden shadow-2xl">
+          <div className="bg-zinc-950 rounded-[2.5rem] border border-white/5 p-8 md:p-16 relative overflow-hidden shadow-2xl">
             <div className="absolute inset-0 opacity-[0.03] bg-grid pointer-events-none" />
 
             <div className="relative z-10 max-w-4xl mx-auto text-center">
@@ -289,7 +289,7 @@ const Home: React.FC = () => {
                 ))}
               </div>
 
-              <Link to="/calisthenics-room" className="group bg-red-600 text-white hover:bg-red-700 px-8 py-4 rounded-xl text-xs font-black transition-all hover:scale-105 inline-flex items-center gap-4 uppercase tracking-[0.2em] shadow-lg shadow-red-900/40">
+              <Link to="/calisthenics-room" className="group bg-red-600 text-white hover:bg-red-500 px-8 py-4 rounded-xl text-xs font-black transition-all hover:scale-105 inline-flex items-center gap-4 uppercase tracking-[0.2em] shadow-lg shadow-red-900/40">
                 Richiedi Accesso{" "}
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>

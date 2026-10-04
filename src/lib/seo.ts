@@ -5,7 +5,7 @@ import { programData, type ProgramDataItem } from "@/data/programs";
 export const SITE_URL = "https://maxthenics.com";
 export const SITE_NAME = "Maxthenics";
 export const SITE_TITLE = "Maxthenics - Calisthenics Mastery";
-export const DEFAULT_IMAGE = `${SITE_URL}/Img/maxthenics.png`;
+export const DEFAULT_IMAGE = `${SITE_URL}/maxthenics.png`;
 export const SITE_DESCRIPTION =
   "La piattaforma definitiva per il Calisthenics. Programmi scientifici personalizzati, tracking avanzato e coaching 1:1 per sbloccare skills come Front Lever e Planche.";
 
@@ -59,7 +59,7 @@ interface MetaOptions {
 
 function makeMetadata(opts: MetaOptions): Metadata {
   const url = absoluteUrl(opts.path);
-  const image = absoluteImage(opts.image ?? "/Img/maxthenics.png");
+  const image = absoluteImage(opts.image ?? "/maxthenics.png");
   return {
     title: opts.absoluteTitle ? { absolute: opts.title } : opts.title,
     description: opts.description,

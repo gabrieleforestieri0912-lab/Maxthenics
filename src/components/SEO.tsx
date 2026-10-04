@@ -36,7 +36,7 @@ const SEO: React.FC<SEOProps> = ({
 }) => {
   const defaultTitle = "Maxthenics - Calisthenics Mastery";
   const defaultDescription = "La piattaforma definitiva per il Calisthenics. Programmi personalizzati, tracking avanzato e coaching 1:1 per raggiungere le tue goals skills come Front Lever e Planche.";
-  const defaultImage = "/Img/maxthenics.png";
+  const defaultImage = "/maxthenics.png";
   const defaultUrl = "https://maxthenics.com";
 
   const pageTitle = title ? `${title} | Maxthenics` : defaultTitle;

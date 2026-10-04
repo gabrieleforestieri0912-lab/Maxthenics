@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import LanguageToggle from "./LanguageToggle";
+import { useLanguage } from "../context/LanguageContext";
 
 interface NavLink {
   name: string;
@@ -39,6 +40,7 @@ function Navbar() {
 
   // ── Scroll-driven shrink ──
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,10 +74,10 @@ function Navbar() {
   }, [isOpen]);
 
   const navLinks: NavLink[] = [
-    { name: "Funzionalità", to: "/#features" },
-    { name: "Piani", to: "/pricing" },
-    { name: "Programmi", to: "/programs" },
-    { name: "Guida", to: "/guide" },
+    { name: t("Funzionalità", "Features"), to: "/#features" },
+    { name: t("Piani", "Plans"), to: "/pricing" },
+    { name: t("Programmi", "Programs"), to: "/programs" },
+    { name: t("Guida", "Guide"), to: "/guide" },
   ];
 
   return (
@@ -90,7 +92,7 @@ function Navbar() {
           className={`w-full bg-zinc-950/90 backdrop-blur-xl border border-white/10 pointer-events-auto transition-all duration-300 ${
             scrolled
               ? 'max-w-5xl mx-4 mt-4 rounded-full px-3 sm:px-5 shadow-[0_10px_40px_rgba(0,0,0,0.8)]'
-              : 'max-w-7xl mx-4 mt-3 rounded-[2rem] px-4 sm:px-6 lg:px-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)]'
+              : 'max-w-7xl mx-4 mt-3 rounded-2xl px-4 sm:px-6 lg:px-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)]'
           }`}
         >
           <div className="flex items-center justify-between h-14">
@@ -190,7 +192,7 @@ function Navbar() {
                         >
                           <Layout className="w-4 h-4 text-zinc-400" />
                           <span className="text-sm text-zinc-300">
-                            Il mio Programma
+                            {t("Il mio Programma", "My Program")}
                           </span>
                         </Link>
                         <Link
@@ -200,7 +202,7 @@ function Navbar() {
                         >
                           <Dumbbell className="w-4 h-4 text-red-500" />
                           <span className="text-sm text-zinc-300">
-                            I Miei Workout
+                            {t("I Miei Workout", "My Workouts")}
                           </span>
                         </Link>
                         <Link
@@ -210,7 +212,7 @@ function Navbar() {
                         >
                           <ShoppingBag className="w-4 h-4 text-zinc-400" />
                           <span className="text-sm text-zinc-300">
-                            I Miei Acquisti
+                            {t("I Miei Acquisti", "My Purchases")}
                           </span>
                         </Link>
                         <Link
@@ -220,7 +222,7 @@ function Navbar() {
                         >
                           <Crown className="w-4 h-4 text-red-500" />
                           <span className="text-sm text-zinc-300">
-                            Coaching Elite
+                            {t("Coaching Elite", "Elite Coaching")}
                           </span>
                         </Link>
                         <Link
@@ -230,7 +232,7 @@ function Navbar() {
                         >
                           <Plus className="w-4 h-4 text-zinc-400" />
                           <span className="text-sm text-zinc-300">
-                            Crea Programma
+                            {t("Crea Programma", "Create Program")}
                           </span>
                         </Link>
                         <Link
@@ -240,7 +242,7 @@ function Navbar() {
                         >
                           <Brain className="w-4 h-4 text-zinc-400" />
                           <span className="text-sm text-zinc-300">
-                            Chat AI
+                            {t("Chat AI", "AI Chat")}
                           </span>
                         </Link>
                         <button
@@ -252,7 +254,7 @@ function Navbar() {
                           className="w-full flex items-center gap-3 p-3 hover:bg-red-600/10 rounded-xl transition-colors text-left"
                         >
                           <LogOut className="w-4 h-4 text-red-500" />
-                          <span className="text-sm text-red-500">Esci</span>
+                          <span className="text-sm text-red-500">{t("Esci", "Logout")}</span>
                         </button>
                       </div>
                     </div>
@@ -262,9 +264,9 @@ function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl font-bold text-xs transition-all hover:shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:-translate-y-0.5"
+                className="bg-red-600 hover:bg-red-500 text-white px-5 py-2 rounded-xl font-bold text-xs transition-all hover:shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:-translate-y-0.5"
               >
-                ACCEDI
+                {t("ACCEDI", "LOGIN")}
               </Link>
             )}
           </div>
@@ -338,7 +340,7 @@ function Navbar() {
                       </div>
                       <div className="min-w-0">
                         <p className="text-[9px] font-black text-red-500 uppercase tracking-widest leading-none mb-0.5">
-                          Livello Atleta
+                          {t("Livello Atleta", "Athlete Level")}
                         </p>
                         <p className="text-base font-bold text-white truncate">
                           {user.name}
@@ -352,7 +354,7 @@ function Navbar() {
                         onClick={() => setIsOpen(false)}
                       >
                         <Plus size={15} />
-                        CREA
+                        {t("CREA", "CREATE")}
                       </Link>
                       <Link
                         to="/my-workouts"
@@ -360,7 +362,7 @@ function Navbar() {
                         onClick={() => setIsOpen(false)}
                       >
                         <Dumbbell size={15} />
-                        WORKOUT
+                        {t("WORKOUT", "WORKOUTS")}
                       </Link>
                       <button
                         onClick={() => {
@@ -370,7 +372,7 @@ function Navbar() {
                         className="col-span-2 flex items-center justify-center gap-2 py-3 bg-red-600/10 text-red-500 rounded-xl text-[11px] font-bold border border-red-500/20 transition-all"
                       >
                         <LogOut size={15} />
-                        LOGOUT
+                        {t("LOGOUT", "LOGOUT")}
                       </button>
                     </div>
                   </div>
@@ -378,10 +380,10 @@ function Navbar() {
                 <div>
                   <Link
                     to="/login"
-                    className="block w-full text-center bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl font-black text-base uppercase tracking-widest shadow-2xl shadow-red-900/40"
+                    className="block w-full text-center bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-black text-base uppercase tracking-widest shadow-2xl shadow-red-900/40"
                     onClick={() => setIsOpen(false)}
                   >
-                    Inizia Ora
+                    {t("Inizia Ora", "Start Now")}
                   </Link>
                 </div>
               )}

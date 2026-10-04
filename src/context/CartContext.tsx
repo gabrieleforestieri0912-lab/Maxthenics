@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { safeJsonParse } from '../lib/safeJson';
 
 export interface CartItem {
   id: string;
@@ -27,8 +28,8 @@ export const CartContext = createContext<CartContextType | undefined>(undefined)
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     if (typeof window !== 'undefined') {
-      const savedCart = localStorage.getItem('cart');
-      return savedCart ? JSON.parse(savedCart) : [];
+      const parsed = safeJsonParse<unknown>(localStorage.getItem('cart'), []);
+      return Array.isArray(parsed) ? (parsed as CartItem[]) : [];
     }
     return [];
   });

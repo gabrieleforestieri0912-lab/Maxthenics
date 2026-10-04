@@ -452,7 +452,7 @@ const ChatWidgetContent = () => {
                                 <textarea value={editingMessageContent} onChange={(e) => setEditingMessageContent(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === 'Escape') cancelEdit(); }} autoFocus className="w-full bg-zinc-800 border border-red-500/30 text-white px-3 py-2 rounded-2xl text-xs outline-none resize-none" rows={2} />
                                 <div className="flex items-center gap-2 justify-end">
                                   <button onClick={cancelEdit} className="text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all">Annulla</button>
-                                  <button onClick={saveEdit} className="px-3 py-1 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-1 shadow-lg shadow-red-900/30"><CheckCheck size={10} /> Rigenera</button>
+                                  <button onClick={saveEdit} className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-1 shadow-lg shadow-red-900/30"><CheckCheck size={10} /> Rigenera</button>
                                 </div>
                               </div>
                             ) : (

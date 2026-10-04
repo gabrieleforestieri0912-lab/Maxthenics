@@ -37,7 +37,7 @@ const Cart: React.FC = () => {
             <ArrowRight className="w-4 h-4 -rotate-45 transform group-hover:-translate-x-1 transition-transform" />
             <span className="text-sm">Home</span>
           </Link>
-          <div className="bg-zinc-900/50 p-6 sm:p-12 rounded-2xl sm:rounded-[3rem] border border-white/10 text-center max-w-md w-full">
+          <div className="bg-zinc-900/50 p-6 sm:p-12 rounded-2xl sm:rounded-[2.5rem] border border-white/10 text-center max-w-md w-full">
             <ShoppingBag className="w-10 h-10 sm:w-14 sm:h-14 text-zinc-500 mx-auto mb-4 sm:mb-6" />
             <h2 className="text-xl sm:text-2xl font-black text-white mb-3">
               Accedi per continuare
@@ -47,7 +47,7 @@ const Cart: React.FC = () => {
             </p>
             <Link
               to="/login?redirect=/cart"
-              className="inline-block w-full bg-red-600 hover:bg-red-700 text-white font-black py-3 sm:py-4 rounded-xl transition-all text-sm uppercase tracking-widest"
+              className="inline-block w-full bg-red-600 hover:bg-red-500 text-white font-black py-3 sm:py-4 rounded-xl transition-all text-sm uppercase tracking-widest"
             >
               Accedi
             </Link>
@@ -67,7 +67,7 @@ const Cart: React.FC = () => {
         },
         body: JSON.stringify({
           cartItems,
-          userId: (user as any)?._id,
+          userId: user?.id,
         }),
       });
 
@@ -115,7 +115,7 @@ const Cart: React.FC = () => {
             <span className="text-sm">Home</span>
           </Link>
 
-          <div className="bg-zinc-900/50 p-6 sm:p-12 rounded-2xl sm:rounded-[3rem] border border-white/10 text-center max-w-md w-full">
+          <div className="bg-zinc-900/50 p-6 sm:p-12 rounded-2xl sm:rounded-[2.5rem] border border-white/10 text-center max-w-md w-full">
             <div className="bg-zinc-800 w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-8">
               <ShoppingBag className="w-6 h-6 sm:w-10 sm:h-10 text-zinc-500" />
             </div>
@@ -127,7 +127,7 @@ const Cart: React.FC = () => {
             </p>
             <Link
               to="/programs"
-              className="inline-block w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 sm:py-4 rounded-lg sm:rounded-xl transition-all text-sm sm:text-base"
+              className="inline-block w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 sm:py-4 rounded-lg sm:rounded-xl transition-all text-sm sm:text-base"
             >
               Vedi i Programmi
             </Link>
@@ -186,7 +186,7 @@ const Cart: React.FC = () => {
                 >
                 <div className="w-full sm:w-20 h-32 sm:h-24 rounded-xl sm:rounded-2xl overflow-hidden shrink-0 relative">
                   <Image
-                    src={item.image || '/Img/maxthenics.png'}
+                    src={item.image || '/maxthenics.png'}
                     alt={item.title}
                     fill
                     className="object-cover"
@@ -248,7 +248,7 @@ const Cart: React.FC = () => {
                 <button
                   onClick={handleCheckout}
                   disabled={loading}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 sm:py-5 rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 sm:gap-3 transition-all shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                  className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 sm:py-5 rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 sm:gap-3 transition-all shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   {loading ? (
                     <>

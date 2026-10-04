@@ -15,6 +15,7 @@ import {
   History
 } from 'lucide-react';
 import SEO from "../components/SEO";
+import { safeJsonParse } from "../lib/safeJson";
 import type { SavedProgram } from "@/types/program";
 
 interface UserProfile {
@@ -31,8 +32,7 @@ const DashboardProgramGrid: React.FC = () => {
   const [savedPrograms, setSavedPrograms] = useState<SavedProgram[]>([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("maxthenicsPrograms");
-    const local: SavedProgram[] = saved ? JSON.parse(saved) : [];
+    const local: SavedProgram[] = safeJsonParse(localStorage.getItem("maxthenicsPrograms"), []);
 
     const token = localStorage.getItem("token");
     if (token) {
@@ -86,7 +86,7 @@ const DashboardProgramGrid: React.FC = () => {
 
   if (savedPrograms.length === 0) {
     return (
-      <div className="text-center py-16 border-2 border-dashed border-white/5 rounded-[2rem]">
+      <div className="text-center py-16 border-2 border-dashed border-white/5 rounded-2xl">
         <Dumbbell className="mx-auto text-zinc-800 mb-5" size={40} />
         <p className="text-zinc-500 font-medium italic text-sm">
           Non hai ancora programmi personalizzati.
@@ -96,7 +96,7 @@ const DashboardProgramGrid: React.FC = () => {
         </p>
         <button
           onClick={() => navigate("/create")}
-          className="bg-linear-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white px-6 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-red-900/20"
+          className="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-red-900/20"
         >
           Crea il Tuo Primo Programma
         </button>
@@ -183,6 +183,10 @@ const Dashboard: React.FC = () => {
         const res = await fetch('/api/auth/me', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (!res.ok) {
+          navigate('/login');
+          return;
+        }
         const data = await res.json();
         if (data.user) {
           setProfile(data.user);
@@ -253,7 +257,7 @@ const Dashboard: React.FC = () => {
                  { label: 'Giorni di Training', value: '12', icon: Activity },
                  { label: 'Messaggi AI', value: '42', icon: MessageSquare },
                ].map((stat, i) => (
-                 <div key={i} className="bg-zinc-900/30 border border-white/5 p-6 rounded-[2rem] hover:bg-zinc-900/50 transition-colors">
+                 <div key={i} className="bg-zinc-900/30 border border-white/5 p-6 rounded-2xl hover:bg-zinc-900/50 transition-colors">
                     <stat.icon className="text-red-600 mb-4" size={24} />
                     <p className="text-3xl font-black">{stat.value}</p>
                     <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{stat.label}</p>
@@ -262,7 +266,7 @@ const Dashboard: React.FC = () => {
             </div>
 
              {/* Program Library Section */}
-            <div className="bg-zinc-900/30 border border-white/5 rounded-[3rem] p-8 md:p-12">
+            <div className="bg-zinc-900/30 border border-white/5 rounded-[2.5rem] p-8 md:p-12">
               <div className="flex justify-between items-center mb-10">
                 <h2 className="text-2xl font-black uppercase tracking-tighter">I Miei Programmi</h2>
                 <Link to="/my-workouts" className="text-red-500 text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
@@ -276,7 +280,7 @@ const Dashboard: React.FC = () => {
 
           {/* Right Column: Sidebar Actions */}
           <div className="space-y-6">
-            <div className="bg-linear-to-br from-red-600 to-orange-600 p-8 rounded-[3rem] shadow-2xl shadow-red-900/20">
+            <div className="bg-linear-to-br from-red-600 to-orange-600 p-8 rounded-[2.5rem] shadow-2xl shadow-red-900/20">
               <h3 className="text-xl font-black uppercase tracking-tight mb-4 text-white">Neural Coach</h3>
               <p className="text-white/80 text-sm mb-8 font-medium">Hai domande sul tuo allenamento? Chiedi all&apos;AI d&apos;élite.</p>
               <Link to="/chat" className="block w-full bg-white text-black py-4 rounded-2xl font-black uppercase tracking-widest text-center text-xs hover:scale-[1.02] transition-transform">
@@ -284,7 +288,7 @@ const Dashboard: React.FC = () => {
               </Link>
             </div>
 
-            <div className="bg-zinc-900/30 border border-white/5 p-8 rounded-[3rem] space-y-4">
+            <div className="bg-zinc-900/30 border border-white/5 p-8 rounded-[2.5rem] space-y-4">
                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 mb-6">Impostazioni Account</h4>
                {[
                  { label: 'Modifica Profilo', icon: User, path: '/questionnaire' },

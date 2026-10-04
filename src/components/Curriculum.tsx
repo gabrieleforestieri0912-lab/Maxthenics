@@ -236,7 +236,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                                       onOpenWorkout && (
                                         <button
                                           onClick={onOpenWorkout}
-                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[11px] font-black uppercase tracking-widest transition-colors"
+                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-[11px] font-black uppercase tracking-widest transition-colors"
                                         >
                                           <Dumbbell size={12} />
                                           {t(

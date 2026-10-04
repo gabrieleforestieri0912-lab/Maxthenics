@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { programData, localizeProgram } from '../data/programs';
 import { getCurriculum } from '../data/curriculum';
+import { localizeList, localizeNote } from '../data/exerciseI18n';
 import Curriculum from '../components/Curriculum';
 import ShareButton from '../components/ShareButton';
 import { useLanguage } from '../context/LanguageContext';
@@ -94,8 +95,13 @@ const _buildWorkoutPlan = (
   return { id, weeks, weeklyOverview: [], warmUp: [], coolDown: [], progressionNotes: [] };
 };
 
-function weekTheme(weekIdx: number, totalWeeks: number, _programId: number): string {
+function weekTheme(weekIdx: number, totalWeeks: number, _programId: number, locale: 'it' | 'en' = 'it'): string {
   const third = Math.ceil(totalWeeks / 3);
+  if (locale === 'en') {
+    if (weekIdx < third) return 'Conditioning & Adaptation';
+    if (weekIdx < third * 2) return 'Volume Intensification';
+    return 'Strength Peak & Mastery';
+  }
   if (weekIdx < third) return 'Condizionamento & Adattamento';
   if (weekIdx < third * 2) return 'Intensificazione del Volume';
   return 'Picco di Forza & Mastery';
@@ -105,15 +111,21 @@ function weekTheme(weekIdx: number, totalWeeks: number, _programId: number): str
 const PROGRAM_CONFIG: Record<number, {
   title: string;
   tagline: string;
+  taglineEn: string;
   warmUp: string[];
+  warmUpEn: string[];
   coolDown: string[];
+  coolDownEn: string[];
   getWorkout: (exercise: Exercise, week: number, dayIndex: number) => WorkoutSet;
 }> = {
   101: {
     title: 'Metabolic Neural Flow',
     tagline: 'Attivazione neurale e metabolica per principianti assoluti.',
+    taglineEn: 'Neural and metabolic activation for absolute beginners.',
     warmUp: ['Cat-Cow Stretch (10x)', "Child's Pose (30s)", 'Jumping Jacks (1 min)', 'Arm Circles (fwd/bwd 10x)'],
+    warmUpEn: ['Cat-Cow Stretch (10x)', "Child's Pose (30s)", 'Jumping Jacks (1 min)', 'Arm Circles (fwd/bwd 10x)'],
     coolDown: ['Deep Squat Hold (1 min)', 'Pigeon Stretch (1 min/side)', 'Foam Rolling (gambe)'],
+    coolDownEn: ['Deep Squat Hold (1 min)', 'Pigeon Stretch (1 min/side)', 'Foam Rolling (legs)'],
     getWorkout: (ex, _week) => ({
       sets: 3,
       reps: ex.type === 'strength' ? '8-10' : '30-45s',
@@ -125,8 +137,11 @@ const PROGRAM_CONFIG: Record<number, {
   102: {
     title: 'Core Structural Stability',
     tagline: 'La base biomeccanica indistruttibile: core profondo, respirazione, forza isometrica.',
+    taglineEn: 'The unbreakable biomechanical base: deep core, breathing, isometric strength.',
     warmUp: ['Plank (60s)', 'Bird-Dog (10x/side)', 'Cat-Cow (10x)', 'Hollow Body Rock (20x)'],
+    warmUpEn: ['Plank (60s)', 'Bird-Dog (10x/side)', 'Cat-Cow (10x)', 'Hollow Body Rock (20x)'],
     coolDown: ['Arch Body Rock (20x)', 'Child\'s Pose (1 min)', 'Deep Squat Hold (30s)'],
+    coolDownEn: ['Arch Body Rock (20x)', 'Child\'s Pose (1 min)', 'Deep Squat Hold (30s)'],
     getWorkout: (ex, week, dayIndex) => {
       const isCoreDay = dayIndex === 4;
       return {
@@ -143,8 +158,11 @@ const PROGRAM_CONFIG: Record<number, {
   103: {
     title: 'Fundamental Biomechanics',
     tagline: 'Traiettorie tecniche perfette per trazioni, piegamenti e dip.',
+    taglineEn: 'Perfect technical patterns for pull-ups, push-ups and dips.',
     warmUp: ['Scapular Wall Slides (15x)', 'Dynamic Chest Stretch (10x/side)', 'Jumping Jacks (1 min)', 'Wrist Prep (30s/side)'],
+    warmUpEn: ['Scapular Wall Slides (15x)', 'Dynamic Chest Stretch (10x/side)', 'Jumping Jacks (1 min)', 'Wrist Prep (30s/side)'],
     coolDown: ['Deep Squat Hold (1 min)', 'Pigeon Stretch (1 min/side)', 'Thoracic Spine Rotation (10x/side)'],
+    coolDownEn: ['Deep Squat Hold (1 min)', 'Pigeon Stretch (1 min/side)', 'Thoracic Spine Rotation (10x/side)'],
     getWorkout: (ex, week, _dayId) => {
       if (ex.id === 'bw-004') { // pull-up day high intensity
         return { sets: 4, reps: week <= 2 ? '5-7' : '6-9', rest: '90-120s', tempo: '2/1/2/0', notes: 'Scapular retraction before each rep' };
@@ -161,8 +179,11 @@ const PROGRAM_CONFIG: Record<number, {
   201: {
     title: 'Retraction & Depression Protocol',
     tagline: 'Forza scapolare specifica per il Front Lever: la base bioenergetica.',
+    taglineEn: 'Specific scapular strength for the Front Lever: the bioenergetic base.',
     warmUp: ['Scapular Wall Slides (15x)', 'Wrist Prep (30s/side)', 'Arm Circles (10x fwd/bwd)', 'Tuck Front Lever Hold (20s x 3)'],
+    warmUpEn: ['Scapular Wall Slides (15x)', 'Wrist Prep (30s/side)', 'Arm Circles (10x fwd/bwd)', 'Tuck Front Lever Hold (20s x 3)'],
     coolDown: ['Child\'s Pose (1 min)', 'Thoracic Rotation (10x/side)', 'Dislocate al Bastone (10x, presa larga)'],
+    coolDownEn: ['Child\'s Pose (1 min)', 'Thoracic Rotation (10x/side)', 'Wide-Grip Stick Dislocates (10x)'],
     getWorkout: (ex, week) => {
       if (ex.id === 'bw-004') {
         return { sets: 4, reps: week <= 3 ? '5-7' : week <= 6 ? '6-8' : '5-6 zavorrato', rest: '90-120s', tempo: '2/0/1/0', notes: 'Retriczione completa nella fase discendente' };
@@ -182,8 +203,11 @@ const PROGRAM_CONFIG: Record<number, {
   202: {
     title: 'Straddle Lever Dynamics',
     tagline: 'Transizione avanzata: dalla leva al massimo reclutamento delle unità motorie.',
+    taglineEn: 'Advanced transition: from the lever to maximum motor-unit recruitment.',
     warmUp: ['Adv Tuck Front Lever (30s x 1)', 'Wrist Prep arcobaleno (20s/side)', 'Scapular Depression drills (10x)', 'Dislocate al Bastone larga (10x)'],
+    warmUpEn: ['Adv Tuck Front Lever (30s x 1)', 'Rainbow Wrist Prep (20s/side)', 'Scapular Depression Drills (10x)', 'Wide Stick Dislocates (10x)'],
     coolDown: ['Child\'s Pose con apertura braccia (1 min)', 'Foam Rolling Schiena (2 min)', 'Deep Squat Hold (30s)'],
+    coolDownEn: ['Child\'s Pose with open arms (1 min)', 'Back Foam Rolling (2 min)', 'Deep Squat Hold (30s)'],
     getWorkout: (ex, week, dayIndex) => {
       const isSkillsDay = dayIndex === 4;
       // Straddle/full front lever days
@@ -209,8 +233,11 @@ const PROGRAM_CONFIG: Record<number, {
   203: {
     title: 'Elite Pulling Mechanics',
     tagline: 'Il culmine. Full Front Lever e pull-ups in leva. Reclutamento massimale delle unità motorie.',
+    taglineEn: 'The pinnacle. Full Front Lever and lever pull-ups. Maximal motor-unit recruitment.',
     warmUp: ['Full FL Hold (30s)', 'Muscle-up Assistito (5x)', 'Wrist Prep arcobaleno (30s/side)', 'Dislocate al Bastone stretta (10x)'],
+    warmUpEn: ['Full FL Hold (30s)', 'Assisted Muscle-up (5x)', 'Rainbow Wrist Prep (30s/side)', 'Narrow Stick Dislocates (10x)'],
     coolDown: ['German Hang (60s)', 'Arch Body Rock (20x)', 'Deep Squat Hold (1 min)'],
+    coolDownEn: ['German Hang (60s)', 'Arch Body Rock (20x)', 'Deep Squat Hold (1 min)'],
     getWorkout: (ex, week) => {
       if (ex.id === 'bw-009-full') {
         return { sets: 5, reps: week <= 4 ? '8-12s' : week <= 8 ? '12-18s' : '15-22s', rest: '180s', tempo: 'isometrico', notes: 'Massima tensione, zero slack nel corpo' };
@@ -230,8 +257,11 @@ const PROGRAM_CONFIG: Record<number, {
   301: {
     title: 'Protraction & Wrist Resilience',
     tagline: 'Serrati anteriori e salute dei polsi: le fondamenta pneumatiche per la spinta.',
+    taglineEn: 'Serratus anterior and wrist health: the foundations of pushing strength.',
     warmUp: ['Wrist Prep arcobaleno (30s/side)', 'Dislocate al Bastone (presa larga, 10x)', 'Cat-Cow (10x)', 'Dynamic Chest Stretch (10x/side)'],
+    warmUpEn: ['Rainbow Wrist Prep (30s/side)', 'Wide-Grip Stick Dislocates (10x)', 'Cat-Cow (10x)', 'Dynamic Chest Stretch (10x/side)'],
     coolDown: ['Child\'s Pose (1 min)', 'Deep Squat Hold (30s)', 'Tuck Planche Hold (20s x 2)'],
+    coolDownEn: ['Child\'s Pose (1 min)', 'Deep Squat Hold (30s)', 'Tuck Planche Hold (20s x 2)'],
     getWorkout: (ex, week, dayIndex) => {
       const _isPlancheDay = dayIndex === 1;
       if (ex.id === 'bw-010') {
@@ -252,8 +282,11 @@ const PROGRAM_CONFIG: Record<number, {
    302: {
     title: 'Hypertrophic Push Periodization',
     tagline: 'Periodizzazione ondulata per volume specifico e forza esplosiva: dalla Tuck alla Straddle Planche.',
+    taglineEn: 'Undulating periodization for specific volume and explosive strength: from Tuck to Straddle Planche.',
     warmUp: ['Pike Push-up (8x)', 'Wrist Prep (30s/side)', 'Scapular Wall Slides (15x)', 'Push-up incline (10x)'],
+    warmUpEn: ['Pike Push-up (8x)', 'Wrist Prep (30s/side)', 'Scapular Wall Slides (15x)', 'Incline Push-ups (10x)'],
     coolDown: ['Child\'s Pose (1 min)', 'Dynamic Chest Stretch (10x/side)', 'Deep Squat Hold (30s)'],
+    coolDownEn: ['Child\'s Pose (1 min)', 'Dynamic Chest Stretch (10x/side)', 'Deep Squat Hold (30s)'],
     getWorkout: (ex, week, dayIndex) => {
       const _isPlancheDay = dayIndex === 1;
       // Periodizzazione ondulata: Week 1-3 volume, Week 4-6 intensità, Week 7-10 picco
@@ -275,8 +308,11 @@ const PROGRAM_CONFIG: Record<number, {
   303: {
     title: 'Full Planche Bio-Optimization',
     tagline: 'Il culmine della spinta statica. Dominio totale della gravità con momenti di forza ottimizzati.',
+    taglineEn: 'The pinnacle of static pushing. Total mastery of gravity with optimized torque.',
     warmUp: ['Straddle Planche (15s x 3)', 'Pike Push-up (8x)', 'Wrist Prep arcobaleno (30s/side)', 'Planche Lean (15x)', 'Hollow Body Rock (25x)'],
+    warmUpEn: ['Straddle Planche (15s x 3)', 'Pike Push-up (8x)', 'Rainbow Wrist Prep (30s/side)', 'Planche Lean (15x)', 'Hollow Body Rock (25x)'],
     coolDown: ['Child\'s Pose (1 min)', 'Dislocate al Bastone stretta (10x)', 'Deep Squat Hold (30s)', 'Foam Rolling petto e spalle'],
+    coolDownEn: ['Child\'s Pose (1 min)', 'Narrow Stick Dislocates (10x)', 'Deep Squat Hold (30s)', 'Chest & Shoulder Foam Rolling'],
     getWorkout: (ex, week) => {
       // Fase 1 (week 1-5): Volume / Fase 2 (week 6-10): Intensità / Fase 3 (week 11-14): Peak
       const phase = week <= 5 ? 'volume' : week <= 10 ? 'intensity' : 'peak';
@@ -310,8 +346,11 @@ const PROGRAM_CONFIG: Record<number, {
   401: {
     title: 'Handstand Mastery',
     tagline: 'Dalla preparazione di polsi alla handstand libera. Il blueprint completo per l\'inversione.',
+    taglineEn: 'From wrist prep to the freestanding handstand. The complete inversion blueprint.',
     warmUp: ['Wrist Prep arcobaleno (30s/side)', 'Dislocate al Bastone larga (10x)', 'Hollow Body Hold (20s x 3)', 'Cat-Cow (10x)', 'Pike Compression (30s)'],
+    warmUpEn: ['Rainbow Wrist Prep (30s/side)', 'Wide Stick Dislocates (10x)', 'Hollow Body Hold (20s x 3)', 'Cat-Cow (10x)', 'Pike Compression (30s)'],
     coolDown: ['Pigeon Stretch (1 min/side)', 'Child\'s Pose (1 min)', 'Foam Rolling spalle (2 min)', 'Wrist Circles (30s/side)'],
+    coolDownEn: ['Pigeon Stretch (1 min/side)', 'Child\'s Pose (1 min)', 'Shoulder Foam Rolling (2 min)', 'Wrist Circles (30s/side)'],
     getWorkout: (ex, week, dayIndex) => {
       const isHSDay = dayIndex === 2;
       if (ex.id === 'bw-012') { // Handstand Hold
@@ -356,8 +395,11 @@ const PROGRAM_CONFIG: Record<number, {
   402: {
     title: 'Back Lever & German Hang',
     tagline: 'La catena posteriore completa: German Hang → Tuck → Straddle → Full Back Lever.',
+    taglineEn: 'The complete posterior chain: German Hang → Tuck → Straddle → Full Back Lever.',
     warmUp: ['German Hang (30s x 2)', 'Hollow Body Rock (25x)', 'Arch Body Rock (25x)', 'Thoracic Spine Rotation (10x/side)', 'Scapular Depression drills (10x)'],
+    warmUpEn: ['German Hang (30s x 2)', 'Hollow Body Rock (25x)', 'Arch Body Rock (25x)', 'Thoracic Spine Rotation (10x/side)', 'Scapular Depression Drills (10x)'],
     coolDown: ['Child\'s Pose con torace aperto (1 min)', 'Deep Squat Hold (45s)', 'Foam Rolling catena posteriore completa (3 min)'],
+    coolDownEn: ['Child\'s Pose with open chest (1 min)', 'Deep Squat Hold (45s)', 'Full Posterior-Chain Foam Rolling (3 min)'],
     getWorkout: (ex, week, _dayIndex) => {
       if (ex.id === 'bw-020-tuck' || ex.id === 'bw-020-german') {
         return { sets: 4, reps: week <= 3 ? '10-15s tuck' : week <= 7 ? '15-25s tuck' : '20-35s tuck', rest: '90-120s', tempo: 'isometrico', notes: 'Scapole depresse e addominale contratto' };
@@ -380,8 +422,11 @@ const PROGRAM_CONFIG: Record<number, {
   403: {
     title: 'Human Flag & Maltese',
     tagline: 'La dominanza orizzontale. Human Flag → Struttle Maltese → Full Maltese.',
+    taglineEn: 'Horizontal dominance. Human Flag → Straddle Maltese → Full Maltese.',
     warmUp: ['German Hang (30s)', 'Tuck Human Flag hold (10s/side)', 'Arch Body Rock (25x)', 'Core Hollow Body (30s)', 'Scapular Wall Slides (15x)'],
+    warmUpEn: ['German Hang (30s)', 'Tuck Human Flag Hold (10s/side)', 'Arch Body Rock (25x)', 'Hollow Body Core (30s)', 'Scapular Wall Slides (15x)'],
     coolDown: ['Child\'s Pose (1 min)', 'Pigeon Stretch (1 min/side)', 'Deep Squat Hold (45s)', 'Foam Rolling (3 min)'],
+    coolDownEn: ['Child\'s Pose (1 min)', 'Pigeon Stretch (1 min/side)', 'Deep Squat Hold (45s)', 'Foam Rolling (3 min)'],
     getWorkout: (ex, week) => {
       const phase = week <= 4 ? 'tuck' : week <= 8 ? 'straddle' : 'full';
       if (ex.id === 'bw-019-tuck') {
@@ -410,8 +455,11 @@ const PROGRAM_CONFIG: Record<number, {
   404: {
     title: 'Dragon Flag Progression',
     tagline: "L'armatura del core. Tuck → Advanced Tuck → Straddle → Full Dragon Flag.",
+    taglineEn: 'Core armor. Tuck → Advanced Tuck → Straddle → Full Dragon Flag.',
     warmUp: ['Hollow Body Rock (25x)', 'Arch Body Rock (25x)', 'Tuck Dragon Flag (3 x 5s)', 'Plank (60s)'],
+    warmUpEn: ['Hollow Body Rock (25x)', 'Arch Body Rock (25x)', 'Tuck Dragon Flag (3 x 5s)', 'Plank (60s)'],
     coolDown: ['Child\'s Pose (1 min)', 'Pigeon Stretch (1 min/side)', 'Foam Rolling bassa schiena (2 min)'],
+    coolDownEn: ['Child\'s Pose (1 min)', 'Pigeon Stretch (1 min/side)', 'Lower-Back Foam Rolling (2 min)'],
     getWorkout: (ex, week) => {
       const _phase = week <= 2 ? 'tuck' : week <= 4 ? 'adv-tuck' : week <= 5 ? 'straddle' : 'full';
       if (ex.id === 'bw-018-tuck' || ex.id === 'bw-018') {
@@ -436,8 +484,11 @@ const PROGRAM_CONFIG: Record<number, {
   405: {
     title: 'Prehab & Longevity',
     tagline: 'Allenati di più e per più tempo. Protocolli settimanali per ogni articolazione.',
+    taglineEn: 'Train more and longer. Weekly protocols for every joint.',
     warmUp: ['Cat-Cow (12x)', 'Wrist Circles (20x/side)', 'Cat-Cow (12x)', 'Hollow Body Rock (20x)'],
+    warmUpEn: ['Cat-Cow (12x)', 'Wrist Circles (20x/side)', 'Cat-Cow (12x)', 'Hollow Body Rock (20x)'],
     coolDown: ['Deep Squat Hold (45s)', 'Pigeon Stretch (1 min/side)', 'Child\'s Pose (2 min)', 'Foam Rolling completo (5 min)'],
+    coolDownEn: ['Deep Squat Hold (45s)', 'Pigeon Stretch (1 min/side)', 'Child\'s Pose (2 min)', 'Full-Body Foam Rolling (5 min)'],
     getWorkout: (ex, week) => {
       if (ex.id === 'mob-005' || ex.id === 'mob-010') {
         return { sets: 3, reps: '15x', rest: '30s', tempo: 'controllato', notes: 'Presa larga → presa stretta. Non forzare il ROM articolare.' };
@@ -460,8 +511,11 @@ const PROGRAM_CONFIG: Record<number, {
   406: {
     title: 'Calisthenics Hypertrophy',
     tagline: 'Costruisci massa con solo il corpo. Split 5 giorni con progressive overload e volume cycling.',
+    taglineEn: 'Build mass with bodyweight only. 5-day split with progressive overload and volume cycling.',
     warmUp: ['Dynamic Chest Stretch (10x/side)', 'Scapular Wall Slides (15x)', 'Arm Circles (10x each way)', 'Bodyweight Squat (15x)', 'Wrist Prep (20s/side)'],
+    warmUpEn: ['Dynamic Chest Stretch (10x/side)', 'Scapular Wall Slides (15x)', 'Arm Circles (10x each way)', 'Bodyweight Squat (15x)', 'Wrist Prep (20s/side)'],
     coolDown: ['Deep Squat Hold (1 min)', 'Pigeon Stretch (1 min/side)', 'Child\'s Pose (1 min)', 'Foam Rolling full body (3 min)'],
+    coolDownEn: ['Deep Squat Hold (1 min)', 'Pigeon Stretch (1 min/side)', 'Child\'s Pose (1 min)', 'Full-Body Foam Rolling (3 min)'],
     getWorkout: (ex, week, _dayIndex) => {
       const _phases: Record<number, 'accum' | 'intensify' | 'peak'> = {};
       const phase = week <= 4 ? 'accum' : week <= 8 ? 'intensify' : 'peak';
@@ -536,7 +590,7 @@ const programWorkoutPlans: ProgramWorkoutPlanDef[] = [
 ];
 
 // ─── Build workout data for a given program ───
-function getProgramPlan(programId: number): ProgramWorkoutPlan {
+function getProgramPlan(programId: number, locale: 'it' | 'en' = 'it'): ProgramWorkoutPlan {
   const planDef = programWorkoutPlans.find((p) => p.id === programId);
   if (!planDef) {
     return { id: programId, weeks: [], weeklyOverview: [], warmUp: [], coolDown: [], progressionNotes: [] };
@@ -546,7 +600,7 @@ function getProgramPlan(programId: number): ProgramWorkoutPlan {
     id: programId,
     weeks: Array.from({ length: planDef.weeks }, (_, wi) => ({
       week: wi + 1,
-      theme: weekTheme(wi, planDef.weeks, programId),
+      theme: weekTheme(wi, planDef.weeks, programId, locale),
       days: [
         { day: 1, week: wi + 1, focus: 'Push', exercises: buildDayExercises(planDef.exerciseIds, cfg.getWorkout, wi + 1, 1) },
         { day: 2, week: wi + 1, focus: 'Pull', exercises: buildDayExercises(planDef.exerciseIds, cfg.getWorkout, wi + 1, 2) },
@@ -606,7 +660,11 @@ interface WorkoutTableProps {
 
 const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, onDragStart, onDragOver, onDrop, onDragEnd, isDragTarget }) => {
   const [expanded, setExpanded] = useState(false);
+  const { locale, t } = useLanguage();
   const w = exercise.workout;
+  const muscles = localizeList(exercise.exercise.muscleGroups.primary, locale);
+  const progressions = localizeList(exercise.exercise.progression, locale);
+  const notes = localizeNote(w.notes, locale) ?? w.notes;
 
   return (
     <motion.div
@@ -633,7 +691,7 @@ const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, on
           </div>
           <div>
             <h4 className="font-bold text-white text-sm">{exercise.exercise.name}</h4>
-            <p className="text-[10px] text-zinc-500 uppercase">{exercise.exercise.muscleGroups.primary.join(', ')}</p>
+            <p className="text-[10px] text-zinc-500 uppercase">{muscles.join(', ')}</p>
           </div>
         </div>
         <div className="hidden sm:flex items-center gap-5 text-xs">
@@ -661,12 +719,12 @@ const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, on
           </div>
           <div className="flex items-start gap-2 p-3 bg-zinc-900/50 rounded-lg">
             <Target size={14} className="text-red-500 mt-0.5 shrink-0" />
-            <span className="text-xs text-zinc-400">{w.notes}</span>
+            <span className="text-xs text-zinc-400">{notes}</span>
           </div>
-          {exercise.exercise.progression.length > 0 && (
+          {progressions.length > 0 && (
             <div className="p-3 bg-zinc-900/50 rounded-lg">
               <span className="text-[10px] text-zinc-500 uppercase block mb-2">
-                Progressioni consigliate: {exercise.exercise.progression.join(' → ')}
+                {t('Progressioni consigliate', 'Recommended progressions')}: {progressions.join(' → ')}
               </span>
             </div>
           )}
@@ -683,6 +741,7 @@ interface DayCardProps {
 }
 const DayCard: React.FC<DayCardProps> = ({ day }) => {
   const [expanded, setExpanded] = useState(day.day <= 2);
+  const { t } = useLanguage();
   const [exercises, setExercises] = useState(day.exercises);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
@@ -727,8 +786,8 @@ const DayCard: React.FC<DayCardProps> = ({ day }) => {
             {day.day}
           </div>
           <div className="text-left">
-            <h3 className="font-bold text-white text-sm">Settimana {day.week} — Giorno {day.day}</h3>
-            <p className="text-[10px] text-zinc-500">{day.focus} · {exercises.length} esercizi</p>
+            <h3 className="font-bold text-white text-sm">{t('Settimana', 'Week')} {day.week} — {t('Giorno', 'Day')} {day.day}</h3>
+            <p className="text-[10px] text-zinc-500">{day.focus} · {exercises.length} {t('esercizi', 'exercises')}</p>
           </div>
         </div>
         {expanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
@@ -823,10 +882,13 @@ const ProgramContent: React.FC = () => {
     );
   }
 
-  const plan = getProgramPlan(program.id);
+  const plan = getProgramPlan(program.id, locale);
   const curriculum = getCurriculum(program.id);
   const currentWeek = plan.weeks[weekIndex] || plan.weeks[0];
   const cfg = PROGRAM_CONFIG[program.id] || PROGRAM_CONFIG[101]!;
+  const tagline = locale === 'en' ? (cfg.taglineEn || cfg.tagline) : cfg.tagline;
+  const warmUp = locale === 'en' ? (cfg.warmUpEn || cfg.warmUp) : cfg.warmUp;
+  const coolDown = locale === 'en' ? (cfg.coolDownEn || cfg.coolDown) : cfg.coolDown;
 
   const programExercises = programWorkoutPlans.find((p) => p.id === program.id)?.exerciseIds
     .map((eid) => exerciseDatabase.find((ex) => ex.id === eid))
@@ -860,7 +922,7 @@ const ProgramContent: React.FC = () => {
             <div>
               <span className="text-red-600 font-black tracking-[0.3em] uppercase text-[10px] mb-2 block">{t('Protocollo di Allenamento', 'Training Protocol')}</span>
               <h1 className="text-2xl sm:text-4xl font-black tracking-tighter uppercase">{program.title}</h1>
-              {cfg.tagline && <p className="text-zinc-500 text-sm mt-1 font-medium italic">{cfg.tagline}</p>}
+              {tagline && <p className="text-zinc-500 text-sm mt-1 font-medium italic">{tagline}</p>}
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
@@ -877,7 +939,7 @@ const ProgramContent: React.FC = () => {
           {/* Week Tabs */}
           {plan.weeks.length > 1 && (
             <div className="mb-6">
-              <p className="text-xs text-zinc-500 mb-2 font-bold uppercase tracking-widest">Seleziona Settimana</p>
+              <p className="text-xs text-zinc-500 mb-2 font-bold uppercase tracking-widest">{t('Seleziona Settimana', 'Select Week')}</p>
               <WeekTabs plan={plan} weekIndex={weekIndex} setWeekIndex={setWeekIndex} />
             </div>
           )}
@@ -888,31 +950,31 @@ const ProgramContent: React.FC = () => {
               {currentWeek && (
                 <div className="bg-red-600/10 border border-red-500/20 p-5 rounded-2xl">
                   <h3 className="font-bold text-red-400 text-sm mb-2 flex items-center gap-2">
-                    <Flame size={16} /> Settimana {currentWeek.week}: {currentWeek.theme}
+                    <Flame size={16} /> {t('Settimana', 'Week')} {currentWeek.week}: {currentWeek.theme}
                   </h3>
                   <p className="text-zinc-400 text-sm">
-                    Giorni di allenamento: {currentWeek.days.length} · Focus: {currentWeek.days.map((d) => d.focus).join(' · ')}
+                    {t('Giorni di allenamento', 'Training days')}: {currentWeek.days.length} · Focus: {currentWeek.days.map((d) => d.focus).join(' · ')}
                   </p>
                 </div>
               )}
 
               <div className="bg-zinc-900/30 border border-white/10 p-5 rounded-2xl">
-                <h3 className="font-bold text-white mb-4 flex items-center gap-2"><Target size={16} className="text-red-500" /> Panoramica Settimanale</h3>
+                <h3 className="font-bold text-white mb-4 flex items-center gap-2"><Target size={16} className="text-red-500" /> {t('Panoramica Settimanale', 'Weekly Overview')}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {currentWeek?.days.map((d) => (
                     <div key={d.day} className={`p-4 rounded-xl border ${d.exercises.length > 0 ? 'bg-zinc-900/50 border-white/10' : 'bg-zinc-950/30 border-white/10 opacity-50'}`}>
-                      <span className="text-[10px] text-zinc-500 uppercase block mb-1">Day {d.day}</span>
+                      <span className="text-[10px] text-zinc-500 uppercase block mb-1">{t('Giorno', 'Day')} {d.day}</span>
                       <span className="font-bold text-white text-sm">{d.focus}</span>
-                      <span className="text-[10px] text-zinc-500 block mt-1">{d.exercises.length} esercizi</span>
+                      <span className="text-[10px] text-zinc-500 block mt-1">{d.exercises.length} {t('esercizi', 'exercises')}</span>
                     </div>
                   )) || null}
                 </div>
               </div>
 
               <div className="bg-zinc-900/30 border border-white/10 p-5 rounded-2xl">
-                <h3 className="font-bold text-white mb-4 flex items-center gap-2"><BookOpen size={16} className="text-red-500" /> Riscaldamento</h3>
+                <h3 className="font-bold text-white mb-4 flex items-center gap-2"><BookOpen size={16} className="text-red-500" /> {t('Riscaldamento', 'Warm-up')}</h3>
                 <ul className="space-y-2">
-                  {cfg.warmUp.map((item, i) => (
+                  {warmUp.map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
                       <span className="w-6 h-6 rounded-full bg-red-500/10 text-red-500 text-[10px] font-black flex items-center justify-center">{i + 1}</span>
                       {item}
@@ -922,9 +984,9 @@ const ProgramContent: React.FC = () => {
               </div>
 
               <div className="bg-zinc-900/30 border border-white/10 p-5 rounded-2xl">
-                <h3 className="font-bold text-white mb-4 flex items-center gap-2"><Dumbbell size={16} className="text-red-500" /> Defaticamento</h3>
+                <h3 className="font-bold text-white mb-4 flex items-center gap-2"><Dumbbell size={16} className="text-red-500" /> {t('Defaticamento', 'Cool-down')}</h3>
                 <ul className="space-y-2">
-                  {cfg.coolDown.map((item, i) => (
+                  {coolDown.map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
                       <CheckCircle />
                       {item}
@@ -934,22 +996,22 @@ const ProgramContent: React.FC = () => {
               </div>
 
               <div className="bg-zinc-900/30 border border-white/10 p-5 rounded-2xl">
-                <h3 className="font-bold text-white mb-3 flex items-center gap-2"><Zap size={16} className="text-red-500" /> Info Programma</h3>
+                <h3 className="font-bold text-white mb-3 flex items-center gap-2"><Zap size={16} className="text-red-500" /> {t('Info Programma', 'Program Info')}</h3>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div className="bg-zinc-900/50 p-3 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 uppercase block">Durata Totale</span>
-                    <span className="font-bold text-white">{program.duration || plan.weeks.length + ' Settimane'}</span>
+                    <span className="text-[10px] text-zinc-500 uppercase block">{t('Durata Totale', 'Total Duration')}</span>
+                    <span className="font-bold text-white">{program.duration || plan.weeks.length + (locale === 'en' ? ' Weeks' : ' Settimane')}</span>
                   </div>
                   <div className="bg-zinc-900/50 p-3 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 uppercase block">Frequenza</span>
-                    <span className="font-bold text-white">4 giorni/settimana</span>
+                    <span className="text-[10px] text-zinc-500 uppercase block">{t('Frequenza', 'Frequency')}</span>
+                    <span className="font-bold text-white">{t('4 giorni/settimana', '4 days/week')}</span>
                   </div>
                   <div className="bg-zinc-900/50 p-3 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 uppercase block">Livello</span>
+                    <span className="text-[10px] text-zinc-500 uppercase block">{t('Livello', 'Level')}</span>
                     <span className="font-bold text-white">{program.level}</span>
                   </div>
                   <div className="bg-zinc-900/50 p-3 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 uppercase block">Esercizi Totali</span>
+                    <span className="text-[10px] text-zinc-500 uppercase block">{t('Esercizi Totali', 'Total Exercises')}</span>
                     <span className="font-bold text-white">{programExercises.length}</span>
                   </div>
                 </div>
@@ -976,7 +1038,7 @@ const ProgramContent: React.FC = () => {
           {activeTab === 'workout' && currentWeek && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
               <p className="text-xs text-zinc-500 mb-2">
-                Settimana {currentWeek.week} di {plan.weeks.length} · {currentWeek.theme}. Clicca un giorno per espandere gli esercizi.
+                {t('Settimana', 'Week')} {currentWeek.week} {t('di', 'of')} {plan.weeks.length} · {currentWeek.theme}. {t('Clicca un giorno per espandere gli esercizi.', 'Click a day to expand the exercises.')}
               </p>
               {currentWeek.days.map((day) => (
                 <DayCard key={day.day} day={day} />
@@ -987,9 +1049,9 @@ const ProgramContent: React.FC = () => {
           {activeTab === 'warmup' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
               <div className="bg-zinc-900/30 border border-red-500/20 p-6 rounded-2xl">
-                <h3 className="font-bold text-white mb-4 text-lg flex items-center gap-2"><Flame className="text-red-500" size={20} /> Riscaldamento Pre-Allenamento</h3>
+                <h3 className="font-bold text-white mb-4 text-lg flex items-center gap-2"><Flame className="text-red-500" size={20} /> {t('Riscaldamento Pre-Allenamento', 'Pre-Workout Warm-up')}</h3>
                 <ul className="space-y-3">
-                  {cfg.warmUp.map((item, i) => (
+                  {warmUp.map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
                       <span className="w-7 h-7 rounded-full bg-red-500/20 text-red-500 text-xs font-black flex items-center justify-center shrink-0">{i + 1}</span>
                       <span className="font-medium">{item}</span>
@@ -998,9 +1060,9 @@ const ProgramContent: React.FC = () => {
                 </ul>
               </div>
               <div className="bg-zinc-900/30 border border-green-500/10 p-6 rounded-2xl">
-                <h3 className="font-bold text-white mb-4 text-lg flex items-center gap-2"><Dumbbell className="text-green-500" size={20} /> Defaticamento Post-Allenamento</h3>
+                <h3 className="font-bold text-white mb-4 text-lg flex items-center gap-2"><Dumbbell className="text-green-500" size={20} /> {t('Defaticamento Post-Allenamento', 'Post-Workout Cool-down')}</h3>
                 <ul className="space-y-3">
-                  {cfg.coolDown.map((item, i) => (
+                  {coolDown.map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
                       <CheckCircle />
                       <span className="font-medium">{item}</span>

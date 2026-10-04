@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 import { downloadTxt, downloadJson, downloadPdf } from "../lib/exportProgram";
 import type { ProgramForExport } from "../lib/exportProgram";
+import { safeJsonParse } from "../lib/safeJson";
 import SEO from "../components/SEO";
 import type { SavedProgram } from "../types/program";
 
@@ -460,8 +461,8 @@ const Create: React.FC = () => {
 
   const [programs, setPrograms] = useState<SavedProgram[]>(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("maxthenicsPrograms");
-      return saved ? JSON.parse(saved) : [];
+      const parsed = safeJsonParse<unknown>(localStorage.getItem("maxthenicsPrograms"), []);
+      return Array.isArray(parsed) ? (parsed as SavedProgram[]) : [];
     }
     return [];
   });
@@ -641,8 +642,9 @@ const Create: React.FC = () => {
         body: JSON.stringify({ preferences, userId }),
       });
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Errore nella generazione");
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error((data && data.message) || "Errore nella generazione");
+      if (!data) throw new Error("Risposta non valida dal server");
 
       setGenerationProgress(95);
 
@@ -1319,9 +1321,9 @@ const Create: React.FC = () => {
             </div>
 
             {/* Grand Summary Card */}
-            <div className="bg-linear-to-br from-zinc-900 via-zinc-950 to-black border border-white/10 rounded-[2rem] p-6 sm:p-8 space-y-5 shadow-2xl relative overflow-hidden">
+            <div className="bg-linear-to-br from-zinc-900 via-zinc-950 to-black border border-white/10 rounded-2xl p-6 sm:p-8 space-y-5 shadow-2xl relative overflow-hidden">
               {/* Subtle glow border */}
-              <div className="absolute inset-0 rounded-[2rem] bg-linear-to-br from-red-600/5 via-transparent to-orange-600/5 pointer-events-none" />
+              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-red-600/5 via-transparent to-orange-600/5 pointer-events-none" />
 
               {/* Header row */}
               <div className="relative z-10 flex items-center justify-between">
@@ -1500,7 +1502,7 @@ const Create: React.FC = () => {
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             {/* ── LEFT: Wizard ────────────────────────────────── */}
             <div className="lg:col-span-7 xl:col-span-8">
-              <div className="bg-zinc-900/30 backdrop-blur-2xl p-6 sm:p-8 md:p-10 rounded-[2rem] border border-white/8 shadow-2xl relative overflow-hidden">
+              <div className="bg-zinc-900/30 backdrop-blur-2xl p-6 sm:p-8 md:p-10 rounded-2xl border border-white/8 shadow-2xl relative overflow-hidden">
                 {/* Top glow bar */}
                 <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent" />
 
@@ -1527,7 +1529,7 @@ const Create: React.FC = () => {
                         type="button"
                         onClick={nextStep}
                         disabled={!canNext}
-                        className={`flex-1 bg-linear-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white py-4 rounded-2xl font-black transition-all shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed ${
+                        className={`flex-1 bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-black transition-all shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed ${
                           step === totalSteps - 1 ? "from-red-600 via-orange-600 to-red-600 bg-[length:200%_100%] animate-gradient" : ""
                         }`}
                       >

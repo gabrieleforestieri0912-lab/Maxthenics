@@ -464,7 +464,7 @@ const CalisthenicsRoom: React.FC = () => {
                   className="group"
                 >
                   <div className="text-center mb-8">
-                    <div className="w-24 h-24 rounded-[2rem] bg-zinc-900/80 border border-white/5 flex items-center justify-center mx-auto mb-8 group-hover:border-red-500/40 group-hover:bg-zinc-900 transition-all duration-500">
+                    <div className="w-24 h-24 rounded-2xl bg-zinc-900/80 border border-white/5 flex items-center justify-center mx-auto mb-8 group-hover:border-red-500/40 group-hover:bg-zinc-900 transition-all duration-500">
                       {React.cloneElement(item.icon as any, { size: 44, className: "text-red-500 group-hover:scale-110 transition-transform duration-500" })}
                     </div>
                     <h3 className="text-2xl font-black mb-4 uppercase tracking-tight">{item.title}</h3>
@@ -488,7 +488,7 @@ const CalisthenicsRoom: React.FC = () => {
 
             <div className="space-y-12">
               {/* Features */}
-              <div className="bg-zinc-900/20 border border-white/5 rounded-[3rem] p-8 md:p-12">
+              <div className="bg-zinc-900/20 border border-white/5 rounded-[2.5rem] p-8 md:p-12">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.3em] mb-10">
                   <Sparkles size={12} />
                   Cosa Include
@@ -517,7 +517,7 @@ const CalisthenicsRoom: React.FC = () => {
 
               {/* Bonuses */}
               <div className="relative">
-                <div className="bg-linear-to-br from-zinc-900/40 to-zinc-950/40 border border-white/5 rounded-[3rem] p-8 md:p-12 overflow-hidden">
+                <div className="bg-linear-to-br from-zinc-900/40 to-zinc-950/40 border border-white/5 rounded-[2.5rem] p-8 md:p-12 overflow-hidden">
                   <div className="absolute -top-20 -right-20 opacity-5">
                     <Crown size={200} />
                   </div>
@@ -754,7 +754,7 @@ const CalisthenicsRoom: React.FC = () => {
                       className={`w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all relative z-10 ${
                         plan.highlight
                           ? "bg-white text-black hover:bg-zinc-100 shadow-xl"
-                          : "bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-900/20 hover:shadow-xl hover:shadow-red-900/30"
+                          : "bg-red-600 text-white hover:bg-red-500 shadow-lg shadow-red-900/20 hover:shadow-xl hover:shadow-red-900/30"
                       } hover:scale-[1.02] active:scale-95`}
                     >
                       {plan.cta}
@@ -916,7 +916,7 @@ const CalisthenicsRoom: React.FC = () => {
                   </div>
                   <h3 className="text-xl font-black mb-3 leading-tight">{res.title}</h3>
                   <p className="text-zinc-500 text-sm mb-8 leading-relaxed">{res.desc}</p>
-                  <button className="flex items-center gap-3 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-black rounded-2xl transition-all text-xs tracking-widest uppercase shadow-lg shadow-red-900/20">
+                  <button className="flex items-center gap-3 px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-black rounded-2xl transition-all text-xs tracking-widest uppercase shadow-lg shadow-red-900/20">
                     {res.action} <ArrowRight size={14} />
                   </button>
                 </div>

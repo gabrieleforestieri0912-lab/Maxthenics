@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, Loader2, Edit, X, Plus, Trash2, Search, Download, ChevronDown } from 'lucide-react';
 import { exerciseDatabase, type Exercise } from '../data/exercises';
+import { useAuth } from '../context/AuthContext';
 import { downloadTxt, downloadJson, downloadPdf, downloadCsv, downloadWeeksTxt, downloadWeeksCsv, downloadWeeksPdf, downloadWeeksJson } from '../lib/exportProgram';
 import type { ProgramForExport } from '../lib/exportProgram';
 import SEO from "../components/SEO";
@@ -63,6 +64,7 @@ interface Program {
 
 const MyProgram: React.FC = () => {
   const navigate = useNavigate();
+  const { addNotification } = useAuth();
   const [program, setProgram] = useState<Program | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -155,6 +157,29 @@ const MyProgram: React.FC = () => {
             days: programData.weeklyPlan,
           }];
         }
+        // DB rows store a flat exercises list: synthesize a single-week view for it.
+        const rowExercises = (programData as unknown as { exercises?: Array<{ name: string; sets: number; reps: string; rest: string; notes?: string }> }).exercises;
+        if ((!programData.weeks || programData.weeks.length === 0) && rowExercises && rowExercises.length > 0) {
+          programData.weeks = [{
+            weekNumber: 1,
+            days: [{
+              id: 'day-1',
+              name: 'Giorno 1',
+              workouts: [{
+                id: 'workout-1',
+                name: programData.title || 'Full Body',
+                exercises: rowExercises.map((ex, i) => ({
+                  exercise: { id: `ex-${i}`, name: ex.name },
+                  sets: ex.sets ?? 3,
+                  reps: ex.reps ?? '10',
+                  rest: ex.rest ?? '60s',
+                  notes: ex.notes,
+                  order: i,
+                })),
+              }],
+            }],
+          }];
+        }
         setProgram(programData);
         setEditedProgram(JSON.parse(JSON.stringify(programData)));
 
@@ -199,9 +224,10 @@ const MyProgram: React.FC = () => {
       }
 
       const result = await response.json();
-      setProgram(result);
+      // The API persists scalar fields; keep the edited structure as source of truth.
+      setProgram(result && result.weeks ? result : editedProgram);
       setIsEditing(false);
-      alert('Programma salvato con successo!');
+      addNotification('Programma salvato con successo!', 'success');
 
     } catch (err: any) {
       console.error("Error saving program:", err);
@@ -648,8 +674,8 @@ const MyProgram: React.FC = () => {
       <div className="container mx-auto p-4 md:p-8 bg-black text-white min-h-screen">
         <p className="text-red-500 text-center text-lg">{error}</p>
         <div className="text-center mt-8">
-          <button onClick={() => navigate('/questionnaire')} className="px-6 py-3 rounded-xl font-bold text-base uppercase tracking-widest text-white bg-red-600 hover:bg-red-500 transition">
-            Torna al Profilo
+          <button onClick={() => navigate('/create')} className="px-6 py-3 rounded-xl font-bold text-base uppercase tracking-widest text-white bg-red-600 hover:bg-red-500 transition">
+            Crea il tuo programma
           </button>
         </div>
       </div>

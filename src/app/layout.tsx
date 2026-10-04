@@ -57,7 +57,7 @@ export const metadata: Metadata = {
       "La piattaforma definitiva per il Calisthenics. Programmi personalizzati e coaching 1:1.",
     images: [
       {
-        url: "/Img/maxthenics.png",
+        url: "/maxthenics.png",
         width: 1200,
         height: 630,
         alt: "Maxthenics - Calisthenics Training",

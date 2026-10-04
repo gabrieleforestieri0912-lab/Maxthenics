@@ -28,6 +28,7 @@ import {
 import { downloadTxt, downloadJson, downloadPdf, downloadCsv, downloadWeeksTxt, downloadWeeksCsv, downloadWeeksPdf, downloadWeeksJson } from "../lib/exportProgram";
 import type { ProgramForExport, ExerciseExport } from "../lib/exportProgram";
 import { useAuth } from "../context/AuthContext";
+import { safeJsonParse } from "../lib/safeJson";
 import SEO from "../components/SEO";
 import type { SavedProgram } from "../types/program";
 import { savedToProgram } from "../types/program";
@@ -57,8 +58,7 @@ const MyWorkouts: React.FC = () => {
   const [lastEdited, setLastEdited] = useState<string | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("maxthenicsPrograms");
-    const local: SavedProgram[] = saved ? JSON.parse(saved) : [];
+    const local: SavedProgram[] = safeJsonParse(localStorage.getItem("maxthenicsPrograms"), []);
 
     const token = localStorage.getItem("token");
     if (token) {
@@ -147,16 +147,25 @@ const MyWorkouts: React.FC = () => {
     addNotification("Modifica il programma direttamente nella pagina di creazione.", "success");
   };
 
-  const handleDelete = (id: string, index: number) => {
+  const handleDelete = async (id: string, index: number) => {
     if (window.confirm("Eliminare definitivamente questo programma?")) {
-      setPrograms(programs.filter((_, i) => i !== index));
       const token = localStorage.getItem("token");
       if (token) {
-        fetch(`/api/programs/user?id=${id}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }).catch(() => {});
+        try {
+          const res = await fetch(`/api/programs/user?id=${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) {
+            addNotification("Eliminazione sul server non riuscita.", "error");
+            return;
+          }
+        } catch {
+          addNotification("Eliminazione sul server non riuscita.", "error");
+          return;
+        }
       }
+      setPrograms(programs.filter((_, i) => i !== index));
       addNotification("Programma eliminato.", "success");
     }
   };
@@ -252,7 +261,7 @@ const MyWorkouts: React.FC = () => {
           <p className="text-zinc-500 text-sm mb-6">Accedi per vedere i tuoi programmi di allenamento.</p>
           <button
             onClick={() => navigate("/login")}
-            className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all"
+            className="bg-red-600 hover:bg-red-500 text-white px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all"
           >
             Accedi
           </button>
@@ -305,7 +314,7 @@ const MyWorkouts: React.FC = () => {
               </div>
               <button
                 onClick={navigateToCreate}
-                className="shrink-0 bg-linear-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-[0.15em] transition-all shadow-lg shadow-red-900/20 hover:shadow-red-900/40 flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
+                className="shrink-0 bg-red-600 hover:bg-red-500 text-white px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-[0.15em] transition-all shadow-lg shadow-red-900/20 hover:shadow-red-900/40 flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
               >
                 <Plus className="w-4 h-4" />
                 Nuovo Programma
@@ -456,7 +465,7 @@ const MyWorkouts: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-20 px-6"
             >
-              <div className="w-24 h-24 mx-auto rounded-[2rem] bg-linear-to-br from-red-600/10 to-orange-600/10 border border-red-500/10 flex items-center justify-center mb-8">
+              <div className="w-24 h-24 mx-auto rounded-2xl bg-linear-to-br from-red-600/10 to-orange-600/10 border border-red-500/10 flex items-center justify-center mb-8">
                 <Dumbbell className="w-10 h-10 text-red-500/40" />
               </div>
               <h2 className="text-2xl font-black text-white mb-3">Nessun programma ancora</h2>
@@ -466,7 +475,7 @@ const MyWorkouts: React.FC = () => {
               </p>
               <button
                 onClick={navigateToCreate}
-                className="bg-linear-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-[0.15em] transition-all shadow-xl shadow-red-900/20 hover:shadow-red-900/40 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 mx-auto"
+                className="bg-red-600 hover:bg-red-500 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-[0.15em] transition-all shadow-xl shadow-red-900/20 hover:shadow-red-900/40 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 mx-auto"
               >
                 <Plus className="w-5 h-5" />
                 Crea il Tuo Primo Programma

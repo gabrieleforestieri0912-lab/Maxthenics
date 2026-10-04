@@ -87,12 +87,20 @@ async function remove(id: string): Promise<void> {
   await db().delete().eq('id', id)
 }
 
+async function update(id: string, data: Record<string, unknown>): Promise<IProgram | null> {
+  const row = toRow(data)
+  const { data: updated, error } = await db().update(row).eq('id', id).select().single()
+  if (error || !updated) return null
+  return rowToProgram(updated as ProgramRow)
+}
+
 const Program = {
   findAll,
   find: findAll,
   findByUser,
   create,
   remove,
+  update,
 }
 
 export default Program

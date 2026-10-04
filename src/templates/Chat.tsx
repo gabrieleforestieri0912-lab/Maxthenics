@@ -626,7 +626,7 @@ const Chat: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="relative w-full max-w-[360px] bg-zinc-950 border border-white/10 p-8 rounded-[2rem] shadow-2xl"
+                className="relative w-full max-w-[360px] bg-zinc-950 border border-white/10 p-8 rounded-2xl shadow-2xl"
               >
                 <div className="w-16 h-16 bg-red-600/10 rounded-2xl flex items-center justify-center mb-6">
                   <Trash2 className="text-red-500" size={32} />
@@ -679,7 +679,7 @@ const Chat: React.FC = () => {
             <div className="flex items-center justify-between mb-8">
               <Link to="/" className="flex items-center gap-3 group">
                 <Image
-                  src="/Img/maxthenics.png"
+                  src="/maxthenics.png"
                   alt="Maxthenics"
                   width={36}
                   height={36}

@@ -162,7 +162,7 @@ const Guide: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <span className="text-red-600 font-black tracking-[0.4em] uppercase text-[10px] mb-6 block">
+            <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-6 block">
               Education Hub
             </span>
             <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[0.85] mb-8">
@@ -210,7 +210,7 @@ const Guide: React.FC = () => {
 
           <div id="concetti-base" className="mb-48">
             <div className="mb-16">
-              <span className="text-red-600 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
+              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
                 Foundations
               </span>
               <h2 className="text-4xl md:text-6xl font-black text-center uppercase tracking-tighter">
@@ -261,7 +261,7 @@ const Guide: React.FC = () => {
 
           <div id="intensita-volume" className="mb-48">
             <div className="mb-16">
-              <span className="text-amber-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
+              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
                 Intensity
               </span>
               <h2 className="text-4xl md:text-6xl font-black text-center uppercase tracking-tighter">
@@ -269,7 +269,7 @@ const Guide: React.FC = () => {
               </h2>
             </div>
             <div className="p-10 rounded-[2.5rem] bg-zinc-900/40 border border-white/10">
-              <h3 className="text-3xl font-black mb-6 uppercase tracking-tighter text-amber-400">
+              <h3 className="text-3xl font-black mb-6 uppercase tracking-tighter text-red-500">
                 Intensità
               </h3>
               <p className="text-zinc-300 leading-relaxed mb-4">
@@ -306,7 +306,7 @@ const Guide: React.FC = () => {
                 stimolo riducendo la fatica eccessiva.
               </p>
 
-              <h3 className="text-3xl font-black mt-8 mb-6 uppercase tracking-tighter text-amber-400">
+              <h3 className="text-3xl font-black mt-8 mb-6 uppercase tracking-tighter text-red-500">
                 Quanto duramente ti devi allenare
               </h3>
               <p className="text-zinc-300 leading-relaxed mb-4">
@@ -355,7 +355,7 @@ const Guide: React.FC = () => {
 
           <div id="formula-forza" className="mb-48">
             <div className="mb-16">
-              <span className="text-cyan-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
+              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
                 Science
               </span>
               <h2 className="text-4xl md:text-6xl font-black text-center uppercase tracking-tighter">
@@ -363,7 +363,7 @@ const Guide: React.FC = () => {
               </h2>
             </div>
             <div className="p-10 rounded-[2.5rem] bg-zinc-900/40 border border-white/10">
-              <h3 className="text-3xl font-black mb-6 uppercase tracking-tighter text-cyan-500">
+              <h3 className="text-3xl font-black mb-6 uppercase tracking-tighter text-red-500">
                 Formula
               </h3>
               <p className="text-2xl font-black mb-6">
@@ -429,7 +429,7 @@ const Guide: React.FC = () => {
 
           <div id="percorsi-ipertrofia" className="mb-48">
             <div className="mb-16">
-              <span className="text-rose-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
+              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
                 Hypertrophy
               </span>
               <h2 className="text-4xl md:text-6xl font-black text-center uppercase tracking-tighter">
@@ -437,7 +437,7 @@ const Guide: React.FC = () => {
               </h2>
             </div>
             <div className="p-10 rounded-[2.5rem] bg-zinc-900/40 border border-white/10">
-              <h3 className="text-3xl font-black mb-6 uppercase tracking-tighter text-rose-400">
+              <h3 className="text-3xl font-black mb-6 uppercase tracking-tighter text-red-500">
                 Tensione meccanica
               </h3>
               <p className="text-zinc-300 mb-4">
@@ -459,7 +459,7 @@ const Guide: React.FC = () => {
                 <li>Connessione mente-muscolo</li>
               </ul>
 
-              <h3 className="text-3xl font-black mt-8 mb-6 uppercase tracking-tighter text-rose-400">
+              <h3 className="text-3xl font-black mt-8 mb-6 uppercase tracking-tighter text-red-500">
                 Danno muscolare eccentrico
               </h3>
               <p className="text-zinc-300 mb-4">
@@ -473,7 +473,7 @@ const Guide: React.FC = () => {
                 graduale di sovraccarico.
               </p>
 
-              <h3 className="text-3xl font-black mt-8 mb-6 uppercase tracking-tighter text-rose-400">
+              <h3 className="text-3xl font-black mt-8 mb-6 uppercase tracking-tighter text-red-500">
                 Accumulazione metabolica
               </h3>
               <p className="text-zinc-300 mb-4">
@@ -491,7 +491,7 @@ const Guide: React.FC = () => {
 
           <div id="programmazione-allenamento" className="mb-48">
             <div className="mb-16">
-              <span className="text-violet-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
+              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
                 Programming
               </span>
               <h2 className="text-4xl md:text-6xl font-black text-center uppercase tracking-tighter">
@@ -499,7 +499,7 @@ const Guide: React.FC = () => {
               </h2>
             </div>
             <div className="p-10 rounded-[2.5rem] bg-zinc-900/40 border border-white/10">
-              <h3 className="text-3xl font-black mb-6 uppercase tracking-tighter text-violet-400">
+              <h3 className="text-3xl font-black mb-6 uppercase tracking-tighter text-red-500">
                 Split di allenamento
               </h3>
               <p className="text-zinc-300 mb-4">
@@ -534,7 +534,7 @@ const Guide: React.FC = () => {
                 </li>
               </ul>
 
-              <h3 className="text-3xl font-black mt-8 mb-6 uppercase tracking-tighter text-violet-400">
+              <h3 className="text-3xl font-black mt-8 mb-6 uppercase tracking-tighter text-red-500">
                 Periodizzazione
               </h3>
               <p className="text-zinc-300 mb-4">
@@ -592,7 +592,7 @@ const Guide: React.FC = () => {
 
           <div id="strategie-recupero" className="mb-48">
             <div className="mb-16">
-              <span className="text-amber-400 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
+              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
                 Recovery
               </span>
               <h2 className="text-4xl md:text-6xl font-black text-center uppercase tracking-tighter">
@@ -600,7 +600,7 @@ const Guide: React.FC = () => {
               </h2>
             </div>
             <div className="p-10 rounded-[2.5rem] bg-zinc-900/40 border border-white/10">
-              <h3 className="text-3xl font-black mb-6 uppercase tracking-tighter text-amber-300">
+              <h3 className="text-3xl font-black mb-6 uppercase tracking-tighter text-red-500">
                 Recupero
               </h3>
               <p className="text-zinc-300 mb-4">
@@ -670,7 +670,7 @@ const Guide: React.FC = () => {
 
           <div id="macronutrienti" className="mb-48">
             <div className="mb-16">
-              <span className="text-emerald-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
+              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
                 Nutrition
               </span>
               <h2 className="text-4xl md:text-6xl font-black text-center uppercase tracking-tighter">
@@ -706,7 +706,7 @@ const Guide: React.FC = () => {
               </div>
             </div>
             <div className="mt-10 p-10 rounded-4xl bg-zinc-900/30 border border-white/10">
-              <h3 className="text-3xl font-black mb-6 text-emerald-400">
+              <h3 className="text-3xl font-black mb-6 text-red-500">
                 I macronutrienti
               </h3>
               <p className="text-zinc-300 mb-4">
@@ -832,7 +832,7 @@ const Guide: React.FC = () => {
 
           <div id="deload" className="mb-48">
             <div className="mb-16">
-              <span className="text-orange-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
+              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block text-center">
                 Recovery
               </span>
               <h2 className="text-4xl md:text-6xl font-black text-center uppercase tracking-tighter">

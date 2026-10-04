@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Mail, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import { useLanguage } from "../context/LanguageContext";
 
 interface IconProps {
   size?: number | string;
@@ -55,25 +56,26 @@ interface FooterLinks {
 
 function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useLanguage();
 
   const footerLinks: FooterLinks = {
     protocolli: [
-      { name: "Tutti i Programmi", to: "/programs" },
+      { name: t("Tutti i Programmi", "All Programs"), to: "/programs" },
       { name: "Front Lever", to: "/programs" },
       { name: "Planche", to: "/programs" },
-      { name: "Personalizzato", to: "/create" },
+      { name: t("Personalizzato", "Custom"), to: "/create" },
     ],
     risorse: [
-      { name: "Guida Tecnica", to: "/guide" },
-      { name: "Chat AI", to: "/chat" },
+      { name: t("Guida Tecnica", "Technique Guide"), to: "/guide" },
+      { name: t("Chat AI", "AI Chat"), to: "/chat" },
       { name: "Calisthenics Room", to: "/calisthenics-room" },
       { name: "FAQ", to: "/#faq" },
-      { name: "Contattaci", to: "/feedback" },
+      { name: t("Contattaci", "Contact Us"), to: "/feedback" },
     ],
     legale: [
       { name: "Privacy Policy", to: "/privacy" },
-      { name: "Termini di Servizio", to: "/terms" },
-      { name: "Cookie Policy", to: "/privacy" },
+      { name: t("Termini di Servizio", "Terms of Service"), to: "/terms" },
+      { name: t("Cookie Policy", "Cookie Policy"), to: "/privacy" },
     ],
   };
 
@@ -98,9 +100,10 @@ function Footer() {
               </span>
             </Link>
             <p className="text-zinc-500 text-xs sm:text-sm max-w-sm leading-relaxed font-medium">
-              La prima piattaforma neurale dedicata all&apos;eccellenza nel
-              Calisthenics. Progettata per atleti che non accettano limiti e
-              puntano alla maestria del movimento.
+              {t(
+                "La prima piattaforma neurale dedicata all'eccellenza nel Calisthenics. Progettata per atleti che non accettano limiti e puntano alla maestria del movimento.",
+                "The first neural platform dedicated to Calisthenics excellence. Built for athletes who accept no limits and aim for movement mastery."
+              )}
             </p>
             <div className="flex items-center gap-3">
               {[
@@ -127,7 +130,7 @@ function Footer() {
           {/* Links Sections */}
           <div>
             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-red-500 mb-6">
-              Protocolli
+              {t("Protocolli", "Protocols")}
             </h4>
             <ul className="space-y-3">
               {footerLinks.protocolli.map((link) => (
@@ -149,7 +152,7 @@ function Footer() {
 
           <div>
             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-6">
-              Risorse
+              {t("Risorse", "Resources")}
             </h4>
             <ul className="space-y-3">
               {footerLinks.risorse.map((link) => (
@@ -171,7 +174,7 @@ function Footer() {
 
           <div>
             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-6">
-              Legale
+              {t("Legale", "Legal")}
             </h4>
             <ul className="space-y-3">
               {footerLinks.legale.map((link) => (

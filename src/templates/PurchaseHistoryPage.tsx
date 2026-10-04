@@ -121,7 +121,7 @@ const PurchaseHistoryPage: React.FC = () => {
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="bg-zinc-900/30 border border-white/5 p-12 rounded-[2rem] text-center max-w-2xl mx-auto mt-10"
+                        className="bg-zinc-900/30 border border-white/5 p-12 rounded-2xl text-center max-w-2xl mx-auto mt-10"
                     >
                         <div className="w-20 h-20 bg-zinc-900 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
                             <ShoppingBag className="w-10 h-10 text-zinc-600" />

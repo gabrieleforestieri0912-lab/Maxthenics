@@ -80,6 +80,10 @@ function PricingCard({ plan, IconComponent, index }: PricingCardProps) {
       const profileRes = await fetch('/api/auth/me', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      if (!profileRes.ok) {
+        window.location.href = '/login';
+        return;
+      }
       const profile = await profileRes.json();
       const userId = profile.user?._id;
 

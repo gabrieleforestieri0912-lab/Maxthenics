@@ -69,18 +69,17 @@ export async function POST(request: Request) {
         if (userId && userId !== 'guest') {
           try {
             const updateData: {
-              $push?: { purchases: { $each: string[] } };
+              purchases?: string[];
               subscriptionStatus?: string;
               subscriptionTier?: string;
             } = {};
-            
+
             if (itemsJson) {
-              const items = JSON.parse(itemsJson);
-              updateData.$push = {
-                purchases: {
-                  $each: items.map((item: { id: string }) => item.id),
-                },
-              };
+              const items = JSON.parse(itemsJson) as Array<{ id?: string }>;
+              const ids = items.map((item) => item.id).filter((id): id is string => typeof id === 'string');
+              const user = await User.findById(userId);
+              const current = Array.isArray(user?.purchases) ? user.purchases : [];
+              updateData.purchases = [...new Set([...current, ...ids])];
             }
 
             if (tier) {

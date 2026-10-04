@@ -113,11 +113,13 @@ const ProgramDetails: React.FC = () => {
 
       if (response.ok) {
         addNotification(t('Programma sbloccato! Ora è nella tua libreria.', 'Program unlocked! Now in your library.'), 'success');
+        navigate(`/program/${program.id}/content`);
+      } else {
+        addNotification(t('Sblocco non riuscito. Riprova.', 'Unlock failed. Try again.'), 'error');
       }
-      navigate(`/program/${program.id}/content`);
     } catch (error) {
       console.error('Unlock error:', error);
-      navigate(`/program/${program.id}/content`);
+      addNotification(t('Sblocco non riuscito. Riprova.', 'Unlock failed. Try again.'), 'error');
     }
   };
 
@@ -247,7 +249,7 @@ const ProgramDetails: React.FC = () => {
                           });
                           addNotification('Aggiunto al carrello!', 'success');
                         }}
-                        className="bg-red-600 hover:bg-red-700 text-white font-black py-4 px-8 rounded-2xl flex items-center justify-center gap-2 transition-all text-sm uppercase tracking-widest shadow-xl shadow-red-900/20"
+                        className="bg-red-600 hover:bg-red-500 text-white font-black py-4 px-8 rounded-2xl flex items-center justify-center gap-2 transition-all text-sm uppercase tracking-widest shadow-xl shadow-red-900/20"
                       >
                         {t('AGGIUNGI', 'ADD')}
                         <ShoppingCart className="w-4 h-4" />
@@ -272,7 +274,7 @@ const ProgramDetails: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="lg:col-span-6 relative order-1 lg:order-2"
           >
-            <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] lg:aspect-square shadow-2xl border border-white/10 group">
+            <div className="relative rounded-2xl overflow-hidden aspect-[4/5] lg:aspect-square shadow-2xl border border-white/10 group">
               <Image
                 src={program.image}
                 alt={program.localizedTitle}
@@ -415,7 +417,7 @@ const ProgramDetails: React.FC = () => {
 
           {/* Right Sidebar: Features & Guarantee */}
           <div className="lg:col-span-1 space-y-8">
-            <div className="bg-zinc-900/40 border border-white/10 rounded-[2rem] p-8 sticky top-28">
+            <div className="bg-zinc-900/40 border border-white/10 rounded-2xl p-8 sticky top-28">
               <h3 className="text-xl font-black mb-6 uppercase tracking-tight">{t("Cosa è incluso", "What's included")}</h3>
               <ul className="space-y-5">
                 {program.localizedFeatures.map((feature, index) => (
