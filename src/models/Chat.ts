@@ -4,6 +4,7 @@ export interface IMessage {
   role: 'user' | 'assistant'
   content: string
   createdAt?: string
+  feedback?: 'up' | 'down' | null
 }
 
 export interface IChat {

@@ -10,6 +10,7 @@ export interface IMessage {
   isNew?: boolean;
   isStreaming?: boolean;
   createdAt?: string;
+  feedback?: "up" | "down" | null;
 }
 
 interface ChatHistoryItem {
@@ -29,7 +30,7 @@ interface ChatContextType {
   history: ChatHistoryItem[];
   chatCorner: Corner;
   setChatCorner: React.Dispatch<React.SetStateAction<Corner>>;
-  sendMessage: (content: string, isInitial?: boolean) => Promise<void>;
+  sendMessage: (content: string, isInitial?: boolean) => Promise<boolean>;
   stopGeneration: () => void;
   editMessage: (index: number, newContent: string) => Promise<void>;
   regenerate: () => Promise<void>;
@@ -211,12 +212,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     );
   }, []);
 
-  const sendMessage = useCallback(async (content: string, isInitial: boolean = false) => {
+  const sendMessage = useCallback(async (content: string, isInitial: boolean = false): Promise<boolean> => {
     const currentMessages = messagesRef.current;
     const currentActiveChatId = activeChatIdRef.current;
     const currentGuestId = guestIdRef.current;
 
-    if ((!content.trim() && !isInitial) || isLoadingRef.current) return;
+    if ((!content.trim() && !isInitial) || isLoadingRef.current) return false;
 
     let updatedMessages = [...currentMessages];
 
@@ -360,7 +361,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
       if (error?.name === 'AbortError') {
-        return;
+        return true;
       }
 
       setMessages((prev) => [
@@ -374,11 +375,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           createdAt: new Date().toISOString(),
         },
       ]);
+      return false;
     } finally {
       setIsLoading(false);
       setIsStreaming(false);
       abortControllerRef.current = null;
     }
+    return true;
   }, [user, refreshHistory]);
 
   const editMessage = useCallback(async (index: number, newContent: string) => {

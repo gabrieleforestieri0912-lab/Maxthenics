@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
-  X, Send, Trash2, ArrowRight, History, Plus, ChevronDown,
-  Copy, Check, Pencil, RefreshCw, Square, Download, CheckCheck,
+  X, Trash2, ArrowRight, History, Plus, ChevronDown,
+  Copy, Check, Pencil, RefreshCw, Download, CheckCheck,
   Sparkles, CornerDownRight, Eye,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useChatContext, IMessage, Corner } from "../context/ChatContext";
+import ChatInput from "./ChatInput";
 
 const Typewriter = ({ text, onComplete, isStreaming }: { text: string; onComplete?: () => void; isStreaming?: boolean }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -152,33 +153,21 @@ const ChatWidgetContent = () => {
   const hiddenPaths = ['/chat', '/login', '/register'];
   const isHidden = hiddenPaths.includes(location.pathname);
 
-  const autoResize = useCallback(() => {
-    const ta = inputRef.current;
-    if (ta) {
-      ta.style.height = 'auto';
-      ta.style.height = `${Math.min(ta.scrollHeight, 120)}px`;
-    }
-  }, []);
-
-  useEffect(() => { autoResize(); }, [input, autoResize]);
-
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSend = async () => {
     if (!input.trim() || isLoading || isStreaming) return;
     const text = input;
     setInput("");
-    await sendMessage(text);
+    const ok = await sendMessage(text);
+    if (!ok) {
+      // Restore the text so nothing is lost on error.
+      setInput(text);
+    }
+    inputRef.current?.focus();
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend(e);
-    }
-    if (e.key === "Escape") {
-      if (editingMessageIndex !== null) cancelEdit();
-      if (showSearch) { setShowSearch(false); setSearchQuery(""); }
-    }
+  const handleInputEscape = () => {
+    if (editingMessageIndex !== null) cancelEdit();
+    if (showSearch) { setShowSearch(false); setSearchQuery(""); }
   };
 
   const handleNewChat = () => {
@@ -508,33 +497,23 @@ const ChatWidgetContent = () => {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* ── Stop generation ── */}
-              {isStreaming && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-4 pb-0">
-                  <button onClick={stopGeneration} className="w-full flex items-center justify-center gap-2 py-2 bg-red-600/10 hover:bg-red-600/20 text-red-400 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border border-red-500/10">
-                    <Square size={10} /> Stop
-                  </button>
-                </motion.div>
-              )}
-
               {/* ── Footer / Input ── */}
               <div className="px-3 pb-3 pt-1 relative">
                 <div className="absolute top-0 left-3 right-3 h-[1px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
-                <form onSubmit={handleSend} className="relative">
-                  <textarea
-                    ref={inputRef}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder={showSearch ? "Cerca..." : "Scrivi un messaggio..."}
-                    rows={1}
-                    className="w-full bg-white/[0.04] border border-white/[0.06] text-white pl-4 pr-12 py-3 rounded-2xl text-xs focus:outline-none focus:border-red-500/30 focus:bg-white/[0.06] transition-all placeholder:text-zinc-600 resize-none overflow-hidden"
-                    style={{ minHeight: '44px', maxHeight: '120px' }}
-                  />
-                  <button type="submit" disabled={isLoading || !input.trim()} className="absolute right-1.5 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-lg shadow-red-900/30 hover:shadow-red-900/50 disabled:opacity-20 disabled:shadow-none transition-all">
-                    <Send size={14} />
-                  </button>
-                </form>
+                <ChatInput
+                  value={input}
+                  onChange={setInput}
+                  onSend={handleSend}
+                  onStop={stopGeneration}
+                  isLoading={isLoading}
+                  isStreaming={isStreaming}
+                  placeholder="Chiedi qualsiasi cosa"
+                  compact
+                  textareaRef={inputRef}
+                  onPlus={handleNewChat}
+                  plusLabel="Nuova chat"
+                  onEscape={handleInputEscape}
+                />
                 <div className="flex items-center justify-between mt-2 px-1">
                   <div className="flex items-center gap-2">
                     {messages.length > 0 && (

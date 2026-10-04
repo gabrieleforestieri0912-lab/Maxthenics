@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
-  Send,
   Plus,
   Trash2,
   LogOut,
@@ -17,7 +16,6 @@ import {
   ThumbsDown,
   ChevronDown,
   Sparkles,
-  Square,
   RefreshCw,
   Pencil,
   Download,
@@ -30,6 +28,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useChatContext, IMessage as ChatMessage } from "../context/ChatContext";
 import SEO from "../components/SEO";
+import ChatInput from "../components/ChatInput";
 import Image from 'next/image';
 
 interface TypewriterProps {
@@ -317,19 +316,6 @@ const Chat: React.FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const exportMenuRef = useRef<HTMLDivElement>(null);
 
-  // Auto-resize textarea
-  const autoResizeTextarea = useCallback(() => {
-    const textarea = inputRef.current;
-    if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
-    }
-  }, []);
-
-  useEffect(() => {
-    autoResizeTextarea();
-  }, [input, autoResizeTextarea]);
-
   useEffect(() => {
     if (messages.length > 0) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -385,8 +371,7 @@ const Chat: React.FC = () => {
     setShowScrollButton(scrollHeight - scrollTop - clientHeight > 200);
   }, []);
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSend = async () => {
     if (!input.trim() || isLoading || isStreaming) return;
 
     if (!user) {
@@ -404,18 +389,17 @@ const Chat: React.FC = () => {
     const text = input;
     setInput("");
     setShowFollowUps(false);
-    await sendMessage(text);
+    const ok = await sendMessage(text);
+    if (!ok) {
+      // Restore the text so nothing is lost on error.
+      setInput(text);
+    }
+    inputRef.current?.focus();
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend(e);
-    }
-    if (e.key === "Escape") {
-      if (editingMessageIndex !== null) cancelEdit();
-      if (showSearch) setShowSearch(false);
-    }
+  const handleInputEscape = () => {
+    if (editingMessageIndex !== null) cancelEdit();
+    if (showSearch) setShowSearch(false);
   };
 
   const startNewChat = () => {
@@ -470,6 +454,28 @@ const Chat: React.FC = () => {
   const handleSuggestionClick = (suggestion: string) => {
     setShowFollowUps(false);
     sendMessage(suggestion);
+  };
+
+  const handleVote = async (index: number, value: "up" | "down") => {
+    const msg = messages[index];
+    if (!msg || msg.role !== "assistant" || msg.isStreaming || isStreaming) return;
+    const next = msg.feedback === value ? null : value;
+    setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, feedback: next } : m)));
+    if (!activeChatId || !/^[0-9a-fA-F-]{36}$/.test(activeChatId)) return;
+    try {
+      await fetch(`/api/chat/${activeChatId}/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messageIndex: index,
+          role: msg.role,
+          excerpt: msg.content.slice(0, 120),
+          value: next,
+        }),
+      });
+    } catch {
+      // Local vote stays visible even if persistence fails.
+    }
   };
 
   // Edit message handlers
@@ -966,50 +972,34 @@ const Chat: React.FC = () => {
                 </p>
 
                 <div className="max-w-xl mx-auto mb-10">
-                  <form onSubmit={handleSend} className="relative group">
-                    <div className="absolute -inset-1 bg-linear-to-r from-red-600/20 to-transparent blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
-                    <textarea
-                      ref={inputRef as React.RefObject<HTMLTextAreaElement>}
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Fai una domanda tecnica..."
-                      rows={1}
-                      className="w-full bg-zinc-900/80 backdrop-blur-2xl border border-white/10 text-white px-6 py-4 rounded-[2.5rem] text-sm focus:outline-none focus:border-red-500/30 transition-all placeholder:text-zinc-700 shadow-2xl relative z-10 resize-none overflow-hidden"
-                      style={{ minHeight: '56px' }}
-                    />
-                    <button
-                      type="submit"
-                      disabled={isLoading || !input.trim()}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 bg-red-600 hover:bg-red-500 disabled:bg-zinc-800 disabled:text-zinc-600 text-white rounded-2xl transition-all z-10 shadow-lg active:scale-90"
-                    >
-                      <Send size={20} />
-                    </button>
-                  </form>
+                  <ChatInput
+                    value={input}
+                    onChange={setInput}
+                    onSend={handleSend}
+                    onStop={stopGeneration}
+                    isLoading={isLoading}
+                    isStreaming={isStreaming}
+                    placeholder="Chiedi qualsiasi cosa"
+                    autoFocus
+                    textareaRef={inputRef}
+                    onPlus={startNewChat}
+                    plusLabel="Nuova conversazione"
+                    showSuggestions
+                    suggestions={[
+                      "Crea un protocollo per la Planche",
+                      "Analisi biomeccanica Front Lever",
+                      "Come gestire il volume allenante?",
+                      "Consigli per il recupero neurale",
+                    ]}
+                    onSuggestionClick={(suggestion) => {
+                      setInput(suggestion);
+                      inputRef.current?.focus();
+                    }}
+                    onEscape={handleInputEscape}
+                  />
                   <p className="text-[9px] text-zinc-700 text-center font-bold uppercase tracking-widest mt-3">
                     <kbd className="px-1.5 py-0.5 bg-zinc-900 rounded text-zinc-500">Enter</kbd> invia · <kbd className="px-1.5 py-0.5 bg-zinc-900 rounded text-zinc-500">Shift+Enter</kbd> nuova riga
                   </p>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-3 w-full">
-                  {[
-                    "Crea un protocollo per la Planche",
-                    "Analisi biomeccanica Front Lever",
-                    "Come gestire il volume allenante?",
-                    "Consigli per il recupero neurale"
-                  ].map((suggestion) => (
-                    <button
-                      key={suggestion}
-                      onClick={() => {
-                        setInput(suggestion);
-                        inputRef.current?.focus();
-                      }}
-                      className="p-4 bg-zinc-900/40 border border-white/5 rounded-2xl text-left text-[11px] font-bold text-zinc-500 hover:text-white hover:border-red-500/30 hover:bg-zinc-900/60 transition-all flex items-center justify-between group"
-                    >
-                      {suggestion}
-                      <Plus size={12} className="text-zinc-700 group-hover:text-red-500 transition-colors" />
-                    </button>
-                  ))}
                 </div>
               </motion.div>
             ) : (
@@ -1151,10 +1141,32 @@ const Chat: React.FC = () => {
                                   {/* Feedback buttons on AI messages */}
                                   {msg.role === "assistant" && !msg.isStreaming && (
                                     <div className="flex items-center gap-2 mt-2 px-1">
-                                      <button className="p-1.5 bg-zinc-900/60 border border-white/5 rounded-lg text-zinc-600 hover:text-green-500 hover:border-green-500/30 transition-all" title="Utile">
+                                      <button
+                                        onClick={() => handleVote(globalIdx, "up")}
+                                        disabled={isStreaming}
+                                        aria-pressed={msg.feedback === "up"}
+                                        title="Utile"
+                                        aria-label="Risposta utile"
+                                        className={`p-1.5 border rounded-lg transition-all disabled:opacity-40 ${
+                                          msg.feedback === "up"
+                                            ? "bg-green-500/10 border-green-500/40 text-green-500"
+                                            : "bg-zinc-900/60 border-white/5 text-zinc-600 hover:text-green-500 hover:border-green-500/30"
+                                        }`}
+                                      >
                                         <ThumbsUp size={10} />
                                       </button>
-                                      <button className="p-1.5 bg-zinc-900/60 border border-white/5 rounded-lg text-zinc-600 hover:text-red-500 hover:border-red-500/30 transition-all" title="Non utile">
+                                      <button
+                                        onClick={() => handleVote(globalIdx, "down")}
+                                        disabled={isStreaming}
+                                        aria-pressed={msg.feedback === "down"}
+                                        title="Non utile"
+                                        aria-label="Risposta non utile"
+                                        className={`p-1.5 border rounded-lg transition-all disabled:opacity-40 ${
+                                          msg.feedback === "down"
+                                            ? "bg-red-500/10 border-red-500/40 text-red-500"
+                                            : "bg-zinc-900/60 border-white/5 text-zinc-600 hover:text-red-500 hover:border-red-500/30"
+                                        }`}
+                                      >
                                         <ThumbsDown size={10} />
                                       </button>
                                     </div>
@@ -1254,47 +1266,23 @@ const Chat: React.FC = () => {
             </motion.button>
           )}
 
-          {/* Stop generation button */}
-          {isStreaming && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute bottom-36 left-1/2 -translate-x-1/2 z-20"
-            >
-              <button
-                onClick={stopGeneration}
-                className="flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-red-900/40 active:scale-95"
-              >
-                <Square size={14} />
-                Stop
-              </button>
-            </motion.div>
-          )}
-
           {/* Bottom Input */}
           {hasMessages && (
-            <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-10 bg-linear-to-t from-[#050505] via-[#050505]/90 to-transparent pointer-events-none">
-              <div className="max-w-3xl mx-auto pointer-events-auto">
-                <form onSubmit={handleSend} className="relative group">
-                  <div className="absolute -inset-1 bg-linear-to-r from-red-600/20 to-transparent blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
-                  <textarea
-                    ref={inputRef as React.RefObject<HTMLTextAreaElement>}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Digita un comando o poni una domanda tecnica..."
-                    rows={1}
-                    className="w-full bg-zinc-900/80 backdrop-blur-2xl border border-white/5 text-white px-7 py-5 rounded-[2rem] text-sm focus:outline-none focus:border-red-500/30 transition-all placeholder:text-zinc-600 shadow-2xl relative z-10 resize-none overflow-hidden"
-                    style={{ minHeight: '58px', maxHeight: '200px' }}
-                  />
-                  <button
-                    type="submit"
-                    disabled={isLoading || !input.trim()}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-red-600 hover:bg-red-500 disabled:bg-zinc-800 disabled:text-zinc-600 text-white rounded-2xl transition-all z-10 shadow-lg active:scale-90"
-                  >
-                    <Send size={18} />
-                  </button>
-                </form>
+            <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-6 bg-linear-to-t from-[#050505] via-[#050505]/90 to-transparent pointer-events-none">
+              <div className="max-w-[720px] mx-auto pointer-events-auto">
+                <ChatInput
+                  value={input}
+                  onChange={setInput}
+                  onSend={handleSend}
+                  onStop={stopGeneration}
+                  isLoading={isLoading}
+                  isStreaming={isStreaming}
+                  placeholder="Chiedi qualsiasi cosa"
+                  textareaRef={inputRef}
+                  onPlus={startNewChat}
+                  plusLabel="Nuova conversazione"
+                  onEscape={handleInputEscape}
+                />
                 <div className="flex items-center justify-between mt-4 px-6">
                   <div className="flex items-center gap-4">
                     <p className="text-[9px] text-zinc-700 font-bold uppercase tracking-widest">
