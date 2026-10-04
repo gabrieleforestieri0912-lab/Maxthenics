@@ -43,7 +43,7 @@ interface Plan {
   price: string;
   priceValue: number;
   label: string;
-  save?: string;
+  save?: string | null;
   highlight?: boolean;
 }
 
@@ -110,6 +110,7 @@ const CalisthenicsRoom: React.FC = () => {
   const [expandedModule, setExpandedModule] = useState(0);
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
   const [hoveredCardEl, setHoveredCardEl] = useState<HTMLDivElement | null>(null);
+  const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -188,6 +189,7 @@ const CalisthenicsRoom: React.FC = () => {
   }, [isAuthenticated, user]);
 
   const handlePurchase = async (plan: Plan) => {
+    setPurchaseError(null);
     try {
       const response = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",
@@ -202,15 +204,19 @@ const CalisthenicsRoom: React.FC = () => {
               quantity: 1,
             },
           ],
+          userId: user?.id,
         }),
       });
 
-      const data = await response.json();
-      if (data.url) {
+      const data = await response.json().catch(() => null);
+      if (response.ok && data?.url) {
         window.location.href = data.url;
+      } else {
+        setPurchaseError(data?.message || "Checkout non riuscito. Riprova.");
       }
     } catch (error) {
       console.error("Errore checkout:", error);
+      setPurchaseError("Errore di connessione. Riprova.");
     }
   };
 
@@ -313,7 +319,7 @@ const CalisthenicsRoom: React.FC = () => {
         <section id="features" className="py-32 px-6 relative">
           <div className="max-w-5xl mx-auto relative">
             <div className="text-center mb-16">
-              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block">Il Metodo</span>
+              <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Il Metodo</span>
               <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
                 Come <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">Funziona</span>
               </h2>
@@ -480,7 +486,7 @@ const CalisthenicsRoom: React.FC = () => {
         <section id="offers" className="py-32 px-6 relative">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
-              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block">Cosa Ottieni</span>
+              <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Cosa Ottieni</span>
               <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
                 Il <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">Protocollo</span> Completo
               </h2>
@@ -502,7 +508,7 @@ const CalisthenicsRoom: React.FC = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.04 }}
-                      className="flex items-start gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-green-500/20 hover:bg-green-500/5 transition-all duration-300 group"
+                      className="flex items-start gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-red-500/20 hover:bg-red-500/5 transition-all duration-300 group"
                     >
                       <div className="w-7 h-7 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
                         <CheckCircle size={16} className="text-green-500" />
@@ -562,7 +568,7 @@ const CalisthenicsRoom: React.FC = () => {
         <section className="pb-32 px-6" id="pricing">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block">Investimento</span>
+              <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Investimento</span>
               <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
                 Scegli il tuo <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">Percorso</span>
               </h2>
@@ -750,7 +756,7 @@ const CalisthenicsRoom: React.FC = () => {
 
                     {/* CTA */}
                     <button
-                      onClick={() => handlePurchase(plan as any)}
+                      onClick={() => handlePurchase(plan)}
                       className={`w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all relative z-10 ${
                         plan.highlight
                           ? "bg-white text-black hover:bg-zinc-100 shadow-xl"
@@ -766,6 +772,11 @@ const CalisthenicsRoom: React.FC = () => {
 
             {/* Payment Info */}
             <div className="mt-16 flex flex-col items-center gap-5">
+              {purchaseError && (
+                <p className="text-red-400 text-xs font-bold bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-3">
+                  {purchaseError}
+                </p>
+              )}
               <div className="flex items-center gap-6 text-zinc-600 text-[10px] font-black uppercase tracking-[0.15em]">
                 <span className="flex items-center gap-1.5"><ShieldCheck size={12} /> Pagamento sicuro Stripe</span>
                 <span className="w-1 h-1 rounded-full bg-zinc-700" />
@@ -792,7 +803,7 @@ const CalisthenicsRoom: React.FC = () => {
         <section className="pb-32 px-6">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-16">
-              <span className="text-red-500 font-black tracking-[0.4em] uppercase text-[10px] mb-4 block">Dubbi?</span>
+              <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Dubbi?</span>
               <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase">Domande <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">Frequenti</span></h2>
             </div>
 
@@ -889,13 +900,15 @@ const CalisthenicsRoom: React.FC = () => {
               {
                 title: "Guida Completa al Calisthenics Moderno",
                 desc: "Scienza applicata, programmazione avanzata e protocolli di recupero.",
-                action: "Scarica PDF",
+                action: "Apri la Guida",
+                to: "/guide",
                 icon: <BookOpen size={32} />,
               },
               {
                 title: "Template Scheda Settimanale",
                 desc: "Il planner settimanale per tracciare volume, intensità e recupero.",
-                action: "Scarica Template",
+                action: "Crea Scheda",
+                to: "/create",
                 icon: <Target size={32} />,
               },
             ].map((res, i) => (
@@ -916,9 +929,9 @@ const CalisthenicsRoom: React.FC = () => {
                   </div>
                   <h3 className="text-xl font-black mb-3 leading-tight">{res.title}</h3>
                   <p className="text-zinc-500 text-sm mb-8 leading-relaxed">{res.desc}</p>
-                  <button className="flex items-center gap-3 px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-black rounded-2xl transition-all text-xs tracking-widest uppercase shadow-lg shadow-red-900/20">
+                  <Link to={res.to} className="inline-flex items-center gap-3 px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-black rounded-2xl transition-all text-xs tracking-widest uppercase shadow-lg shadow-red-900/20">
                     {res.action} <ArrowRight size={14} />
-                  </button>
+                  </Link>
                 </div>
               </motion.div>
             ))}

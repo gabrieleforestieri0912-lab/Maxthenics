@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   User,
@@ -20,20 +18,12 @@ import {
   Pencil,
   Trash2,
   Layout,
-  Clock,
-  TrendingUp,
   Dumbbell,
-  MapPin,
   AlertTriangle,
   CheckCircle2,
   Zap,
-  Heart,
-  Repeat,
-  Eye,
-  Star,
   BrainCircuit,
   Shield,
-  BarChart3,
   Ruler,
   Scale,
   Calendar,
@@ -266,7 +256,7 @@ interface SavedProgramsPanelProps {
   setOpenExportIdx: React.Dispatch<React.SetStateAction<number | null>>;
   handleEdit: (index: number) => void;
   handleDelete: (index: number) => void;
-  handleExport: (format: "txt" | "json" | "pdf", program: SavedProgram, index: number) => void;
+  handleExport: (format: "txt" | "json" | "pdf", program: SavedProgram) => void;
   bodyFocus: string[];
 }
 
@@ -355,21 +345,21 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
                         <div className="fixed inset-0 z-40" onClick={() => setOpenExportIdx(null)} />
                         <div className="absolute right-0 top-full mt-1 z-50 w-44 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden">
                           <button
-                            onClick={() => handleExport("txt", p, i)}
+                            onClick={() => handleExport("txt", p)}
                             className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
                           >
                             <FileText size={14} className="text-zinc-500" />
                             Esporta TXT
                           </button>
                           <button
-                            onClick={() => handleExport("json", p, i)}
+                            onClick={() => handleExport("json", p)}
                             className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
                           >
                             <FileJson size={14} className="text-zinc-500" />
                             Esporta JSON
                           </button>
                           <button
-                            onClick={() => handleExport("pdf", p, i)}
+                            onClick={() => handleExport("pdf", p)}
                             className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
                           >
                             <Printer size={14} className="text-zinc-500" />
@@ -456,7 +446,6 @@ const GenerationProgressBar: React.FC<GenerationProgressBarProps> = ({ isGenerat
 
 const Create: React.FC = () => {
   const { user, loading: authLoading, addNotification } = useAuth();
-  const navigate = useNavigate();
   const confettiRef = useRef<HTMLDivElement>(null);
 
   const [programs, setPrograms] = useState<SavedProgram[]>(() => {
@@ -729,7 +718,7 @@ const Create: React.FC = () => {
     setPrograms(updated);
   };
 
-  const handleExport = (format: "txt" | "json" | "pdf", program: SavedProgram, index: number) => {
+  const handleExport = (format: "txt" | "json" | "pdf", program: SavedProgram) => {
     setOpenExportIdx(null);
     const flatExercises: { name: string; sets: number; reps: string; rest: string; notes?: string }[] = (program.exercises || []).map((ex: any) => ({
       name: ex.exercise?.name || ex.name || 'Esercizio',

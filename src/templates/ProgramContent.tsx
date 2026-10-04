@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { programData, localizeProgram } from '../data/programs';
 import { getCurriculum } from '../data/curriculum';
 import { localizeList, localizeNote } from '../data/exerciseI18n';
+import { getLessonProgress, toggleLessonProgress } from '../lib/lessonProgress';
 import Curriculum from '../components/Curriculum';
 import ShareButton from '../components/ShareButton';
 import { useLanguage } from '../context/LanguageContext';
@@ -58,42 +59,6 @@ interface ProgramWorkoutPlan {
 // ─── Exercise finder helper ───
 const findExercise = (id: string): Exercise | undefined =>
   exerciseDatabase.find((ex) => ex.id === id);
-
-// ─── Workout data builder for every program ───
-const _buildWorkoutPlan = (
-  id: number,
-  exerciseIds: string[],
-  getWorkout: (exercise: Exercise, week: number, dayOfWeek: number) => WorkoutSet,
-  lengthWeeks: number,
-): ProgramWorkoutPlan => {
-  const exercises: ExerciseEntry[] = exerciseIds
-    .map((eid) => {
-      const ex = findExercise(eid);
-      return ex ? { exerciseId: eid, exercise: ex, workout: getWorkout(ex, 1, 1) } : null;
-    })
-    .filter(Boolean) as ExerciseEntry[];
-
-  const weeks: WeekPlan[] = Array.from({ length: lengthWeeks }, (_, wi) => {
-    const dayOfWeeks = [
-      { idx: 1, name: 'Push' },
-      { idx: 2, name: 'Pull' },
-      { idx: 3, name: 'Legs' },
-      { idx: 4, name: 'Core/Skills' },
-    ];
-    return {
-      week: wi + 1,
-      theme: weekTheme(wi, lengthWeeks, id),
-      days: dayOfWeeks.map((d) => ({
-        day: d.idx,
-        week: wi + 1,
-        focus: d.name,
-        exercises,
-      })),
-    };
-  });
-
-  return { id, weeks, weeklyOverview: [], warmUp: [], coolDown: [], progressionNotes: [] };
-};
 
 function weekTheme(weekIdx: number, totalWeeks: number, _programId: number, locale: 'it' | 'en' = 'it'): string {
   const third = Math.ceil(totalWeeks / 3);
@@ -224,9 +189,6 @@ const PROGRAM_CONFIG: Record<number, {
       if (ex.id === 'bw-003') {
         return { sets: 3, reps: '90-120s', rest: '90s', tempo: 'isometrico', notes: 'Core e scapole attive' };
       }
-      if (ex.id === 'bw-009-full') {
-        return { sets: 3, reps: week <= 3 ? '5-8s' : week <= 7 ? '8-12s' : '12-18s', rest: '150s', tempo: 'isometrico', notes: 'Livello massimo di tensione isometrica' };
-      }
       return { sets: 4, reps: isSkillsDay ? '5-8' : '8-10', rest: isSkillsDay ? '150s' : '90s', tempo: '2/1/2/0', notes: 'Focus su tecnica e controllo della barra' };
     },
   },
@@ -262,8 +224,7 @@ const PROGRAM_CONFIG: Record<number, {
     warmUpEn: ['Rainbow Wrist Prep (30s/side)', 'Wide-Grip Stick Dislocates (10x)', 'Cat-Cow (10x)', 'Dynamic Chest Stretch (10x/side)'],
     coolDown: ['Child\'s Pose (1 min)', 'Deep Squat Hold (30s)', 'Tuck Planche Hold (20s x 2)'],
     coolDownEn: ['Child\'s Pose (1 min)', 'Deep Squat Hold (30s)', 'Tuck Planche Hold (20s x 2)'],
-    getWorkout: (ex, week, dayIndex) => {
-      const _isPlancheDay = dayIndex === 1;
+    getWorkout: (ex, week, _dayIndex) => {
       if (ex.id === 'bw-010') {
         return {
           sets: 4,
@@ -287,8 +248,7 @@ const PROGRAM_CONFIG: Record<number, {
     warmUpEn: ['Pike Push-up (8x)', 'Wrist Prep (30s/side)', 'Scapular Wall Slides (15x)', 'Incline Push-ups (10x)'],
     coolDown: ['Child\'s Pose (1 min)', 'Dynamic Chest Stretch (10x/side)', 'Deep Squat Hold (30s)'],
     coolDownEn: ['Child\'s Pose (1 min)', 'Dynamic Chest Stretch (10x/side)', 'Deep Squat Hold (30s)'],
-    getWorkout: (ex, week, dayIndex) => {
-      const _isPlancheDay = dayIndex === 1;
+    getWorkout: (ex, week, _dayIndex) => {
       // Periodizzazione ondulata: Week 1-3 volume, Week 4-6 intensità, Week 7-10 picco
       const phase = week <= 3 ? 'volume' : week <= 6 ? 'intensity' : 'peak';
       if (ex.id === 'bw-011') {
@@ -461,7 +421,6 @@ const PROGRAM_CONFIG: Record<number, {
     coolDown: ['Child\'s Pose (1 min)', 'Pigeon Stretch (1 min/side)', 'Foam Rolling bassa schiena (2 min)'],
     coolDownEn: ['Child\'s Pose (1 min)', 'Pigeon Stretch (1 min/side)', 'Lower-Back Foam Rolling (2 min)'],
     getWorkout: (ex, week) => {
-      const _phase = week <= 2 ? 'tuck' : week <= 4 ? 'adv-tuck' : week <= 5 ? 'straddle' : 'full';
       if (ex.id === 'bw-018-tuck' || ex.id === 'bw-018') {
         const level = week <= 2 ? 'tuck' : week <= 4 ? 'adv-tuck' : week <= 5 ? 'straddle' : 'full';
         return {
@@ -496,7 +455,7 @@ const PROGRAM_CONFIG: Record<number, {
       if (ex.id === 'mob-004') {
         return { sets: 3, reps: `${30 + week * 10}s`, rest: '30s', tempo: 'isometrico', notes: 'Anche aperte, talloni a terra, core attivo' };
       }
-      if (ex.id === 'mob-006' || ex.id === 'mob-006') {
+      if (ex.id === 'mob-006') {
         return { sets: 2, reps: '20 circle/side entrambi i versi', rest: '30s', tempo: 'lento', notes: 'Movimento circolare completo senza dolore' };
       }
       if (ex.id === 'mob-008') {
@@ -517,7 +476,6 @@ const PROGRAM_CONFIG: Record<number, {
     coolDown: ['Deep Squat Hold (1 min)', 'Pigeon Stretch (1 min/side)', 'Child\'s Pose (1 min)', 'Foam Rolling full body (3 min)'],
     coolDownEn: ['Deep Squat Hold (1 min)', 'Pigeon Stretch (1 min/side)', 'Child\'s Pose (1 min)', 'Full-Body Foam Rolling (3 min)'],
     getWorkout: (ex, week, _dayIndex) => {
-      const _phases: Record<number, 'accum' | 'intensify' | 'peak'> = {};
       const phase = week <= 4 ? 'accum' : week <= 8 ? 'intensify' : 'peak';
       if (ex.id === 'bw-001' || ex.id === 'bw-027') {
         const { s, r, reps: res } = pushDay(phase);
@@ -651,6 +609,8 @@ const GripHandle: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => (
 interface WorkoutTableProps {
   exercise: ExerciseEntry;
   exerciseIndex: number;
+  highlighted?: boolean;
+  autoExpand?: boolean;
   onDragStart?: (e: React.DragEvent) => void;
   onDragOver?: (e: React.DragEvent) => void;
   onDrop?: (e: React.DragEvent) => void;
@@ -658,13 +618,26 @@ interface WorkoutTableProps {
   isDragTarget?: boolean;
 }
 
-const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, onDragStart, onDragOver, onDrop, onDragEnd, isDragTarget }) => {
-  const [expanded, setExpanded] = useState(false);
+const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, highlighted = false, autoExpand = false, onDragStart, onDragOver, onDrop, onDragEnd, isDragTarget }) => {
+  const [expanded, setExpanded] = useState(autoExpand || highlighted);
+  const [wasHighlighted, setWasHighlighted] = useState(highlighted);
+  // Adjust state during render when a new highlight arrives (documented React pattern).
+  if (wasHighlighted !== highlighted) {
+    setWasHighlighted(highlighted);
+    if (highlighted) setExpanded(true);
+  }
+  const rowRef = useRef<HTMLDivElement>(null);
   const { locale, t } = useLanguage();
   const w = exercise.workout;
   const muscles = localizeList(exercise.exercise.muscleGroups.primary, locale);
   const progressions = localizeList(exercise.exercise.progression, locale);
   const notes = localizeNote(w.notes, locale) ?? w.notes;
+
+  useEffect(() => {
+    if (highlighted) {
+      rowRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [highlighted]);
 
   return (
     <motion.div
@@ -673,7 +646,8 @@ const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, on
       transition={{ delay: exerciseIndex * 0.04 }}
     >
       <div
-        className={`border-b border-white/10 last:border-0 group relative ${isDragTarget ? 'opacity-40' : ''}`}
+        ref={rowRef}
+        className={`border-b border-white/10 last:border-0 group relative rounded-xl transition-shadow ${isDragTarget ? 'opacity-40' : ''} ${highlighted ? 'ring-2 ring-red-500/60 bg-red-500/[0.04]' : ''}`}
         draggable
         onDragStart={onDragStart}
         onDragOver={onDragOver}
@@ -852,6 +826,9 @@ const ProgramContent: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<'overview' | 'workout' | 'warmup' | 'exercises' | 'lessons'>('lessons');
   const [weekIndex, setWeekIndex] = useState(0);
+  const [highlightExercise, setHighlightExercise] = useState<string | null>(null);
+  const [lessonDone, setLessonDone] = useState<Set<string>>(new Set());
+  const [progressFor, setProgressFor] = useState<string | null>(null);
   const { locale, t } = useLanguage();
 
   const allPrograms: IProgram[] = [
@@ -885,6 +862,13 @@ const ProgramContent: React.FC = () => {
   const plan = getProgramPlan(program.id, locale);
   const curriculum = getCurriculum(program.id);
   const currentWeek = plan.weeks[weekIndex] || plan.weeks[0];
+
+  // Reload per-program state when navigating between programs (same component instance).
+  if (progressFor !== program.id.toString()) {
+    setProgressFor(program.id.toString());
+    setLessonDone(getLessonProgress(program.id));
+    setHighlightExercise(null);
+  }
   const cfg = PROGRAM_CONFIG[program.id] || PROGRAM_CONFIG[101]!;
   const tagline = locale === 'en' ? (cfg.taglineEn || cfg.tagline) : cfg.tagline;
   const warmUp = locale === 'en' ? (cfg.warmUpEn || cfg.warmUp) : cfg.warmUp;
@@ -1029,8 +1013,15 @@ const ProgramContent: React.FC = () => {
               </p>
               <Curriculum
                 curriculum={curriculum}
+                progress={lessonDone}
+                onToggleLesson={(lessonId) =>
+                  setLessonDone(toggleLessonProgress(program.id, lessonId))
+                }
                 onOpenWorkout={() => setActiveTab('workout')}
-                onOpenExercise={() => setActiveTab('exercises')}
+                onOpenExercise={(exerciseId) => {
+                  setActiveTab('exercises');
+                  setHighlightExercise(exerciseId ?? null);
+                }}
               />
             </motion.div>
           )}
@@ -1084,6 +1075,8 @@ const ProgramContent: React.FC = () => {
                     workout: cfg.getWorkout(exercise, 1, 1),
                   }}
                   exerciseIndex={i}
+                  highlighted={highlightExercise === exercise.id}
+                  autoExpand={highlightExercise === exercise.id}
                 />
               ))}
             </motion.div>

@@ -4,7 +4,6 @@ import { isRateLimited, getRateLimitHeaders, getClientId } from '@/lib/rateLimit
 import dbConnect from '@/lib/db';
 import Chat from '@/models/Chat';
 import { getUserId } from '@/lib/auth';
-import OpenAI from 'openai';
 import { getEnv } from '@/lib/env';
 import { getOpenAI } from '@/lib/clients';
 

@@ -6,14 +6,12 @@ import type { Locale } from "../data/programs";
 interface LanguageContextValue {
   locale: Locale;
   setLocale: (l: Locale) => void;
-  toggle: () => void;
   t: (it: string, en: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextValue>({
   locale: "it",
   setLocale: () => {},
-  toggle: () => {},
   t: (it) => it,
 });
 
@@ -45,14 +43,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, [locale]);
 
   const setLocale = useCallback((l: Locale) => setLocaleState(l), []);
-  const toggle = useCallback(
-    () => setLocaleState((p) => (p === "it" ? "en" : "it")),
-    []
-  );
   const t = useCallback((it: string, en: string) => (locale === "en" ? en : it), [locale]);
 
   return (
-    <LanguageContext.Provider value={{ locale, setLocale, toggle, t }}>
+    <LanguageContext.Provider value={{ locale, setLocale, t }}>
       {children}
     </LanguageContext.Provider>
   );

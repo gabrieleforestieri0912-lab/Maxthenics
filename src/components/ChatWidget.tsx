@@ -202,11 +202,6 @@ const ChatWidgetContent = () => {
     setRenamingChatTitle("");
   };
 
-  const _handleRenameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") { e.preventDefault(); saveRename(); }
-    if (e.key === "Escape") { setRenamingChatId(null); setRenamingChatTitle(""); }
-  };
-
   const startEdit = (index: number, content: string) => {
     setEditingMessageIndex(index);
     setEditingMessageContent(content);
@@ -222,11 +217,6 @@ const ChatWidgetContent = () => {
     await editMessage(editingMessageIndex, editingMessageContent);
     setEditingMessageIndex(null);
     setEditingMessageContent("");
-  };
-
-  const _handleEditKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); }
-    if (e.key === "Escape") cancelEdit();
   };
 
   const copyMessage = async (content: string, index: number) => {

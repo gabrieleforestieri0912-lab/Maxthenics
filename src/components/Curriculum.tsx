@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ListVideo,
   GraduationCap,
+  Check,
 } from "lucide-react";
 import type { LessonKind, ProgramCurriculum } from "../data/curriculum";
 import { useLanguage } from "../context/LanguageContext";
@@ -34,6 +35,9 @@ interface CurriculumProps {
   /** Member-area navigation callbacks. */
   onOpenWorkout?: () => void;
   onOpenExercise?: (exerciseId?: string) => void;
+  /** Completed lesson ids (member area). Enables progress + checkmarks. */
+  progress?: Set<string>;
+  onToggleLesson?: (lessonId: string) => void;
 }
 
 function formatMinutes(min: number, locale: "it" | "en") {
@@ -52,12 +56,18 @@ const Curriculum: React.FC<CurriculumProps> = ({
   preview = false,
   onOpenWorkout,
   onOpenExercise,
+  progress,
+  onToggleLesson,
 }) => {
   const { locale, t } = useLanguage();
   const [openSection, setOpenSection] = useState<string | null>(
     curriculum.sections[0]?.id ?? null
   );
   const [openLesson, setOpenLesson] = useState<string | null>(null);
+
+  const doneCount = progress
+    ? curriculum.sections.flatMap((s) => s.lessons).filter((l) => progress.has(l.id)).length
+    : 0;
 
   // Running lesson numbers across sections (1-based, like "Lesson 12").
   const sectionOffsets = React.useMemo(() => {
@@ -90,6 +100,11 @@ const Curriculum: React.FC<CurriculumProps> = ({
         <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-[11px] font-black uppercase tracking-widest">
           IT / EN
         </span>
+        {progress && (
+          <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-[11px] font-black uppercase tracking-widest">
+            {t(`${doneCount}/${curriculum.totalLessons} completate`, `${doneCount}/${curriculum.totalLessons} done`)}
+          </span>
+        )}
       </div>
 
       {curriculum.sections.map((section, si) => {
@@ -141,23 +156,22 @@ const Curriculum: React.FC<CurriculumProps> = ({
                       const lessonNo = firstLessonNo + li;
                       const Icon = KIND_ICON[lesson.kind];
                       const locked = preview && !lesson.freePreview;
-                      const expanded =
-                        !preview && openLesson === lesson.id;
+                      const expanded = !locked && openLesson === lesson.id;
+                      const done = progress?.has(lesson.id) ?? false;
                       return (
                         <div
                           key={lesson.id}
                           className={`rounded-xl border transition-colors ${
                             locked
                               ? "border-white/5 bg-zinc-950/40"
-                              : "border-white/5 bg-zinc-950/60 hover:border-white/15"
+                              : done
+                                ? "border-green-500/20 bg-green-500/[0.03]"
+                                : "border-white/5 bg-zinc-950/60 hover:border-white/15"
                           }`}
                         >
                           <button
                             disabled={locked}
-                            onClick={() =>
-                              !preview &&
-                              setOpenLesson(expanded ? null : lesson.id)
-                            }
+                            onClick={() => setOpenLesson(expanded ? null : lesson.id)}
                             className={`w-full p-3 flex items-center gap-3 text-left ${
                               locked ? "cursor-not-allowed" : ""
                             }`}
@@ -166,11 +180,15 @@ const Curriculum: React.FC<CurriculumProps> = ({
                               className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                                 locked
                                   ? "bg-zinc-800 text-zinc-600"
-                                  : "bg-red-600/15 text-red-400"
+                                  : done
+                                    ? "bg-green-500/15 text-green-400"
+                                    : "bg-red-600/15 text-red-400"
                               }`}
                             >
                               {locked ? (
                                 <Lock size={14} />
+                              ) : done ? (
+                                <Check size={14} strokeWidth={3} />
                               ) : (
                                 <Icon size={14} />
                               )}
@@ -184,7 +202,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                                 }`}
                               >
                                 {t("Lezione", "Lesson")} {lessonNo}
-                                {!preview && (
+                                {(!preview || lesson.freePreview) && (
                                   <span className="ml-2 normal-case font-medium">
                                     · {lesson.minutes} min
                                   </span>
@@ -192,7 +210,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                               </span>
                               <span
                                 className={`block text-sm font-bold truncate ${
-                                  locked ? "text-zinc-600" : "text-zinc-100"
+                                  locked ? "text-zinc-600" : done ? "text-zinc-400 line-through" : "text-zinc-100"
                                 }`}
                               >
                                 {locale === "en"
@@ -205,7 +223,33 @@ const Curriculum: React.FC<CurriculumProps> = ({
                                 {t("Anteprima", "Preview")}
                               </span>
                             )}
-                            {!preview && (
+                            {!preview && onToggleLesson && !locked && (
+                              <span
+                                role="button"
+                                tabIndex={0}
+                                aria-label={t("Segna come completata", "Mark as done")}
+                                aria-pressed={done}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onToggleLesson(lesson.id);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onToggleLesson(lesson.id);
+                                  }
+                                }}
+                                className={`shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center transition-all ${
+                                  done
+                                    ? "bg-green-500 border-green-500 text-white"
+                                    : "border-white/15 text-zinc-600 hover:border-green-500/50 hover:text-green-400"
+                                }`}
+                              >
+                                <Check size={14} strokeWidth={3} />
+                              </span>
+                            )}
+                            {!locked && (
                               <ChevronDown
                                 size={15}
                                 className={`text-zinc-500 transition-transform shrink-0 ${

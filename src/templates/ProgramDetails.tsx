@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getProgramByIdList, localizeProgram } from '../data/programs';
 import { getCurriculum } from '../data/curriculum';
@@ -59,18 +58,6 @@ const TARGET_AUDIENCE = [
 ];
 
 
-
-interface IProgramDetails {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  price: number;
-  duration: string;
-  level: string;
-  intensity: string;
-  features: string[];
-}
 
 const ProgramDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
