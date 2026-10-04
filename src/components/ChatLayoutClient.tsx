@@ -1,12 +1,32 @@
 "use client";
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import ChatToggle from './ChatToggle';
 import ChatWidget from './ChatWidget';
 
-export default function ChatLayoutClient() {
+function ChatLayoutInner() {
+  const location = useLocation();
+
+  // Niente minichat sulla landing
+  if (location.pathname === '/') return null;
+
   return (
     <>
       <ChatToggle />
       <ChatWidget />
     </>
   );
+}
+
+export default function ChatLayoutClient() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Prima dell'hydrate (e senza router) non renderizzare nulla
+  if (!mounted) return null;
+
+  return <ChatLayoutInner />;
 }
