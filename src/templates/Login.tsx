@@ -11,13 +11,40 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
+  const { login, addNotification } = useAuth();
+  const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   // Read redirect destination from query string (?redirect=/cart)
   const redirectTo = new URLSearchParams(location.search).get('redirect') || '/';
 
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    try {
+      const sb = getSupabaseBrowser();
+      const { data, error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: { prompt: 'select_account' },
+        },
+      });
+      if (error) {
+        addNotification(error.message || 'Accesso Google non riuscito. Riprova.', 'error');
+        return;
+      }
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        addNotification('Accesso Google non riuscito. Riprova.', 'error');
+      }
+    } catch {
+      addNotification('Accesso Google non riuscito. Riprova.', 'error');
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await login(email, password);
@@ -125,19 +152,12 @@ const Login: React.FC = () => {
 
           <button
             type="button"
-            onClick={async () => {
-              const sb = getSupabaseBrowser();
-              await sb.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                  redirectTo: `${window.location.origin}/auth/callback`,
-                },
-              });
-            }}
-            className="w-full flex items-center justify-center gap-3 bg-white text-zinc-950 py-2.5 sm:py-3 rounded-xl font-bold text-sm transition-all hover:bg-zinc-200 active:scale-[0.98]"
+            onClick={handleGoogleLogin}
+            disabled={googleLoading}
+            className="w-full flex items-center justify-center gap-3 bg-white text-zinc-950 py-2.5 sm:py-3 rounded-xl font-bold text-sm transition-all hover:bg-zinc-200 active:scale-[0.98] disabled:opacity-60"
           >
             <GoogleIcon className="w-5 h-5" />
-            Accedi con Google
+            {googleLoading ? 'Reindirizzamento…' : 'Accedi con Google'}
           </button>
 
           <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-white/10 text-center">

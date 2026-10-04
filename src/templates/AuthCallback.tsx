@@ -17,6 +17,13 @@ const AuthCallback: React.FC = () => {
 
     const handleCallback = async (): Promise<boolean> => {
       try {
+        // PKCE flow returns ?code=: exchange it for a session first.
+        const code = new URL(window.location.href).searchParams.get('code');
+        if (code) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          if (exchangeError) return false;
+        }
+
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error || !session?.access_token) return false;

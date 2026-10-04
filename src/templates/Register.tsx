@@ -19,6 +19,7 @@ const Register: React.FC = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,13 +47,30 @@ const Register: React.FC = () => {
   };
 
   const handleGoogleRegister = async () => {
-    const sb = getSupabaseBrowser();
-    await sb.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    setGoogleLoading(true);
+    try {
+      const sb = getSupabaseBrowser();
+      const { data, error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: { prompt: 'select_account' },
+        },
+      });
+      if (error) {
+        addNotification(error.message || 'Registrazione Google non riuscita. Riprova.', 'error');
+        return;
+      }
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        addNotification('Registrazione Google non riuscita. Riprova.', 'error');
+      }
+    } catch {
+      addNotification('Registrazione Google non riuscita. Riprova.', 'error');
+    } finally {
+      setGoogleLoading(false);
+    }
   };
 
   return (
@@ -199,10 +217,11 @@ const Register: React.FC = () => {
           <button
             type="button"
             onClick={handleGoogleRegister}
-            className="w-full flex items-center justify-center gap-3 bg-white text-zinc-950 py-2.5 sm:py-3 rounded-xl font-bold text-sm transition-all hover:bg-zinc-200 active:scale-[0.98]"
+            disabled={googleLoading}
+            className="w-full flex items-center justify-center gap-3 bg-white text-zinc-950 py-2.5 sm:py-3 rounded-xl font-bold text-sm transition-all hover:bg-zinc-200 active:scale-[0.98] disabled:opacity-60"
           >
             <GoogleIcon className="w-5 h-5" />
-            Registrati con Google
+            {googleLoading ? 'Reindirizzamento…' : 'Registrati con Google'}
           </button>
 
           <div className="mt-5 sm:mt-6 pt-4 sm:pt-5 border-t border-white/10 text-center">
