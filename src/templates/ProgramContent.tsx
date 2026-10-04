@@ -2,10 +2,15 @@
 
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { programData } from '../data/programs';
+import { programData, localizeProgram } from '../data/programs';
+import { getCurriculum } from '../data/curriculum';
+import Curriculum from '../components/Curriculum';
+import ShareButton from '../components/ShareButton';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageToggle from '../components/LanguageToggle';
 import { exerciseDatabase, Exercise } from '../data/exercises';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ChevronDown, ChevronRight, Target, Dumbbell, BookOpen, Flame, Zap, Check } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronRight, Target, Dumbbell, BookOpen, Flame, Zap, Check, GraduationCap } from 'lucide-react';
 import SEO from "../components/SEO";
 
 // ─── Workout Data Types ───
@@ -786,8 +791,9 @@ interface IProgram { id: number; title: string; level: string; duration?: string
 
 const ProgramContent: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [activeTab, setActiveTab] = useState<'overview' | 'workout' | 'warmup' | 'exercises'>('workout');
+  const [activeTab, setActiveTab] = useState<'overview' | 'workout' | 'warmup' | 'exercises' | 'lessons'>('lessons');
   const [weekIndex, setWeekIndex] = useState(0);
+  const { locale, t } = useLanguage();
 
   const allPrograms: IProgram[] = [
     ...programData.workout,
@@ -795,18 +801,30 @@ const ProgramContent: React.FC = () => {
     ...(programData.planche || []),
     ...(programData.skills || []),
   ];
-  const program = allPrograms.find((p) => p.id === parseInt(id || '0'));
+  const rawProgram = allPrograms.find((p) => p.id === parseInt(id || '0'));
+  const localized = rawProgram
+    ? localizeProgram(rawProgram as unknown as Parameters<typeof localizeProgram>[0], locale)
+    : undefined;
+  const program = rawProgram
+    ? {
+        ...rawProgram,
+        title: localized!.localizedTitle,
+        level: localized!.localizedLevel,
+        duration: localized!.localizedDuration,
+      }
+    : undefined;
 
   if (!program) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
-        <h2 className="text-3xl font-bold mb-4">Programma non trovato</h2>
-        <Link to="/programs" className="text-red-500 hover:underline">Torna ai programmi</Link>
+        <h2 className="text-3xl font-bold mb-4">{t('Programma non trovato', 'Program not found')}</h2>
+        <Link to="/programs" className="text-red-500 hover:underline">{t('Torna ai programmi', 'Back to programs')}</Link>
       </div>
     );
   }
 
   const plan = getProgramPlan(program.id);
+  const curriculum = getCurriculum(program.id);
   const currentWeek = plan.weeks[weekIndex] || plan.weeks[0];
   const cfg = PROGRAM_CONFIG[program.id] || PROGRAM_CONFIG[101]!;
 
@@ -823,24 +841,34 @@ const ProgramContent: React.FC = () => {
       />
       <div className="min-h-screen bg-black text-white pt-24 pb-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <Link to="/programs" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white mb-6 transition-colors font-bold text-sm">
-            <ArrowLeft className="w-4 h-4" />
-            Torna ai Programmi
-          </Link>
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <Link to="/programs" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors font-bold text-sm">
+              <ArrowLeft className="w-4 h-4" />
+              {t('Torna ai Programmi', 'Back to Programs')}
+            </Link>
+            <div className="flex items-center gap-2">
+              <ShareButton
+                compact
+                url={typeof window !== 'undefined' ? `${window.location.origin}/program/${program.id}` : undefined}
+                title={program.title}
+              />
+              <LanguageToggle compact />
+            </div>
+          </div>
 
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
             <div>
-              <span className="text-red-600 font-black tracking-[0.3em] uppercase text-[10px] mb-2 block">Protocollo di Allenamento</span>
+              <span className="text-red-600 font-black tracking-[0.3em] uppercase text-[10px] mb-2 block">{t('Protocollo di Allenamento', 'Training Protocol')}</span>
               <h1 className="text-2xl sm:text-4xl font-black tracking-tighter uppercase">{program.title}</h1>
               {cfg.tagline && <p className="text-zinc-500 text-sm mt-1 font-medium italic">{cfg.tagline}</p>}
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <span className="text-[10px] text-zinc-500 uppercase">Durata</span>
-                <span className="font-black text-white ml-2">{program.duration || plan.weeks.length + ' Settimane'}</span>
+                <span className="text-[10px] text-zinc-500 uppercase">{t('Durata', 'Duration')}</span>
+                <span className="font-black text-white ml-2">{program.duration || plan.weeks.length + (locale === 'en' ? ' Weeks' : ' Settimane')}</span>
               </div>
               <div className="text-right">
-                <span className="text-[10px] text-zinc-500 uppercase">Livello</span>
+                <span className="text-[10px] text-zinc-500 uppercase">{t('Livello', 'Level')}</span>
                 <span className="font-black text-white ml-2">{program.level}</span>
               </div>
             </div>
@@ -929,6 +957,22 @@ const ProgramContent: React.FC = () => {
             </motion.div>
           )}
 
+          {activeTab === 'lessons' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+              <p className="text-xs text-zinc-500 mb-2">
+                {t(
+                  'Il percorso completo: teoria, tecnica, schede, video e consigli. Tocca una lezione per aprirla.',
+                  'The full journey: theory, technique, plans, videos and tips. Tap a lesson to open it.'
+                )}
+              </p>
+              <Curriculum
+                curriculum={curriculum}
+                onOpenWorkout={() => setActiveTab('workout')}
+                onOpenExercise={() => setActiveTab('exercises')}
+              />
+            </motion.div>
+          )}
+
           {activeTab === 'workout' && currentWeek && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
               <p className="text-xs text-zinc-500 mb-2">
@@ -986,10 +1030,11 @@ const ProgramContent: React.FC = () => {
           {/* Nab Tab Bar */}
           <div className="sticky bottom-0 mt-8 -mx-4 px-4 py-3 bg-zinc-950/90 backdrop-blur-xl border-t border-white/5 flex gap-2 overflow-x-auto">
             {[
+              { key: 'lessons' as const, label: t('Lezioni', 'Lessons'), icon: GraduationCap },
               { key: 'workout' as const, label: 'Workout', icon: Dumbbell },
-              { key: 'overview' as const, label: 'Panoramica', icon: BookOpen },
-              { key: 'warmup' as const, label: 'Riscaldamento', icon: Flame },
-              { key: 'exercises' as const, label: 'Esercizi', icon: Target },
+              { key: 'overview' as const, label: t('Panoramica', 'Overview'), icon: BookOpen },
+              { key: 'warmup' as const, label: t('Riscaldamento', 'Warm-up'), icon: Flame },
+              { key: 'exercises' as const, label: t('Esercizi', 'Exercises'), icon: Target },
             ].map((tab) => (
               <button
                 key={tab.key}

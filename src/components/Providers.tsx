@@ -4,6 +4,7 @@ import React, { ReactNode, useState, useEffect } from 'react';
 import { AuthProvider } from '../context/AuthContext';
 import { CartProvider } from '../context/CartContext';
 import { ChatProvider } from '../context/ChatContext';
+import { LanguageProvider } from '../context/LanguageContext';
 import { BrowserRouter } from 'react-router-dom';
 import ScrollToTop from './ScrollToTop';
 import NotificationRenderer from './NotificationRenderer';
@@ -23,6 +24,7 @@ function BrowserRouterWrapper({ children }: { children: ReactNode }) {
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
+    <LanguageProvider>
     <AuthProvider>
       <CartProvider>
         <ChatProvider>
@@ -33,5 +35,6 @@ export default function Providers({ children }: { children: ReactNode }) {
         </ChatProvider>
       </CartProvider>
     </AuthProvider>
+    </LanguageProvider>
   );
 }

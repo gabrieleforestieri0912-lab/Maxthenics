@@ -4,7 +4,7 @@ import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import { getEnv } from '@/lib/env';
 import type { NextRequest } from 'next/server';
-import { programData } from '@/data/programs';
+import { programData, getAllProgramsList } from '@/data/programs';
 const JWT_SECRET = getEnv().JWT_SECRET;
 
 function getUserIdFromToken(request: NextRequest): string | null {
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Utente non trovato' }, { status: 404 });
     }
 
-    const allPrograms = [...programData.workout, ...programData.frontLever, ...programData.planche];
+    const allPrograms = getAllProgramsList(programData);
 
     const purchases = user.purchases.map((programId: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
       const idStr = programId.toString();
