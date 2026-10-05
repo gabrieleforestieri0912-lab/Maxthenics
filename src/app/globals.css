@@ -114,8 +114,17 @@
   @apply bg-zinc-900/30 border border-white/10 rounded-2xl;
 }
 
+/* Elevated hover: lifts the card, warms the border and adds a soft red glow
+   that intensifies as the pointer moves. Pair with `card-lift` for the
+   gradient sheen that fades in on top of the surface. */
 @utility card-hover {
-  @apply transition-all duration-500 hover:-translate-y-1 hover:border-red-500/30 hover:shadow-[0_0_40px_rgba(220,38,38,0.1)];
+  @apply transition-[transform,border-color,box-shadow,background-color] duration-300 ease-out hover:-translate-y-1 hover:border-red-500/40 hover:bg-zinc-900/50 hover:shadow-[0_18px_40px_-12px_rgba(220,38,38,0.35)];
+}
+
+/* Gradient sheen overlay. Apply to an absolutely-positioned child of the
+   card so it can fade in without affecting layout. */
+@utility card-lift {
+  @apply pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-linear-to-b from-red-500/[0.07] to-transparent;
 }
 
 @utility glass-card {

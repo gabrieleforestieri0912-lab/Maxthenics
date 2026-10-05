@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Pricing from "../components/Pricing";
 import HowItWorks from "../components/HowItWorks";
@@ -7,6 +6,7 @@ import SEO from "../components/SEO";
 import FAQ from "../components/FAQ";
 import Features from "../components/Features";
 import ProgramShowcase from "../components/ProgramShowcase";
+import Button from "../components/Button";
 import {
   Zap,
   Crown,
@@ -79,21 +79,15 @@ const Home: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col sm:flex-row items-stretch sm:items-center justify-start md:justify-center gap-3 w-full sm:w-auto mb-12"
           >
-            <Link
-              to="/programs"
-              className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white text-sm font-bold rounded-lg transition-colors"
-            >
+            <Button to="/programs" size="lg">
               Vedi i programmi
-              <ArrowRight size={17} />
-            </Link>
+              <ArrowRight size={17} aria-hidden />
+            </Button>
 
-            <Link
-              to="/calisthenics-room"
-              className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-zinc-900 border border-white/15 text-white text-sm font-bold rounded-lg hover:border-white/30 transition-colors"
-            >
+            <Button to="/calisthenics-room" variant="secondary" size="lg">
               Coaching 1:1
-              <Crown size={17} className="text-zinc-400" />
-            </Link>
+              <Crown size={17} className="text-zinc-400" aria-hidden />
+            </Button>
           </motion.div>
 
           {/* Stats Grid - Matching Calisthenics Room Section Style */}
@@ -127,14 +121,13 @@ const Home: React.FC = () => {
         className="section-padding scroll-mt-24"
       >
         <div className="container-max max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.3em] mb-8">
+          <div className="eyebrow-pill mb-8">
             <Zap size={12} fill="currentColor" /> Filosofia
           </div>
-          <h2 className="text-4xl md:text-6xl font-black leading-[0.9] text-white uppercase italic mb-10">
-            Oltre il semplice <br />
-            <span className="text-red-500">Allenamento</span>
+          <h2 className="page-title mb-10 text-4xl md:text-5xl">
+            Oltre il semplice <span className="text-red-500">allenamento</span>
           </h2>
-          <div className="space-y-6 text-base md:text-lg text-zinc-400 font-medium leading-relaxed text-left md:text-center max-w-3xl mx-auto">
+          <div className="space-y-6 text-base text-zinc-400 leading-relaxed text-left md:text-center max-w-3xl mx-auto">
             <p>
               Maxthenics è un ecosistema di allenamento intelligente. Non un semplice generatore di schede, ma un sistema che analizza, adatta e ottimizza ogni variabile del tuo percorso: dalla biomeccanica dei movimenti alla gestione del carico neurologico, dalla periodizzazione alla tecnica pura.
             </p>
@@ -146,16 +139,19 @@ const Home: React.FC = () => {
             </p>
           </div>
           <div className="mt-12">
-            <h3 className="text-sm font-black uppercase tracking-[0.3em] text-zinc-500 mb-6">Cosa ottieni</h3>
-            <div className="grid sm:grid-cols-3 gap-4">
+            <p className="meta-mono mb-6">Cosa ottieni</p>
+            <div className="grid sm:grid-cols-3 gap-4 text-left">
               {[
                 { title: "Progressioni Frame-by-Frame", desc: "Ogni skill scomposta in micro-step misurabili. Sai esattamente cosa fare oggi per arrivare domani." },
                 { title: "Schede Dinamiche", desc: "Il programma si aggiorna in base ai tuoi progressi reali. Niente più settimane sprecate su esercizi troppo facili o impossibili." },
                 { title: "Supporto Coach AI 24/7", desc: "Il nostro assistente virtuale risponde a ogni dubbio: tecnica, alimentazione, recupero. Sempre acceso, sempre disponibile." },
               ].map((item) => (
-                <div key={item.title} className="p-6 bg-zinc-900/50 rounded-2xl border border-white/5 text-left hover:border-red-500/20 transition-colors">
-                  <p className="text-white font-black text-sm uppercase tracking-widest mb-2">{item.title}</p>
-                  <p className="text-zinc-500 text-sm font-medium leading-relaxed">{item.desc}</p>
+                <div key={item.title} className="group card card-hover relative overflow-hidden p-6">
+                  <div className="card-lift" aria-hidden />
+                  <div className="relative">
+                    <p className="text-base font-bold text-white mb-2">{item.title}</p>
+                    <p className="prose-block text-sm">{item.desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -176,7 +172,7 @@ const Home: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative rounded-[2.5rem] p-8 md:p-16 lg:p-20 border border-white/10 overflow-hidden bg-linear-to-br from-zinc-900 to-black shadow-2xl"
+            className="relative rounded-2xl p-8 md:p-12 lg:p-16 border border-white/10 overflow-hidden bg-zinc-900/40"
           >
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(220,38,38,0.15)_0%,transparent_60%)] pointer-events-none" />
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[100px] pointer-events-none" />
@@ -185,17 +181,16 @@ const Home: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.3em] mb-8"
+                className="eyebrow-pill mb-8"
               >
                 <Zap size={12} fill="currentColor" /> Algoritmo Proprietario
               </motion.div>
-              
-              <h2 className="text-4xl md:text-6xl font-black mb-8 text-white uppercase italic tracking-tighter leading-[0.9]">
-                PROGRAMMA <br />
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-zinc-400 to-zinc-600 pr-2">PERSONALIZZATO</span>
+
+              <h2 className="page-title mb-8 text-4xl md:text-5xl">
+                Programma <span className="text-red-500">personalizzato</span>
               </h2>
-              
-              <div className="space-y-6 text-base md:text-lg text-zinc-400 font-medium leading-relaxed text-left md:text-center max-w-3xl mx-auto mb-12">
+
+              <div className="space-y-6 text-base text-zinc-400 leading-relaxed text-left md:text-center max-w-3xl mx-auto mb-12">
                 <p>
                   Ogni programma generato da Maxthenics è unico perché parte da te. Non esistono due utenti con lo stesso percorso: il nostro sistema incrocia oltre quindici variabili — dai dati antropometrici allo stile di allenamento preferito, dalle attrezzature disponibili agli infortuni pregressi — per costruire un protocollo che nessun altro ha.
                 </p>
@@ -207,34 +202,32 @@ const Home: React.FC = () => {
                 </p>
               </div>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 text-left max-w-3xl mx-auto">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 rounded-2xl overflow-hidden border border-white/10 mb-12 max-w-3xl mx-auto">
                 {[
                   { val: "15+", label: "Variabili analizzate" },
                   { val: "7", label: "Stili di training" },
                   { val: "8", label: "Attrezzature supportate" },
                   { val: "24/7", label: "Supporto Coach AI" },
                 ].map((item) => (
-                  <div key={item.label} className="p-4 bg-zinc-900/50 rounded-xl border border-white/5 text-center">
-                    <p className="text-2xl font-black text-red-500">{item.val}</p>
-                    <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mt-1">{item.label}</p>
+                  <div key={item.label} className="p-5 bg-zinc-950">
+                    <p className="text-2xl font-bold text-red-500">{item.val}</p>
+                    <p className="meta-mono mt-1">{item.label}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link
-                  to="/create"
-                  className="relative group inline-flex items-center gap-4 bg-white text-black hover:bg-red-600 hover:text-white px-8 py-5 rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all hover:scale-105 shadow-xl shadow-white/5"
-                >
-                  Genera il Tuo Protocollo
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <Link
-                  to="/programs"
-                  className="relative group inline-flex items-center gap-4 border border-white/10 text-white px-8 py-5 rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all hover:border-red-500/30 hover:scale-105"
-                >
-                  Vedi Programmi Esempio
-                </Link>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Button to="/create" size="lg">
+                  Genera il tuo protocollo
+                  <ArrowRight
+                    size={16}
+                    className="group-hover:translate-x-1 transition-transform"
+                    aria-hidden
+                  />
+                </Button>
+                <Button to="/programs" variant="secondary" size="lg">
+                  Vedi programmi esempio
+                </Button>
               </div>
             </div>
           </motion.div>
@@ -249,21 +242,18 @@ const Home: React.FC = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="container-max">
-          <div className="bg-zinc-950 rounded-[2.5rem] border border-white/5 p-8 md:p-16 relative overflow-hidden shadow-2xl">
+          <div className="card relative overflow-hidden p-8 md:p-12 lg:p-16">
             <div className="absolute inset-0 opacity-[0.03] bg-grid pointer-events-none" />
 
             <div className="relative z-10 max-w-4xl mx-auto text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.4em] mb-8">
+              <div className="eyebrow-pill mb-8">
                 <Crown size={12} /> Elite Coaching Service
               </div>
-              <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-[0.85] mb-8 italic">
-                CALISTHENICS <br />
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-red-600 to-orange-500 pr-2">
-                  ROOM
-                </span>
+              <h2 className="page-title mb-8 text-4xl md:text-5xl">
+                Calisthenics <span className="text-red-500">Room</span>
               </h2>
 
-              <div className="space-y-6 text-base md:text-lg text-zinc-400 font-medium leading-relaxed text-left md:text-center max-w-3xl mx-auto mb-12">
+              <div className="space-y-6 text-base text-zinc-400 leading-relaxed text-left md:text-center max-w-3xl mx-auto mb-12">
                 <p>
                   La Calisthenics Room è il nostro servizio di coaching 1:1 premium. Non un corso registrato né una serie di video generici: è un percorso individuale dove ogni seduta viene progettata, monitorata e corretta in tempo reale da un coach dedicato. Il programma non esiste fino a quando non iniziamo a lavorare insieme.
                 </p>
@@ -275,24 +265,31 @@ const Home: React.FC = () => {
                 </p>
               </div>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 max-w-3xl mx-auto">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 max-w-3xl mx-auto text-left">
                 {[
                   { label: "Live Coaching", sub: "Ogni sessione è in diretta con video-analisi frame-by-frame della tua tecnica. Correggiamo l'esecuzione in tempo reale, non a posteriori." },
                   { label: "Supporto H24", sub: "Accesso diretto via WhatsApp per qualsiasi necessità: variazioni dell'ultimo minuto, dubbi sul recupero, ripensamenti sul programma." },
                   { label: "Protocolli Live", sub: "Il piano si modifica seduta dopo seduta in base alla tua risposta. Se un esercizio non funziona, lo sostituiamo subito." },
                   { label: "Attenzione esclusiva", sub: "Ogni coaching riceve attenzione dedicata e continuità nel tempo." },
-                ].map((item, i) => (
-                  <div key={i} className="p-5 bg-zinc-900/50 rounded-xl border border-white/5 text-left hover:border-red-500/20 transition-colors">
-                    <p className="text-sm font-black text-white uppercase tracking-tight mb-1.5">{item.label}</p>
-                    <p className="text-xs text-zinc-500 font-medium leading-relaxed">{item.sub}</p>
+                ].map((item) => (
+                  <div key={item.label} className="group card card-hover relative overflow-hidden p-5">
+                    <div className="card-lift" aria-hidden />
+                    <div className="relative">
+                      <p className="text-sm font-bold text-white mb-1.5">{item.label}</p>
+                      <p className="text-xs text-zinc-500 leading-relaxed">{item.sub}</p>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              <Link to="/calisthenics-room" className="group bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-8 py-4 rounded-xl text-xs font-black transition-all hover:scale-105 inline-flex items-center gap-4 uppercase tracking-[0.2em] shadow-lg shadow-red-900/40">
-                Richiedi Accesso{" "}
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
+              <Button to="/calisthenics-room" size="lg">
+                Richiedi accesso
+                <ArrowRight
+                  size={16}
+                  className="group-hover:translate-x-1 transition-transform"
+                  aria-hidden
+                />
+              </Button>
             </div>
           </div>
         </div>

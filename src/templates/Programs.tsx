@@ -92,17 +92,17 @@ const ProgramCard: React.FC<{
       viewport={{ once: true }}
       transition={{ duration: 0.35 }}
       onMouseMove={handleMouseMove}
-      className="group relative flex flex-col h-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/30 cursor-pointer transition-colors duration-300 hover:border-red-500/30 hover:bg-zinc-900/60"
+      className="group relative flex flex-col h-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/30 cursor-pointer card-hover"
     >
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500 z-10"
+        className="card-lift"
         style={{
           background: useMotionTemplate`
             radial-gradient(
-              400px circle at ${mouseX}px ${mouseY}px,
-              rgba(220,38,38,0.15),
-              transparent 80%
+              420px circle at ${mouseX}px ${mouseY}px,
+              rgba(220,38,38,0.16),
+              transparent 70%
             )
           `,
         }}
@@ -250,6 +250,7 @@ function Programs() {
 
       <div className="container-max">
         <PageHeader
+          align="center"
           eyebrow={t("Programmi di Allenamento", "Training Programs")}
           title={t("Scegli il tuo percorso.", "Choose your path.")}
           description={t(
@@ -268,6 +269,7 @@ function Programs() {
             return (
               <section key={group.key}>
                 <SectionHeading
+                  align="center"
                   eyebrow={group.eyebrow}
                   title={t(group.title.it, group.title.en)}
                   description={t(group.description.it, group.description.en)}
