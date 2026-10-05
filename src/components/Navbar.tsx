@@ -87,8 +87,8 @@ function Navbar() {
       >
         <motion.div
           animate={{
+            maxWidth: scrolled ? 880 : 1024,
             marginTop: scrolled ? 16 : 12,
-            borderRadius: scrolled ? 9999 : 24,
             paddingLeft: scrolled ? 16 : 24,
             paddingRight: scrolled ? 16 : 24,
             boxShadow: scrolled
@@ -97,7 +97,8 @@ function Navbar() {
             backgroundColor: scrolled ? "rgba(9,9,9,0.95)" : "rgba(9,9,9,0.85)",
           }}
           transition={{ duration: 0.4, ease: "easeInOut" }}
-          className="w-full max-w-5xl backdrop-blur-xl border border-white/10 pointer-events-auto"
+          style={{ borderRadius: 24 }}
+          className="w-full backdrop-blur-xl border border-white/10 pointer-events-auto"
         >
           <div className="flex items-center justify-between h-14">
           {/* Logo */}
