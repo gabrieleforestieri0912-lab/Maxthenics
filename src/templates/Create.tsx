@@ -28,6 +28,21 @@ import {
   Ruler,
   Scale,
   Calendar,
+  Flame,
+  Wind,
+  Sprout,
+  Crown,
+  MoveLeft,
+  Crosshair,
+  Footprints,
+  Circle,
+  Building2,
+  Orbit,
+  Bomb,
+  HeartPulse,
+  RefreshCw,
+  Layers,
+  type LucideIcon,
 } from "lucide-react";
 import { downloadTxt, downloadJson, downloadPdf } from "../lib/exportProgram";
 import type { ProgramForExport } from "../lib/exportProgram";
@@ -37,7 +52,7 @@ import type { SavedProgram } from "../types/program";
 
 interface ExperienceOption {
   label: string;
-  icon: string;
+  icon: LucideIcon;
   color: string;
   desc: string;
 }
@@ -52,20 +67,19 @@ interface WorkoutIntensity {
 interface FocusOption {
   val: string;
   label: string;
-  icon: string;
+  icon: LucideIcon;
   desc: string;
   gradient: string;
 }
 
 interface GenderOption {
   val: string;
-  icon: string;
   label: string;
 }
 
 const LEVEL_STYLES: Record<string, { bg: string; border: string; glow: string; accent: string; tag: string }> = {
   principiante: {
-    bg: "bg-emerald-600/8",
+    bg: "bg-emerald-600/10",
     border: "border-emerald-500/30",
     glow: "shadow-[0_0_30px_rgba(16,185,129,0.12)]",
     accent: "text-emerald-400",
@@ -79,7 +93,7 @@ const LEVEL_STYLES: Record<string, { bg: string; border: string; glow: string; a
     tag: "bg-red-500/15 text-red-400 border-red-500/30",
   },
   avanzato: {
-    bg: "bg-amber-600/8",
+    bg: "bg-amber-600/10",
     border: "border-amber-500/30",
     glow: "shadow-[0_0_30px_rgba(245,158,11,0.12)]",
     accent: "text-amber-400",
@@ -88,12 +102,12 @@ const LEVEL_STYLES: Record<string, { bg: string; border: string; glow: string; a
 };
 
 const FOCUS_OPTIONS: FocusOption[] = [
-  { val: "ipertrofia", icon: "💪", label: "Ipertrofia", desc: "Aumenta la massa muscolare e definizione", gradient: "from-red-600/20 to-red-500/5" },
-  { val: "forza", icon: "🏋️", label: "Forza Pura", desc: "Rafforza il sistema neuromuscolare e la potenza", gradient: "from-blue-600/20 to-blue-500/5" },
-  { val: "resistenza", icon: "🏃", label: "Resistenza", desc: "Migliora la resistenza cardiovascolare e muscolare", gradient: "from-green-600/20 to-green-500/5" },
-  { val: "skills", icon: "🌟", label: "Skills & Moves", desc: "Padroneggia le mosse avanzate", gradient: "from-violet-600/20 to-violet-500/5" },
-  { val: "dimagrimento", icon: "🔥", label: "Dimagrimento", desc: "Riduci la massa grassa con allenamenti intensi", gradient: "from-orange-600/20 to-orange-500/5" },
-  { val: "mobilita", icon: "🧘", label: "Mobilità & Recupero", desc: "Aumenta la flessibilità articolare e previeni infortuni", gradient: "from-cyan-600/20 to-cyan-500/5" },
+  { val: "ipertrofia", icon: Dumbbell, label: "Ipertrofia", desc: "Aumenta la massa muscolare e definizione", gradient: "from-red-600/20 to-red-500/5" },
+  { val: "forza", icon: Zap, label: "Forza Pura", desc: "Rafforza il sistema neuromuscolare e la potenza", gradient: "from-blue-600/20 to-blue-500/5" },
+  { val: "resistenza", icon: Activity, label: "Resistenza", desc: "Migliora la resistenza cardiovascolare e muscolare", gradient: "from-green-600/20 to-green-500/5" },
+  { val: "skills", icon: Target, label: "Skills & Moves", desc: "Padroneggia le mosse avanzate", gradient: "from-violet-600/20 to-violet-500/5" },
+  { val: "dimagrimento", icon: Flame, label: "Dimagrimento", desc: "Riduci la massa grassa con allenamenti intensi", gradient: "from-orange-600/20 to-orange-500/5" },
+  { val: "mobilita", icon: Wind, label: "Mobilità & Recupero", desc: "Aumenta la flessibilità articolare e previeni infortuni", gradient: "from-cyan-600/20 to-cyan-500/5" },
 ];
 
 const INTENSITY_OPTIONS: WorkoutIntensity[] = [
@@ -103,32 +117,32 @@ const INTENSITY_OPTIONS: WorkoutIntensity[] = [
 ];
 
 const EXPERIENCE_OPTIONS: ExperienceOption[] = [
-  { label: "0-1 anni", icon: "🌱", color: "text-emerald-400", desc: "Inizio del percorso" },
-  { label: "1-3 anni", icon: "⚡", color: "text-red-400", desc: "Fondamenti solidi" },
-  { label: "3-5 anni", icon: "🔥", color: "text-orange-400", desc: "Consolidamento" },
-  { label: "5+ anni", icon: "👑", color: "text-amber-400", desc: "Livello esperto" },
+  { label: "0-1 anni", icon: Sprout, color: "text-emerald-400", desc: "Inizio del percorso" },
+  { label: "1-3 anni", icon: Zap, color: "text-red-400", desc: "Fondamenti solidi" },
+  { label: "3-5 anni", icon: Flame, color: "text-orange-400", desc: "Consolidamento" },
+  { label: "5+ anni", icon: Crown, color: "text-amber-400", desc: "Livello esperto" },
 ];
 
-const BODY_FOCUS_OPTIONS = [
-  { label: "Petto", icon: "💪", group: "Upper" },
-  { label: "Schiena", icon: "🔙", group: "Upper" },
-  { label: "Spalle", icon: "🎯", group: "Upper" },
-  { label: "Bicipiti", icon: "💪", group: "Upper" },
-  { label: "Tricipiti", icon: "💪", group: "Upper" },
-  { label: "Addominali", icon: "🔥", group: "Core" },
-  { label: "Core", icon: "🎯", group: "Core" },
-  { label: "Quadricipiti", icon: "🦵", group: "Lower" },
-  { label: "Femorali", icon: "🦵", group: "Lower" },
-  { label: "Glutei", icon: "🍑", group: "Lower" },
-  { label: "Polpacci", icon: "🦶", group: "Lower" },
-  { label: "Gambe Completo", icon: "🏗️", group: "Lower" },
+const BODY_FOCUS_OPTIONS: { label: string; icon: LucideIcon; group: string }[] = [
+  { label: "Petto", icon: Dumbbell, group: "Upper" },
+  { label: "Schiena", icon: MoveLeft, group: "Upper" },
+  { label: "Spalle", icon: Crosshair, group: "Upper" },
+  { label: "Bicipiti", icon: Dumbbell, group: "Upper" },
+  { label: "Tricipiti", icon: Dumbbell, group: "Upper" },
+  { label: "Addominali", icon: Flame, group: "Core" },
+  { label: "Core", icon: Shield, group: "Core" },
+  { label: "Quadricipiti", icon: Footprints, group: "Lower" },
+  { label: "Femorali", icon: Footprints, group: "Lower" },
+  { label: "Glutei", icon: Circle, group: "Lower" },
+  { label: "Polpacci", icon: Footprints, group: "Lower" },
+  { label: "Gambe Completo", icon: Building2, group: "Lower" },
 ];
 
 const GENDER_OPTIONS: GenderOption[] = [
-  { val: "male", icon: "♂️", label: "Maschile" },
-  { val: "female", icon: "♀️", label: "Femminile" },
-  { val: "other", icon: "⚧", label: "Altro" },
-  { val: "prefer-not-say", icon: "🔒", label: "Preferisco non dire" },
+  { val: "male", label: "Maschile" },
+  { val: "female", label: "Femminile" },
+  { val: "other", label: "Altro" },
+  { val: "prefer-not-say", label: "Preferisco non dire" },
 ];
 
 const DURATION_OPTIONS = [
@@ -139,14 +153,14 @@ const DURATION_OPTIONS = [
   { val: "90", label: "90 min", sub: "Massimale su tutto" },
 ];
 
-const TRAINING_TYPES = [
-  { val: "street-workout", icon: "🏙️", label: "Street Workout", desc: "Esplosività, tricking, muscle-up, movimenti dinamici" },
-  { val: "skill-work", icon: "🎯", label: "Skill Work", desc: "Front Lever, Planche, Handstand, progressioni tecniche" },
-  { val: "freestyle", icon: "🌀", label: "Freestyle & Flow", desc: "Combinazioni creative, transizioni fluide, stile libero" },
-  { val: "power", icon: "💥", label: "Power & Static Holds", desc: "Massimale isometrico, tenute statiche, forza bruta" },
-  { val: "rings", icon: "⭕", label: "Anelli & Gymnastics", desc: "Lavoro agli anelli, elementi olimpici, controllo" },
-  { val: "hypertrophy", icon: "💪", label: "Ipertrofia & Estetica", desc: "Volume alto, definizione, scheda estetica classica" },
-  { val: "endurance", icon: "🏃", label: "Endurance & High Rep", desc: "Resistenza muscolare, high rep, circuiti" },
+const TRAINING_TYPES: { val: string; icon: LucideIcon; label: string; desc: string }[] = [
+  { val: "street-workout", icon: Building2, label: "Street Workout", desc: "Esplosività, tricking, muscle-up, movimenti dinamici" },
+  { val: "skill-work", icon: Crosshair, label: "Skill Work", desc: "Front Lever, Planche, Handstand, progressioni tecniche" },
+  { val: "freestyle", icon: Orbit, label: "Freestyle & Flow", desc: "Combinazioni creative, transizioni fluide, stile libero" },
+  { val: "power", icon: Bomb, label: "Power & Static Holds", desc: "Massimale isometrico, tenute statiche, forza bruta" },
+  { val: "rings", icon: Circle, label: "Anelli & Gymnastics", desc: "Lavoro agli anelli, elementi olimpici, controllo" },
+  { val: "hypertrophy", icon: Dumbbell, label: "Ipertrofia & Estetica", desc: "Volume alto, definizione, scheda estetica classica" },
+  { val: "endurance", icon: HeartPulse, label: "Endurance & High Rep", desc: "Resistenza muscolare, high rep, circuiti" },
 ];
 
 // ─── EXTRACTED COMPONENTS ─────────────────────────────────────────────────
@@ -793,7 +807,7 @@ const Create: React.FC = () => {
 
             {/* Gender */}
             <div className="space-y-3">
-              <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-zinc-400">
+              <label className="block meta-mono">
                 Sesso <span className="text-zinc-600 font-normal ml-1">(opzionale)</span>
               </label>
               <div className="grid grid-cols-4 gap-2">
@@ -808,8 +822,9 @@ const Create: React.FC = () => {
                         : "bg-zinc-950/40 border-white/5 hover:border-white/15"
                     }`}
                   >
-                    <div className="text-xl mb-1">{g.icon}</div>
-                    <p className="text-[10px] font-bold text-zinc-300 leading-tight">{g.label}</p>
+                    <p className={`text-[10px] font-bold text-zinc-300 leading-tight ${gender === g.val ? "text-white" : ""}`}>
+                      {g.label}
+                    </p>
                   </button>
                 ))}
               </div>
@@ -854,7 +869,7 @@ const Create: React.FC = () => {
                   <div key={field.label} className={`rounded-2xl border border-white/5 ${field.cls} p-4`}>
                     <div className="flex items-center gap-2 mb-3">
                       <FI className={`w-4 h-4 ${field.iconCls}`} />
-                      <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400">{field.label}</span>
+                      <span className="meta-mono">{field.label}</span>
                       <span className="text-[10px] text-zinc-600 ml-auto">{field.unit}</span>
                     </div>
                     <input
@@ -898,12 +913,12 @@ const Create: React.FC = () => {
 
             {/* Level cards */}
             <div className="space-y-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-500">Livello di Abilità</p>
+              <p className="meta-mono">Livello di Abilità</p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {[
                   {
                     val: "principiante",
-                    icon: "🌱",
+                    icon: Sprout,
                     title: "Principiante",
                     subt: "0 – 1 anni di esperienza",
                     points: ["Fondamenti posturali", "Progressioni graduali", "Volume moderato"],
@@ -911,7 +926,7 @@ const Create: React.FC = () => {
                   },
                   {
                     val: "intermedio",
-                    icon: "⚡",
+                    icon: Zap,
                     title: "Intermedio",
                     subt: "1 – 3 anni di esperienza",
                     points: ["Tecniche complesse", "Periodizzazione", "Volume progressivo"],
@@ -919,13 +934,13 @@ const Create: React.FC = () => {
                   },
                   {
                     val: "avanzato",
-                    icon: "🔥",
+                    icon: Flame,
                     title: "Avanzato",
                     subt: "3+ anni di esperienza",
                     points: ["Skills avanzate", "Massimo volume", "Periodizzazione completa"],
                     style: LEVEL_STYLES.avanzato,
                   },
-                ].map((lvl: any) => (
+                ].map((lvl) => (
                   <button
                     key={lvl.val}
                     type="button"
@@ -941,13 +956,17 @@ const Create: React.FC = () => {
                         level === lvl.val ? "opacity-40" : "opacity-0"
                       }`}
                     />
-                    <div className="text-3xl mb-3">{lvl.icon}</div>
-                    <p className={`font-black text-base mb-0.5 transition-colors ${level === lvl.val ? lvl.style.accent : "text-white"}`}>
+                    <lvl.icon
+                      size={28}
+                      className={`mb-3 ${level === lvl.val ? lvl.style.accent : "text-zinc-600"}`}
+                      aria-hidden
+                    />
+                    <p className={`text-base font-bold mb-0.5 transition-colors ${level === lvl.val ? lvl.style.accent : "text-white"}`}>
                       {lvl.title}
                     </p>
                     <p className="text-[11px] text-zinc-500 mb-4">{lvl.subt}</p>
                     <div className="space-y-1.5">
-                      {lvl.points.map((pt: string) => (
+                      {lvl.points.map((pt) => (
                         <div key={pt} className="flex items-center gap-2">
                           <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${level === lvl.val ? "bg-red-500" : "bg-zinc-700"}`} />
                           <p className={`text-[11px] font-medium leading-snug ${level === lvl.val ? "text-zinc-300" : "text-zinc-600"}`}>
@@ -959,7 +978,7 @@ const Create: React.FC = () => {
                     {level === lvl.val && (
                       <div className="absolute top-4 right-4">
                         <div className="w-6 h-6 rounded-full bg-red-600 flex items-center justify-center shadow-lg shadow-red-600/40">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-white" aria-hidden />
                         </div>
                       </div>
                     )}
@@ -970,7 +989,7 @@ const Create: React.FC = () => {
 
             {/* Experience pills */}
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400 mb-4">
+              <label className="block meta-mono mb-4">
                 Anni di Allenamento
               </label>
               <div className="flex gap-2">
@@ -985,10 +1004,14 @@ const Create: React.FC = () => {
                         : "bg-zinc-950/40 border-white/5 hover:border-white/15"
                     }`}
                   >
-                    <div className={`text-2xl mb-1.5 ${experience === exp.label.split(" ")[0] ? "scale-125 transition-transform" : ""}`}>
-                      {exp.icon}
-                    </div>
-                    <p className={`text-xs font-black transition-colors ${experience === exp.label.split(" ")[0] ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"}`}>
+                    <exp.icon
+                      size={22}
+                      className={`mx-auto mb-1.5 transition-colors ${
+                        exp.color
+                      } ${experience === exp.label.split(" ")[0] ? "scale-110" : "opacity-50 group-hover:opacity-80"}`}
+                      aria-hidden
+                    />
+                    <p className={`text-xs font-bold transition-colors ${experience === exp.label.split(" ")[0] ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"}`}>
                       {exp.label}
                     </p>
                     <p className="text-[10px] text-zinc-600 mt-0.5">{exp.desc}</p>
@@ -1016,7 +1039,7 @@ const Create: React.FC = () => {
             {/* Days/week + session duration */}
             <div className="space-y-5">
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400 mb-5">
+                <label className="block meta-mono mb-5">
                   Frequenza Settimanale
                 </label>
                 <div className="flex items-center gap-6 bg-zinc-950/30 rounded-2xl p-5 border border-white/5">
@@ -1056,7 +1079,7 @@ const Create: React.FC = () => {
 
               {/* Session duration */}
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400 mb-4">
+                <label className="block meta-mono mb-4">
                   Durata Sessione Stimata
                 </label>
                 <div className="flex gap-2">
@@ -1083,7 +1106,7 @@ const Create: React.FC = () => {
 
             {/* Training Type */}
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400 mb-4">
+              <label className="block meta-mono mb-4">
                 Tipo di Allenamento
               </label>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -1098,10 +1121,16 @@ const Create: React.FC = () => {
                         : "bg-zinc-950/40 border-white/5 hover:border-white/15"
                     }`}
                   >
-                    <div className={`text-2xl mb-1 transition-transform ${trainingType === t.val ? "scale-125" : ""}`}>
-                      {t.icon}
-                    </div>
-                    <p className={`text-[11px] font-black leading-tight ${trainingType === t.val ? "text-white" : "text-zinc-400"}`}>
+                    <t.icon
+                      size={20}
+                      className={`mx-auto mb-1 transition-colors ${
+                        trainingType === t.val
+                          ? "text-red-500"
+                          : "text-zinc-500 group-hover:text-zinc-300"
+                      }`}
+                      aria-hidden
+                    />
+                    <p className={`text-[11px] font-bold leading-tight ${trainingType === t.val ? "text-white" : "text-zinc-400"}`}>
                       {t.label}
                     </p>
                     <p className="text-[9px] text-zinc-600 mt-1 leading-snug">{t.desc}</p>
@@ -1112,19 +1141,19 @@ const Create: React.FC = () => {
 
             {/* Equipment */}
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400 mb-4">
+              <label className="block meta-mono mb-4">
                 Attrezzatura Disponibile
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[
-                  { val: "nessuna", icon: "🏋️", label: "Solo Corpo Libero", sub: "Nessun attrezzo" },
-                  { val: "sbarra", icon: "🏗️", label: "Sbarra Trazioni", sub: "Pull-up bar" },
-                  { val: "parallele", icon: "〰️", label: "Parallette", sub: "Dip bars / P-bars" },
-                  { val: "anelli", icon: "⭕", label: "Anelli", sub: "Gymnastics Rings" },
-                  { val: "bande", icon: "🔄", label: "Bande Elastiche", sub: "Resistance Bands" },
-                  { val: "zavorra", icon: "🏋️‍♂️", label: "Zavorra", sub: "Weight Vest / Cintura" },
-                  { val: "base", icon: "🏗️", label: "Set Base", sub: "Sbarra + Parallele" },
-                  { val: "completo", icon: "🏟️", label: "Completo", sub: "Tutto disponibile" },
+                  { val: "nessuna", icon: User, label: "Solo Corpo Libero", sub: "Nessun attrezzo" },
+                  { val: "sbarra", icon: Building2, label: "Sbarra Trazioni", sub: "Pull-up bar" },
+                  { val: "parallele", icon: MoveLeft, label: "Parallette", sub: "Dip bars / P-bars" },
+                  { val: "anelli", icon: Circle, label: "Anelli", sub: "Gymnastics Rings" },
+                  { val: "bande", icon: RefreshCw, label: "Bande Elastiche", sub: "Resistance Bands" },
+                  { val: "zavorra", icon: Dumbbell, label: "Zavorra", sub: "Weight Vest / Cintura" },
+                  { val: "base", icon: Building2, label: "Set Base", sub: "Sbarra + Parallele" },
+                  { val: "completo", icon: Layers, label: "Completo", sub: "Tutto disponibile" },
                 ].map((eq) => (
                   <button
                     key={eq.val}
@@ -1136,9 +1165,13 @@ const Create: React.FC = () => {
                         : "bg-zinc-950/40 border-white/5 hover:border-white/15"
                     }`}
                   >
-                    <div className={`text-xl mb-1 transition-transform ${equipment === eq.val ? "scale-125" : ""}`}>
-                      {eq.icon}
-                    </div>
+                    <eq.icon
+                      size={18}
+                      className={`mx-auto mb-1 transition-colors ${
+                        equipment === eq.val ? "text-red-500" : "text-zinc-600"
+                      }`}
+                      aria-hidden
+                    />
                     <p className={`text-[10px] font-bold leading-tight ${equipment === eq.val ? "text-white" : "text-zinc-400"}`}>{eq.label}</p>
                     <p className="text-[9px] text-zinc-600 mt-0.5">{eq.sub}</p>
                   </button>
@@ -1148,7 +1181,7 @@ const Create: React.FC = () => {
 
             {/* Intensity */}
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400 mb-4">
+              <label className="block meta-mono mb-4">
                 Intensità di Allenamento
               </label>
               <div className="grid grid-cols-3 gap-3">
@@ -1193,7 +1226,7 @@ const Create: React.FC = () => {
 
             {/* Focus principale */}
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400 mb-5">
+              <label className="block meta-mono mb-5">
                 Focus Principale
               </label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -1208,8 +1241,16 @@ const Create: React.FC = () => {
                   >
                     <div className={`absolute inset-0 bg-linear-to-br ${opt.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
                     <div className="relative z-10">
-                      <div className="text-2xl mb-1.5">{opt.icon}</div>
-                      <p className={`text-xs font-black ${focus === opt.val ? "text-white" : "text-zinc-400 group-hover:text-zinc-200"}`}>
+                      <opt.icon
+                        size={20}
+                        className={`mb-1.5 transition-colors ${
+                          focus === opt.val
+                            ? "text-red-500"
+                            : "text-zinc-500 group-hover:text-zinc-300"
+                        }`}
+                        aria-hidden
+                      />
+                      <p className={`text-xs font-bold ${focus === opt.val ? "text-white" : "text-zinc-400 group-hover:text-zinc-200"}`}>
                         {opt.label}
                       </p>
                       <p className="text-[10px] text-zinc-600 mt-0.5 leading-snug">{opt.desc}</p>
@@ -1228,7 +1269,7 @@ const Create: React.FC = () => {
 
             {/* Body parts focus */}
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400 mb-2">
+              <label className="block meta-mono mb-2">
                 Aree del Corpo da Lavorare{" "}
                 <span className="text-zinc-600 font-normal normal-case ml-1">(opzionale)</span>
               </label>
@@ -1252,7 +1293,15 @@ const Create: React.FC = () => {
                           : "bg-zinc-950/40 border-white/5 text-zinc-500 hover:text-zinc-300 hover:border-white/10"
                       }`}
                     >
-                      <span className="text-lg">{bf.icon}</span>
+                      <bf.icon
+                        size={16}
+                        className={`mx-auto transition-colors ${
+                          bodyFocus.includes(bf.label)
+                            ? "text-red-500"
+                            : "text-zinc-500 group-hover:text-zinc-300"
+                        }`}
+                        aria-hidden
+                      />
                       <p className="text-[10px] font-bold mt-1">{bf.label}</p>
                     </button>
                   );
@@ -1262,7 +1311,7 @@ const Create: React.FC = () => {
 
             {/* Goals */}
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400 mb-2">
+              <label className="block meta-mono mb-2">
                 I Tuoi Obiettivi Specifici
               </label>
               <div className="relative">
@@ -1281,7 +1330,7 @@ const Create: React.FC = () => {
 
             {/* Injury */}
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-zinc-400 mb-2">
+              <label className="block meta-mono mb-2">
                 Condizioni Mediche o Infortuni{" "}
                 <span className="text-zinc-600 font-normal normal-case ml-1">(opzionale)</span>
               </label>
