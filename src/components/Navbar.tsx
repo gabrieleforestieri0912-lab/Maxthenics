@@ -12,12 +12,10 @@ import {
   LogOut,
   Plus,
   ShoppingCart,
-  ShoppingBag,
   User as UserIcon,
   ChevronDown,
   Layout,
   Crown,
-  Brain,
   Dumbbell,
 } from "lucide-react";
 import Image from "next/image";
@@ -87,12 +85,19 @@ function Navbar() {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none"
       >
-        <div
-          className={`w-full bg-zinc-950/90 backdrop-blur-xl border border-white/10 pointer-events-auto transition-all duration-300 ${
-            scrolled
-              ? 'max-w-5xl mx-4 mt-4 rounded-full px-3 sm:px-5 shadow-[0_10px_40px_rgba(0,0,0,0.8)]'
-              : 'max-w-7xl mx-4 mt-3 rounded-2xl px-4 sm:px-6 lg:px-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)]'
-          }`}
+        <motion.div
+          animate={{
+            marginTop: scrolled ? 16 : 12,
+            borderRadius: scrolled ? 9999 : 24,
+            paddingLeft: scrolled ? 16 : 24,
+            paddingRight: scrolled ? 16 : 24,
+            boxShadow: scrolled
+              ? "0 10px 40px rgba(0,0,0,0.8)"
+              : "0 20px 60px rgba(0,0,0,0.6)",
+            backgroundColor: scrolled ? "rgba(9,9,9,0.95)" : "rgba(9,9,9,0.85)",
+          }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          className="w-full max-w-5xl backdrop-blur-xl border border-white/10 pointer-events-auto"
         >
           <div className="flex items-center justify-between h-14">
           {/* Logo */}
@@ -148,8 +153,7 @@ function Navbar() {
             </Link>
 
             {user ? (
-              <div className="flex items-center gap-3 lg:gap-4">
-                <div className="relative" ref={userMenuRef}>
+              <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                     className="flex items-center gap-1.5 pl-3 lg:pl-4 border-l border-white/10"
@@ -174,7 +178,13 @@ function Navbar() {
                     </div>
                   </button>
                   {userMenuOpen && (
-                    <div className="absolute right-0 top-10 mt-1 w-52 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50">
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 top-10 mt-1 w-52 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50"
+                    >
                       <div className="p-4 border-b border-white/10">
                         <p className="font-bold text-white text-sm">
                           {user.name}
@@ -203,13 +213,13 @@ function Navbar() {
                           </span>
                         </Link>
                         <Link
-                          to="/purchase-history"
+                          to="/create"
                           onClick={() => setUserMenuOpen(false)}
                           className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors"
                         >
-                          <ShoppingBag className="w-4 h-4 text-zinc-400" />
+                          <Plus className="w-4 h-4 text-zinc-400" />
                           <span className="text-sm text-zinc-300">
-                            {t("I Miei Acquisti", "My Purchases")}
+                            {t("Crea Programma", "Create Program")}
                           </span>
                         </Link>
                         <Link
@@ -222,26 +232,6 @@ function Navbar() {
                             {t("Coaching Elite", "Elite Coaching")}
                           </span>
                         </Link>
-                        <Link
-                          to="/create"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors"
-                        >
-                          <Plus className="w-4 h-4 text-zinc-400" />
-                          <span className="text-sm text-zinc-300">
-                            {t("Crea Programma", "Create Program")}
-                          </span>
-                        </Link>
-                        <Link
-                          to="/chat"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors"
-                        >
-                          <Brain className="w-4 h-4 text-zinc-400" />
-                          <span className="text-sm text-zinc-300">
-                            {t("Chat AI", "AI Chat")}
-                          </span>
-                        </Link>
                         <button
                           onClick={() => {
                             setUserMenuOpen(false);
@@ -250,13 +240,12 @@ function Navbar() {
                           }}
                           className="w-full flex items-center gap-3 p-3 hover:bg-red-600/10 rounded-xl transition-colors text-left"
                         >
-                          <LogOut className="w-4 h-4 text-red-500" />
+<LogOut className="w-4 h-4 text-red-500" />
                           <span className="text-sm text-red-500">{t("Esci", "Logout")}</span>
                         </button>
                       </div>
-                    </div>
+                    </motion.div>
                   )}
-                </div>
               </div>
             ) : (
               <Link
@@ -295,9 +284,8 @@ function Navbar() {
               )}
             </button>
           </div>
-        </div>
-      </div>
-
+          </div>
+        </motion.div>
       </motion.nav>
 
       <AnimatePresence>
@@ -394,3 +382,4 @@ function Navbar() {
 }
 
 export default Navbar;
+
