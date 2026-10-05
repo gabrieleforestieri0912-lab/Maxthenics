@@ -402,7 +402,7 @@ const ChatWidgetContent = () => {
                       <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-red-600/20 to-orange-500/20 border border-red-500/10 flex items-center justify-center mx-auto mb-5">
                         <Sparkles size={28} className="text-red-500" />
                       </div>
-                      <h2 className="text-2xl font-black text-white uppercase tracking-tighter italic mb-2">
+                      <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">
                         Come posso <span className="text-red-500">aiutarti</span>?
                       </h2>
                       <p className="text-zinc-500 text-xs font-medium">Scegli un argomento o scrivi la tua domanda</p>

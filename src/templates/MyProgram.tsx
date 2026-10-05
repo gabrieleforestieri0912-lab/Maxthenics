@@ -446,7 +446,7 @@ const MyProgram: React.FC = () => {
                   Settimana {week.weekNumber}
                 </h2>
                 {week.theme && (
-                  <span className="text-sm text-zinc-500 italic">{week.theme}</span>
+                  <span className="text-sm text-zinc-500">{week.theme}</span>
                 )}
                 {week.isDeload && (
                   <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
@@ -609,7 +609,7 @@ const MyProgram: React.FC = () => {
                             )}
                           </div>
                           {exercise.notes && (
-                            <div className="mt-2 text-xs text-zinc-400 italic">
+                            <div className="mt-2 text-xs text-zinc-400">
                               Note: {exercise.notes}
                             </div>
                           )}

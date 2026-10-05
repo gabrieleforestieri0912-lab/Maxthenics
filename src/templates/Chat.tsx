@@ -631,7 +631,7 @@ const Chat: React.FC = () => {
                 <div className="w-16 h-16 bg-red-600/10 rounded-2xl flex items-center justify-center mb-6">
                   <Trash2 className="text-red-500" size={32} />
                 </div>
-                <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter mb-3">Elimina Chat?</h3>
+                <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-3">Elimina Chat?</h3>
                 <p className="text-zinc-500 text-sm font-medium mb-8 leading-relaxed">Questa azione è irreversibile. Tutti i dati di questa conversazione verranno rimossi dai nostri sistemi.</p>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -685,7 +685,7 @@ const Chat: React.FC = () => {
                   height={36}
                   className="rounded-xl object-contain group-hover:scale-110 transition-transform"
                 />
-                <span className="text-lg font-black tracking-tighter uppercase italic">
+                <span className="text-lg font-bold tracking-tight uppercase">
                   MAX<span className="text-red-600">THENICS</span>
                 </span>
               </Link>
@@ -963,7 +963,7 @@ const Chat: React.FC = () => {
                   <Brain size={40} className="text-red-500" />
                 </motion.div>
 
-                <h2 className="text-5xl md:text-7xl font-black text-white uppercase italic tracking-tighter leading-none mb-6">
+                <h2 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter leading-none mb-6">
                   COME POSSO <br />
                   <span className="text-red-600">AIUTARTI?</span>
                 </h2>
@@ -1039,7 +1039,7 @@ const Chat: React.FC = () => {
                                   <div className="w-8 h-8 bg-zinc-900 border border-white/10 rounded-xl flex items-center justify-center">
                                     <Brain size={14} className="text-red-500" />
                                   </div>
-                                  <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] italic flex items-center gap-1.5">
+                                  <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] flex items-center gap-1.5">
                                     <Sparkles size={10} />
                                     STHENOX
                                   </span>

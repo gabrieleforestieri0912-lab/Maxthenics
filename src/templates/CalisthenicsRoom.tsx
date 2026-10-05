@@ -277,7 +277,7 @@ const CalisthenicsRoom: React.FC = () => {
             >
               <span className="text-white">CALISTHENICS</span>
               <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-br from-red-500 via-red-600 to-orange-500 italic">ROOM</span>
+              <span className="text-transparent bg-clip-text bg-linear-to-br from-red-500 via-red-600 to-orange-500">ROOM</span>
             </motion.h1>
 
             <motion.p
@@ -563,7 +563,7 @@ const CalisthenicsRoom: React.FC = () => {
               <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
                 Scegli il tuo <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">Percorso</span>
               </h2>
-              <p className="text-zinc-500 font-medium italic mt-4 max-w-xl mx-auto">Più investi su di te, più il costo per mese scende. Il miglior affare? Il pacchetto annuale.</p>
+              <p className="text-zinc-500 font-normal mt-4 max-w-xl mx-auto">Più investi su di te, più il costo per mese scende. Il miglior affare? Il pacchetto annuale.</p>
             </div>
 
             {/* Frequency Toggle */}
@@ -871,7 +871,7 @@ const CalisthenicsRoom: React.FC = () => {
             <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-4">
               LA TUA <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">ROOM</span>
             </h1>
-            <p className="text-zinc-500 font-medium italic text-lg">Il tuo portale d&apos;élite per la massima performance fisica.</p>
+            <p className="text-zinc-500 font-normal text-lg">Il tuo portale d&apos;élite per la massima performance fisica.</p>
           </motion.div>
         </div>
       </section>

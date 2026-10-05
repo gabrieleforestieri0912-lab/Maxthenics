@@ -296,7 +296,7 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
     {programs.length === 0 ? (
       <div className="bg-zinc-900/20 border border-dashed border-white/10 rounded-[1.5rem] p-10 text-center">
         <Layout className="mx-auto text-zinc-800 mb-4" size={40} />
-        <p className="text-zinc-600 italic text-sm">Nessun programma creato ancora.</p>
+        <p className="text-zinc-600 text-sm">Nessun programma creato ancora.</p>
         <p className="text-zinc-700 text-xs mt-1">Compila il wizard e genera il tuo primo piano!</p>
       </div>
     ) : (
@@ -1444,7 +1444,7 @@ const Create: React.FC = () => {
                   <div className="relative z-10">
                     <p className="text-[10px] font-black uppercase tracking-wider text-zinc-500 mb-2">Obiettivi</p>
                     <div className="bg-zinc-950/60 rounded-xl p-4 border border-white/5 border-l-2 border-l-red-500/60">
-                      <p className="text-sm text-zinc-300 italic leading-relaxed">&ldquo;{goals}&rdquo;</p>
+                      <p className="text-sm text-zinc-300 leading-relaxed">&ldquo;{goals}&rdquo;</p>
                     </div>
                   </div>
                 </>
@@ -1459,7 +1459,7 @@ const Create: React.FC = () => {
                       Note su Infortuni / Condizioni
                     </p>
                     <div className="bg-amber-950/20 rounded-xl p-4 border border-amber-500/10 border-l-2 border-l-amber-500/60">
-                      <p className="text-sm text-amber-200/80 italic leading-relaxed">&ldquo;{injury}&rdquo;</p>
+                      <p className="text-sm text-amber-200/80 leading-relaxed">&ldquo;{injury}&rdquo;</p>
                     </div>
                   </div>
                 </>

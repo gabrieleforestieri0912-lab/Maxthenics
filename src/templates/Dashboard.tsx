@@ -89,7 +89,7 @@ const DashboardProgramGrid: React.FC = () => {
     return (
       <div className="text-center py-16 border-2 border-dashed border-white/5 rounded-2xl">
         <Dumbbell className="mx-auto text-zinc-800 mb-5" size={40} />
-        <p className="text-zinc-500 font-medium italic text-sm">
+        <p className="text-zinc-500 font-normal text-sm">
           Non hai ancora programmi personalizzati.
         </p>
         <p className="text-zinc-700 text-xs mt-1 mb-6">

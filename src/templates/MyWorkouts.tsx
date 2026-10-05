@@ -676,7 +676,7 @@ const MyWorkouts: React.FC = () => {
                       {p.goals && (
                         <div className="bg-zinc-950/50 rounded-xl p-3.5 border border-white/5 border-l-2 border-l-red-500/40 mb-4">
                           <p className="text-[10px] text-zinc-600 font-black uppercase tracking-wider mb-1">Obiettivi</p>
-                          <p className="text-xs text-zinc-400 italic leading-relaxed line-clamp-2">&ldquo;{p.goals}&rdquo;</p>
+                          <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">&ldquo;{p.goals}&rdquo;</p>
                         </div>
                       )}
 
