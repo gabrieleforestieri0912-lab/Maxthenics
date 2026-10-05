@@ -73,25 +73,6 @@
 }
 
 @layer utilities {
-  .text-glow {
-    text-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
-  }
-
-  .glass-card {
-    @apply bg-zinc-900/40 backdrop-blur-md border border-white/10 hover:border-red-500/30 transition-all duration-300;
-  }
-
-  .bg-grid {
-    background-size: 40px 40px;
-    background-image:
-      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  }
-
-  .mask-gradient {
-    mask-image: linear-gradient(to bottom, black, transparent);
-  }
-
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -109,29 +90,123 @@
   @apply max-w-7xl mx-auto;
 }
 
-/* ── Canonical design tokens (use these for new code) ── */
-@utility btn-primary {
-  @apply bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-red-900/20;
+/* ──────────────────────────────────────────────────────────────
+   Canonical design tokens
+   Every page should compose from these. Reference implementation:
+   src/components/HowItWorks.tsx and src/components/Features.tsx
+   ────────────────────────────────────────────────────────────── */
+
+/* Layout */
+@utility page-shell {
+  @apply min-h-screen pt-24 pb-20 bg-zinc-950 text-white;
 }
 
-@utility btn-secondary {
-  @apply bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200 font-bold rounded-xl transition-all;
+@utility section-padding {
+  @apply py-20 lg:py-24 px-6 lg:px-8;
 }
 
+@utility container-max {
+  @apply max-w-7xl mx-auto;
+}
+
+/* Surfaces */
 @utility card {
   @apply bg-zinc-900/30 border border-white/10 rounded-2xl;
 }
 
+@utility card-hover {
+  @apply transition-all duration-500 hover:-translate-y-1 hover:border-red-500/30 hover:shadow-[0_0_40px_rgba(220,38,38,0.1)];
+}
+
+@utility glass-card {
+  @apply bg-zinc-900/40 backdrop-blur-md border border-white/10 hover:border-red-500/30 transition-all duration-300;
+}
+
+@utility hairline {
+  @apply border-white/10;
+}
+
+/* Buttons */
+@utility btn-base {
+  @apply inline-flex items-center justify-center gap-2 font-bold transition-all duration-150 select-none;
+}
+
+@utility btn-primary {
+  @apply btn-base bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white rounded-xl shadow-lg shadow-red-900/20 hover:shadow-red-900/40 disabled:opacity-50 disabled:pointer-events-none;
+}
+
+@utility btn-secondary {
+  @apply btn-base bg-zinc-900 hover:bg-zinc-800 border border-white/10 hover:border-white/25 text-zinc-100 rounded-xl;
+}
+
+@utility btn-ghost {
+  @apply btn-base text-zinc-400 hover:text-white rounded-xl;
+}
+
+@utility btn-primary-sm {
+  @apply btn-primary px-5 py-2.5 text-[13px];
+}
+
+@utility btn-secondary-sm {
+  @apply btn-secondary px-5 py-2.5 text-[13px];
+}
+
+@utility btn-primary-lg {
+  @apply btn-primary px-7 py-3.5 text-sm;
+}
+
+@utility btn-secondary-lg {
+  @apply btn-secondary px-7 py-3.5 text-sm;
+}
+
+/* Type */
 @utility eyebrow {
-  @apply text-red-500 font-black uppercase tracking-[0.3em] text-[10px];
+  @apply text-xs font-bold uppercase tracking-widest text-red-600;
 }
 
 @utility eyebrow-pill {
-  @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.3em];
+  @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.2em];
 }
 
-@utility card-hover {
-  @apply transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(220,38,38,0.1)];
+@utility page-title {
+  @apply text-3xl md:text-5xl font-bold text-white tracking-tight leading-tight;
+}
+
+@utility meta-mono {
+  @apply font-mono text-xs uppercase tracking-wider text-zinc-500;
+}
+
+@utility body-copy {
+  @apply text-zinc-400 text-base leading-relaxed;
+}
+
+/* Long-form editorial content (guide, legal) */
+@utility prose-block {
+  @apply text-zinc-400 text-[15px] leading-relaxed;
+}
+
+@utility prose-list {
+  @apply list-disc list-inside text-zinc-400 space-y-2 text-[15px] leading-relaxed;
+}
+
+@utility prose-subheading {
+  @apply text-base font-bold text-white tracking-tight mt-8 mb-3;
+}
+
+/* Misc */
+@utility text-glow {
+  text-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+}
+
+@utility mask-gradient {
+  mask-image: linear-gradient(to bottom, black, transparent);
+}
+
+@utility bg-grid {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -160,6 +235,11 @@
 }
 
 .animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 15s ease infinite;
+}
+
+.animate-gradient {
   background-size: 200% 200%;
   animation: gradient-x 15s ease infinite;
 }

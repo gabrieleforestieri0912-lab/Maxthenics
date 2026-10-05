@@ -685,7 +685,7 @@ const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, hi
               { label: 'Rest', val: w.rest },
               { label: 'Tempo', val: w.tempo },
             ].map((cell) => (
-              <div key={cell.label} className="bg-zinc-900/50 p-3 rounded-lg">
+              <div key={cell.label} className="rounded-lg bg-zinc-950/40 border border-white/10 p-3">
                 <span className="text-[10px] text-zinc-500 uppercase block mb-1">{cell.label}</span>
                 <span className="font-bold text-white text-lg">{cell.val}</span>
               </div>
@@ -852,9 +852,13 @@ const ProgramContent: React.FC = () => {
 
   if (!program) {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
-        <h2 className="text-3xl font-bold mb-4">{t('Programma non trovato', 'Program not found')}</h2>
-        <Link to="/programs" className="text-red-500 hover:underline">{t('Torna ai programmi', 'Back to programs')}</Link>
+      <div className="page-shell flex flex-col items-center justify-center px-6 text-center">
+        <p className="eyebrow">404</p>
+        <h1 className="page-title mt-3">{t('Programma non trovato', 'Program not found')}</h1>
+        <Link to="/programs" className="btn-primary mt-8">
+          <ArrowLeft className="w-4 h-4" />
+          {t('Torna ai programmi', 'Back to programs')}
+        </Link>
       </div>
     );
   }
@@ -885,11 +889,11 @@ const ProgramContent: React.FC = () => {
         description={`Visualizza il contenuto del programma ${program.title} su Maxthenics. Esercizi, serie, ripetizioni e progressioni dettagliate.`}
         keywords={`programma calisthenics ${program.title.toLowerCase()}, workout, esercizi, progressioni`}
       />
-      <div className="min-h-screen bg-black text-white pt-24 pb-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      <div className="page-shell px-6 lg:px-8">
+        <div className="container-max max-w-5xl">
           <div className="flex items-center justify-between gap-4 mb-6">
-            <Link to="/programs" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors font-bold text-sm">
-              <ArrowLeft className="w-4 h-4" />
+            <Link to="/programs" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors font-bold text-sm group">
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" aria-hidden />
               {t('Torna ai Programmi', 'Back to Programs')}
             </Link>
             <div className="flex items-center gap-2">
@@ -902,28 +906,28 @@ const ProgramContent: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
-              <span className="text-red-600 font-black tracking-[0.3em] uppercase text-[10px] mb-2 block">{t('Protocollo di Allenamento', 'Training Protocol')}</span>
-              <h1 className="text-2xl sm:text-4xl font-black tracking-tighter uppercase">{program.title}</h1>
-              {tagline && <p className="text-zinc-500 text-sm mt-1 font-medium italic">{tagline}</p>}
+              <p className="eyebrow">{t('Protocollo di Allenamento', 'Training Protocol')}</p>
+              <h1 className="page-title mt-2 text-3xl sm:text-4xl">{program.title}</h1>
+              {tagline && <p className="body-copy text-sm mt-2">{tagline}</p>}
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <span className="text-[10px] text-zinc-500 uppercase">{t('Durata', 'Duration')}</span>
-                <span className="font-black text-white ml-2">{program.duration || plan.weeks.length + (locale === 'en' ? ' Weeks' : ' Settimane')}</span>
+            <div className="flex flex-wrap items-center gap-5">
+              <div className="flex items-center gap-2">
+                <span className="meta-mono">{t('Durata', 'Duration')}</span>
+                <span className="text-sm font-bold text-white">{program.duration || plan.weeks.length + (locale === 'en' ? ' Weeks' : ' Settimane')}</span>
               </div>
-              <div className="text-right">
-                <span className="text-[10px] text-zinc-500 uppercase">{t('Livello', 'Level')}</span>
-                <span className="font-black text-white ml-2">{program.level}</span>
+              <div className="flex items-center gap-2">
+                <span className="meta-mono">{t('Livello', 'Level')}</span>
+                <span className="text-sm font-bold text-white">{program.level}</span>
               </div>
             </div>
           </div>
 
           {/* Week Tabs */}
           {plan.weeks.length > 1 && (
-            <div className="mb-6">
-              <p className="text-xs text-zinc-500 mb-2 font-bold uppercase tracking-widest">{t('Seleziona Settimana', 'Select Week')}</p>
+            <div className="mb-8">
+              <p className="meta-mono mb-2">{t('Seleziona Settimana', 'Select Week')}</p>
               <WeekTabs plan={plan} weekIndex={weekIndex} setWeekIndex={setWeekIndex} />
             </div>
           )}
@@ -932,7 +936,7 @@ const ProgramContent: React.FC = () => {
           {activeTab === 'overview' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
               {currentWeek && (
-                <div className="bg-red-600/10 border border-red-500/20 p-5 rounded-2xl">
+                <div className="card border-red-500/20 bg-red-600/[0.08] p-5">
                   <h3 className="font-bold text-red-400 text-sm mb-2 flex items-center gap-2">
                     <Flame size={16} /> {t('Settimana', 'Week')} {currentWeek.week}: {currentWeek.theme}
                   </h3>
@@ -942,7 +946,7 @@ const ProgramContent: React.FC = () => {
                 </div>
               )}
 
-              <div className="bg-zinc-900/30 border border-white/10 p-5 rounded-2xl">
+              <div className="card p-5">
                 <h3 className="font-bold text-white mb-4 flex items-center gap-2"><Target size={16} className="text-red-500" /> {t('Panoramica Settimanale', 'Weekly Overview')}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {currentWeek?.days.map((d) => (
@@ -955,7 +959,7 @@ const ProgramContent: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-zinc-900/30 border border-white/10 p-5 rounded-2xl">
+              <div className="card p-5">
                 <h3 className="font-bold text-white mb-4 flex items-center gap-2"><BookOpen size={16} className="text-red-500" /> {t('Riscaldamento', 'Warm-up')}</h3>
                 <ul className="space-y-2">
                   {warmUp.map((item, i) => (
@@ -967,7 +971,7 @@ const ProgramContent: React.FC = () => {
                 </ul>
               </div>
 
-              <div className="bg-zinc-900/30 border border-white/10 p-5 rounded-2xl">
+              <div className="card p-5">
                 <h3 className="font-bold text-white mb-4 flex items-center gap-2"><Dumbbell size={16} className="text-red-500" /> {t('Defaticamento', 'Cool-down')}</h3>
                 <ul className="space-y-2">
                   {coolDown.map((item, i) => (
@@ -979,23 +983,23 @@ const ProgramContent: React.FC = () => {
                 </ul>
               </div>
 
-              <div className="bg-zinc-900/30 border border-white/10 p-5 rounded-2xl">
+              <div className="card p-5">
                 <h3 className="font-bold text-white mb-3 flex items-center gap-2"><Zap size={16} className="text-red-500" /> {t('Info Programma', 'Program Info')}</h3>
                 <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="bg-zinc-900/50 p-3 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 uppercase block">{t('Durata Totale', 'Total Duration')}</span>
+                  <div className="rounded-lg bg-zinc-950/40 border border-white/10 p-3">
+                    <span className="meta-mono block">{t('Durata Totale', 'Total Duration')}</span>
                     <span className="font-bold text-white">{program.duration || plan.weeks.length + (locale === 'en' ? ' Weeks' : ' Settimane')}</span>
                   </div>
-                  <div className="bg-zinc-900/50 p-3 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 uppercase block">{t('Frequenza', 'Frequency')}</span>
+                  <div className="rounded-lg bg-zinc-950/40 border border-white/10 p-3">
+                    <span className="meta-mono block">{t('Frequenza', 'Frequency')}</span>
                     <span className="font-bold text-white">{t('4 giorni/settimana', '4 days/week')}</span>
                   </div>
-                  <div className="bg-zinc-900/50 p-3 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 uppercase block">{t('Livello', 'Level')}</span>
+                  <div className="rounded-lg bg-zinc-950/40 border border-white/10 p-3">
+                    <span className="meta-mono block">{t('Livello', 'Level')}</span>
                     <span className="font-bold text-white">{program.level}</span>
                   </div>
-                  <div className="bg-zinc-900/50 p-3 rounded-lg">
-                    <span className="text-[10px] text-zinc-500 uppercase block">{t('Esercizi Totali', 'Total Exercises')}</span>
+                  <div className="rounded-lg bg-zinc-950/40 border border-white/10 p-3">
+                    <span className="meta-mono block">{t('Esercizi Totali', 'Total Exercises')}</span>
                     <span className="font-bold text-white">{programExercises.length}</span>
                   </div>
                 </div>

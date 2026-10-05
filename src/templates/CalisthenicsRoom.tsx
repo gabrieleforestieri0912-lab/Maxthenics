@@ -296,7 +296,7 @@ const CalisthenicsRoom: React.FC = () => {
               transition={{ delay: 0.5 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <a href="#offers" className="px-10 py-4 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black rounded-2xl text-sm uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-red-900/30">
+              <a href="#offers" className="px-10 py-4 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black rounded-2xl text-sm uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-red-900/30">
                 Inizia il Percorso
               </a>
               <a href="#features" className="px-10 py-4 border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white font-black rounded-2xl text-sm uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95">
@@ -431,8 +431,8 @@ const CalisthenicsRoom: React.FC = () => {
         {/* ── THREE PILLARS ── */}
         <section className="py-24 px-6 bg-zinc-900/20 border-y border-white/5 relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.08)_0%,transparent_60%)]" />
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
-          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-orange-500/30 to-transparent" />
+          <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-red-500/30 to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-px bg-linear-to-r from-transparent via-orange-500/30 to-transparent" />
           <div className="max-w-7xl mx-auto relative z-10">
             <div className="grid md:grid-cols-3 gap-10">
               {[
@@ -542,7 +542,7 @@ const CalisthenicsRoom: React.FC = () => {
                       ))}
                     </div>
 
-                    <div className="mt-10 p-6 bg-gradient-to-r from-red-600/10 to-amber-600/10 border border-red-500/20 rounded-2xl flex items-center gap-3">
+                    <div className="mt-10 p-6 bg-linear-to-r from-red-600/10 to-amber-600/10 border border-red-500/20 rounded-2xl flex items-center gap-3">
                       <Sparkles size={16} className="text-amber-500 shrink-0" />
                       <p className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-300">
                         Bonus inclusi in tutti i piani
@@ -666,7 +666,7 @@ const CalisthenicsRoom: React.FC = () => {
                     </>
                   )}
                   {!plan.highlight && (
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-linear-to-b from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   )}
 
                   {/* Badge */}
@@ -751,7 +751,7 @@ const CalisthenicsRoom: React.FC = () => {
                       className={`w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all relative z-10 ${
                         plan.highlight
                           ? "bg-white text-black hover:bg-zinc-100 shadow-xl"
-                          : "bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white shadow-lg shadow-red-900/20 hover:shadow-xl hover:shadow-red-900/30"
+                          : "bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white shadow-lg shadow-red-900/20 hover:shadow-xl hover:shadow-red-900/30"
                       } hover:scale-[1.02] active:scale-95`}
                     >
                       {plan.cta}
@@ -825,7 +825,7 @@ const CalisthenicsRoom: React.FC = () => {
 
   // ─── SUBSCRIBER VIEW ──────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-red-500/30">
+    <div className="page-shell selection:bg-red-500/30">
       <SEO
         title="Calisthenics Room - Area Riservata"
         description="Benvenuto nella Calisthenics Room. Accedi al tuo coaching e ai tuoi programmi."
@@ -920,7 +920,7 @@ const CalisthenicsRoom: React.FC = () => {
                   </div>
                   <h3 className="text-xl font-black mb-3 leading-tight">{res.title}</h3>
                   <p className="text-zinc-500 text-sm mb-8 leading-relaxed">{res.desc}</p>
-                  <Link to={res.to} className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black rounded-2xl transition-all text-xs tracking-widest uppercase shadow-lg shadow-red-900/20">
+                  <Link to={res.to} className="inline-flex items-center gap-3 px-6 py-3 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black rounded-2xl transition-all text-xs tracking-widest uppercase shadow-lg shadow-red-900/20">
                     {res.action} <ArrowRight size={14} />
                   </Link>
                 </div>
@@ -976,7 +976,7 @@ const CalisthenicsRoom: React.FC = () => {
                     {module.lessons.map((lesson, lessonIndex) => (
                       <div
                         key={lessonIndex}
-                        className="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5 hover:border-white/10 hover:bg-black/60 transition-all group/lesson"
+                        className="flex items-center justify-between p-4 bg-zinc-950/40 rounded-xl border border-white/10 hover:border-white/10 hover:bg-zinc-950/70 transition-all group/lesson"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-lg bg-red-600/10 flex items-center justify-center text-red-500 group-hover/lesson:bg-red-600 group-hover/lesson:text-white transition-all">

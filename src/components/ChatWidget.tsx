@@ -275,7 +275,7 @@ const ChatWidgetContent = () => {
     <>
       <AnimatePresence>
         {deleteConfirmId && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -324,7 +324,7 @@ const ChatWidgetContent = () => {
               style={posStyle}
             >
               {/* Gradient top edge accent */}
-              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
+              <div className="absolute top-0 left-0 right-0 h-[1px] bg-linear-to-r from-transparent via-red-500/30 to-transparent" />
 
               {/* ── Header ── */}
               <div className="px-4 py-3 relative shrink-0">
@@ -333,7 +333,7 @@ const ChatWidgetContent = () => {
 
                 <div className="relative flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-red-600 to-orange-500 flex items-center justify-center shadow-lg shadow-red-900/30">
+                    <div className="w-8 h-8 rounded-xl bg-linear-to-br from-red-600 to-orange-500 flex items-center justify-center shadow-lg shadow-red-900/30">
                       <Sparkles size={15} className="text-white" />
                     </div>
                     <div className="flex flex-col">
@@ -359,7 +359,7 @@ const ChatWidgetContent = () => {
                           >
                             <div className="p-2 border-b border-white/[0.04]">
                               <button onClick={handleNewChat} className="w-full flex items-center gap-3 p-2.5 hover:bg-white/5 rounded-xl text-xs font-bold text-white transition-all group">
-                                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-red-600 to-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-red-900/30"><Plus size={13} /></div> Nuova Chat
+                                <div className="w-6 h-6 rounded-lg bg-linear-to-br from-red-600 to-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-red-900/30"><Plus size={13} /></div> Nuova Chat
                               </button>
                             </div>
                             <div className="max-h-[300px] overflow-y-auto p-1.5 scrollbar-hide">
@@ -399,7 +399,7 @@ const ChatWidgetContent = () => {
                 {messages.length === 0 && !isLoading ? (
                   <div className="flex flex-col items-center justify-center h-full text-center px-4">
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-600/20 to-orange-500/20 border border-red-500/10 flex items-center justify-center mx-auto mb-5">
+                      <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-red-600/20 to-orange-500/20 border border-red-500/10 flex items-center justify-center mx-auto mb-5">
                         <Sparkles size={28} className="text-red-500" />
                       </div>
                       <h2 className="text-2xl font-black text-white uppercase tracking-tighter italic mb-2">
@@ -449,7 +449,7 @@ const ChatWidgetContent = () => {
                               <>
                                 <div className={`px-4 py-3 text-[13px] leading-relaxed ${
                                   msg.role === "user"
-                                    ? "bg-gradient-to-br from-red-600 to-orange-500 text-white rounded-2xl rounded-tr-md shadow-lg shadow-red-900/20"
+                                    ? "bg-linear-to-br from-red-600 to-orange-500 text-white rounded-2xl rounded-tr-md shadow-lg shadow-red-900/20"
                                     : "bg-white/[0.04] border border-white/[0.06] text-zinc-200 rounded-2xl rounded-tl-md"
                                 }`}>
                                   {msg.role === "assistant" && (msg.isNew || msg.isStreaming) ? (
@@ -477,7 +477,7 @@ const ChatWidgetContent = () => {
                     {isLoading && (
                       <div className="flex justify-start">
                         <div className="bg-white/[0.04] border border-white/[0.06] px-4 py-3 rounded-2xl rounded-tl-md flex items-center gap-2">
-                          {[0, 1, 2].map((i) => <motion.span key={i} animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }} className="w-1.5 h-1.5 bg-gradient-to-r from-red-500 to-orange-400 rounded-full" />)}
+                          {[0, 1, 2].map((i) => <motion.span key={i} animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }} className="w-1.5 h-1.5 bg-linear-to-r from-red-500 to-orange-400 rounded-full" />)}
                           {isStreaming && <span className="text-[7px] text-zinc-500 font-bold uppercase tracking-widest ml-1">Scrittura...</span>}
                         </div>
                       </div>
@@ -489,7 +489,7 @@ const ChatWidgetContent = () => {
 
               {/* ── Footer / Input ── */}
               <div className="px-3 pb-3 pt-1 relative">
-                <div className="absolute top-0 left-3 right-3 h-[1px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
+                <div className="absolute top-0 left-3 right-3 h-[1px] bg-linear-to-r from-transparent via-white/[0.04] to-transparent" />
                 <ChatInput
                   value={input}
                   onChange={setInput}

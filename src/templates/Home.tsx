@@ -81,7 +81,7 @@ const Home: React.FC = () => {
           >
             <Link
               to="/programs"
-              className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white text-sm font-bold rounded-lg transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white text-sm font-bold rounded-lg transition-colors"
             >
               Vedi i programmi
               <ArrowRight size={17} />
@@ -176,7 +176,7 @@ const Home: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative rounded-[2.5rem] p-8 md:p-16 lg:p-20 border border-white/10 overflow-hidden bg-gradient-to-br from-zinc-900 to-black shadow-2xl"
+            className="relative rounded-[2.5rem] p-8 md:p-16 lg:p-20 border border-white/10 overflow-hidden bg-linear-to-br from-zinc-900 to-black shadow-2xl"
           >
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(220,38,38,0.15)_0%,transparent_60%)] pointer-events-none" />
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[100px] pointer-events-none" />
@@ -192,7 +192,7 @@ const Home: React.FC = () => {
               
               <h2 className="text-4xl md:text-6xl font-black mb-8 text-white uppercase italic tracking-tighter leading-[0.9]">
                 PROGRAMMA <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-400 to-zinc-600 pr-2">PERSONALIZZATO</span>
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-zinc-400 to-zinc-600 pr-2">PERSONALIZZATO</span>
               </h2>
               
               <div className="space-y-6 text-base md:text-lg text-zinc-400 font-medium leading-relaxed text-left md:text-center max-w-3xl mx-auto mb-12">
@@ -289,7 +289,7 @@ const Home: React.FC = () => {
                 ))}
               </div>
 
-              <Link to="/calisthenics-room" className="group bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-8 py-4 rounded-xl text-xs font-black transition-all hover:scale-105 inline-flex items-center gap-4 uppercase tracking-[0.2em] shadow-lg shadow-red-900/40">
+              <Link to="/calisthenics-room" className="group bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-8 py-4 rounded-xl text-xs font-black transition-all hover:scale-105 inline-flex items-center gap-4 uppercase tracking-[0.2em] shadow-lg shadow-red-900/40">
                 Richiedi Accesso{" "}
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>

@@ -21,7 +21,7 @@ import {
   Plus,
   TrendingUp,
   Award,
-  Eye,
+  Search,
   CheckCircle2,
   XCircle,
 } from "lucide-react";
@@ -29,6 +29,8 @@ import { downloadTxt, downloadJson, downloadPdf, downloadCsv, downloadWeeksTxt, 
 import type { ProgramForExport, ExerciseExport } from "../lib/exportProgram";
 import { useAuth } from "../context/AuthContext";
 import { safeJsonParse } from "../lib/safeJson";
+import Button from "../components/Button";
+import EmptyState from "../components/EmptyState";
 import SEO from "../components/SEO";
 import type { SavedProgram } from "../types/program";
 import { savedToProgram } from "../types/program";
@@ -254,17 +256,17 @@ const MyWorkouts: React.FC = () => {
   // ─── AUTH GUARD ────────────────────────────────────────────────────────
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="text-center">
-          <AlertCircle className="mx-auto text-red-500 mb-6" size={48} />
-          <h2 className="text-xl font-black text-white mb-3">Accesso Richiesto</h2>
-          <p className="text-zinc-500 text-sm mb-6">Accedi per vedere i tuoi programmi di allenamento.</p>
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-red-600 hover:bg-red-500 text-white px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-wider transition-all"
+      <div className="page-shell flex items-center justify-center px-6">
+        <div className="w-full max-w-sm">
+          <EmptyState
+            icon={AlertCircle}
+            title="Accesso richiesto"
+            description="Accedi per vedere i tuoi programmi di allenamento."
           >
-            Accedi
-          </button>
+            <Button size="lg" className="w-full" onClick={() => navigate("/login")}>
+              Accedi
+            </Button>
+          </EmptyState>
         </div>
       </div>
     );
@@ -286,12 +288,12 @@ const MyWorkouts: React.FC = () => {
         keywords="miei allenamenti, programmi personalizzati, workout, calisthenics"
       />
 
-      <div className="min-h-screen bg-black text-white py-8 sm:py-14 px-4 sm:px-6 relative">
+      <div className="page-shell px-6 lg:px-8">
         {/* Background atmosphere */}
-        <div className="absolute top-0 left-1/3 w-[600px] h-[600px] bg-red-600/3 rounded-full blur-[150px] pointer-events-none -z-10" />
-        <div className="absolute bottom-0 right-1/3 w-[500px] h-[500px] bg-orange-600/3 rounded-full blur-[150px] pointer-events-none -z-10" />
+        <div className="absolute top-0 left-1/3 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[150px] pointer-events-none -z-10" aria-hidden />
+        <div className="absolute bottom-0 right-1/3 w-[500px] h-[500px] bg-orange-600/5 rounded-full blur-[150px] pointer-events-none -z-10" aria-hidden />
 
-        <div className="max-w-7xl mx-auto">
+        <div className="container-max">
           {/* ── PAGE HEADER ─────────────────────────────── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -301,24 +303,24 @@ const MyWorkouts: React.FC = () => {
           >
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-red-500 mb-2">Dashboard Allenamento</p>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight">
-                  I Miei{" "}
-                  <span className="bg-linear-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Workout</span>
+                <p className="eyebrow">Dashboard Allenamento</p>
+                <h1 className="page-title mt-2 text-3xl sm:text-4xl md:text-5xl">
+                  I miei workout
                 </h1>
-                <p className="text-zinc-500 mt-3 text-sm leading-relaxed max-w-xl">
+                <p className="body-copy text-sm mt-3 max-w-xl">
                   {stats.total > 0
                     ? `Hai ${stats.total} programma${stats.total > 1 ? "i" : ""} attivo${stats.total > 1 ? "i" : ""}. Modificalo, esportalo o allenati.`
                     : "Non hai ancora nessun programma. Inizia a costruire il tuo percorso."}
                 </p>
               </div>
-              <button
+              <Button
+                size="lg"
                 onClick={navigateToCreate}
-                className="shrink-0 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-[0.15em] transition-all shadow-lg shadow-red-900/20 hover:shadow-red-900/40 flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
+                className="shrink-0"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4" aria-hidden />
                 Nuovo Programma
-              </button>
+              </Button>
             </div>
           </motion.div>
 
@@ -330,13 +332,14 @@ const MyWorkouts: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="mb-8 bg-emerald-500/8 border border-emerald-500/20 rounded-2xl p-4 flex items-center gap-4"
+                role="status"
+                className="mb-8 card border-emerald-500/20 bg-emerald-500/[0.08] p-4 flex items-center gap-4"
               >
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400" aria-hidden />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-black text-white">Programma modificato con successo!</p>
+                  <p className="text-sm font-bold text-white">Programma modificato con successo!</p>
                   <p className="text-xs text-zinc-500 mt-0.5">Le modifiche sono state salvate automaticamente.</p>
                 </div>
               </motion.div>
@@ -389,15 +392,15 @@ const MyWorkouts: React.FC = () => {
                   border: "border-amber-500/15",
                 },
               ].map((s) => (
-                <div key={s.label} className={`rounded-2xl border ${s.border} p-5 bg-linear-to-br ${s.accent} relative overflow-hidden`}>
-                  <div className={`absolute inset-0 bg-linear-to-br ${s.accent} pointer-events-none`} />
+                <div key={s.label} className={`card ${s.border} p-5 relative overflow-hidden`}>
+                  <div className={`absolute inset-0 bg-linear-to-br ${s.accent} pointer-events-none`} aria-hidden />
                   <div className="relative z-10 flex items-center justify-between">
                     <div>
-                      <p className={`text-2xl sm:text-3xl font-black ${s.col}`}>{s.val}</p>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mt-1">{s.label}</p>
+                      <p className={`text-2xl sm:text-3xl font-bold ${s.col}`}>{s.val}</p>
+                      <p className="meta-mono mt-1">{s.label}</p>
                     </div>
-                    <div className={`w-10 h-10 rounded-xl ${s.border} flex items-center justify-center`}>
-                      <s.icon className={`w-5 h-5 ${s.col}`} />
+                    <div className={`w-10 h-10 rounded-lg ${s.border} flex items-center justify-center`}>
+                      <s.icon className={`w-5 h-5 ${s.col}`} aria-hidden />
                     </div>
                   </div>
                 </div>
@@ -415,26 +418,31 @@ const MyWorkouts: React.FC = () => {
             >
               {/* Search */}
               <div className="flex-1 relative">
-                <Eye className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 pointer-events-none" />
+                <Search
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600 pointer-events-none"
+                  aria-hidden
+                />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cerca per nome, focus, obiettivi..."
-                  className="w-full bg-zinc-950/60 border border-white/8 rounded-2xl pl-11 pr-4 py-3.5 text-sm text-white placeholder:text-zinc-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 transition-all"
+                  aria-label="Cerca programmi"
+                  className="w-full rounded-xl border border-white/10 bg-zinc-950/60 pl-11 pr-4 py-3 text-sm text-white placeholder:text-zinc-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 transition-colors"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
+                    aria-label="Cancella ricerca"
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-white transition-colors"
                   >
-                    <XCircle className="w-4 h-4" />
+                    <XCircle className="w-4 h-4" aria-hidden />
                   </button>
                 )}
               </div>
 
               {/* Level filter */}
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {[
                   { val: null, label: "Tutti" },
                   { val: "principiante", label: "Principiante" },
@@ -444,11 +452,12 @@ const MyWorkouts: React.FC = () => {
                   <button
                     key={f.label}
                     type="button"
+                    aria-pressed={filterLevel === f.val}
                     onClick={() => setFilterLevel(filterLevel === f.val ? null : f.val)}
-                    className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-wider transition-all border ${
+                    className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-colors border ${
                       filterLevel === f.val
-                        ? "bg-red-600 text-white border-red-500 shadow-[0_0_16px_rgba(220,38,38,0.2)]"
-                        : "bg-zinc-950/60 text-zinc-500 border-white/8 hover:text-white hover:border-white/15"
+                        ? "bg-red-600 text-white border-red-500"
+                        : "bg-zinc-950/60 text-zinc-500 border-white/10 hover:text-white hover:border-white/25"
                     }`}
                   >
                     {f.label}
@@ -460,27 +469,18 @@ const MyWorkouts: React.FC = () => {
 
           {/* ── NO PROGRAMS ──────────────────────────────── */}
           {programs.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center py-20 px-6"
-            >
-              <div className="w-24 h-24 mx-auto rounded-2xl bg-linear-to-br from-red-600/10 to-orange-600/10 border border-red-500/10 flex items-center justify-center mb-8">
-                <Dumbbell className="w-10 h-10 text-red-500/40" />
-              </div>
-              <h2 className="text-2xl font-black text-white mb-3">Nessun programma ancora</h2>
-              <p className="text-zinc-500 max-w-md mx-auto text-sm leading-relaxed mb-8">
-                Il tuo primo piano di allenamento personalizzato ti aspetta. Compila il wizard e lascia che
-                l&apos;IA crei il programma perfetto per te.
-              </p>
-              <button
-                onClick={navigateToCreate}
-                className="bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-[0.15em] transition-all shadow-xl shadow-red-900/20 hover:shadow-red-900/40 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 mx-auto"
+            <div className="mt-10">
+              <EmptyState
+                icon={Dumbbell}
+                title="Nessun programma ancora"
+                description="Il tuo primo piano di allenamento personalizzato ti aspetta. Compila il wizard e lascia che l'IA crei il programma giusto per te."
               >
-                <Plus className="w-5 h-5" />
-                Crea il Tuo Primo Programma
-              </button>
-            </motion.div>
+                <Button size="lg" className="w-full" onClick={navigateToCreate}>
+                  <Plus className="w-4 h-4" aria-hidden />
+                  Crea il tuo primo programma
+                </Button>
+              </EmptyState>
+            </div>
           )}
 
           {/* ── NO MATCHES ───────────────────────────────── */}
@@ -530,7 +530,7 @@ const MyWorkouts: React.FC = () => {
                     exit={{ opacity: 0, y: -12 }}
                     layout
                     transition={{ duration: 0.3, delay: idx * 0.05 }}
-                    className={`relative group rounded-[1.75rem] border border-white/8 bg-zinc-900/50 backdrop-blur-sm overflow-hidden hover:border-red-500/20 transition-all duration-300 hover:bg-zinc-900/70 ${
+                    className={`relative group card bg-zinc-900/40 overflow-hidden hover:border-red-500/20 transition-all duration-300 hover:bg-zinc-900/70 ${
                       viewMode === "list" ? "" : ""
                     }`}
                   >
@@ -542,14 +542,14 @@ const MyWorkouts: React.FC = () => {
                       <div className="flex items-start justify-between gap-3 mb-4">
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap gap-1.5 mb-2">
-                            <span className={`text-[9px] font-bold uppercase tracking-[0.12em] px-2.5 py-1 rounded-full ${lvlCfg.bg} ${lvlCfg.color} border border-white/8`}>
+                            <span className={`meta-mono px-2.5 py-1 rounded-full ${lvlCfg.bg} ${lvlCfg.color} border border-white/10`}>
                               {lvlCfg.label}
                             </span>
-                            <span className="text-[9px] font-bold uppercase tracking-[0.12em] px-2.5 py-1 rounded-full bg-red-500/8 text-red-400 border border-red-500/15">
+                            <span className="meta-mono px-2.5 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
                               {p.focus}
                             </span>
                             {formatIntensity(p.intensity) && (
-                              <span className="text-[9px] font-bold uppercase tracking-[0.12em] px-2.5 py-1 rounded-full bg-white/3 text-zinc-500 border border-white/5">
+                              <span className="meta-mono px-2.5 py-1 rounded-full bg-white/3 text-zinc-500 border border-white/5">
                                 {formatIntensity(p.intensity)}
                               </span>
                             )}
@@ -564,7 +564,7 @@ const MyWorkouts: React.FC = () => {
                         <div className="flex gap-0.5 shrink-0">
                           <button
                             onClick={() => handleEdit(p.id, programIndex)}
-                            className="p-2 text-zinc-500 hover:text-white hover:bg-white/8 rounded-xl transition-all"
+                            className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl transition-all"
                             title="Modifica"
                           >
                             <Pencil className="w-3.5 h-3.5" />
@@ -579,7 +579,7 @@ const MyWorkouts: React.FC = () => {
                           <div className="relative">
                             <button
                               onClick={() => setExportOpenId(isExportOpen ? null : p.id)}
-                              className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-500/8 rounded-xl transition-all"
+                              className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
                               title="Esporta"
                             >
                               <Download className="w-3.5 h-3.5" />
@@ -661,7 +661,7 @@ const MyWorkouts: React.FC = () => {
                           {p.exercises.slice(0, 5).map((ex: any, j: number) => (
                             <span
                               key={j}
-                              className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 bg-red-500/5 text-red-500/50 rounded-full border border-red-500/8"
+                              className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 bg-red-500/5 text-red-500/50 rounded-full border border-red-500/10"
                             >
                               {ex.name}
                             </span>
@@ -697,7 +697,7 @@ const MyWorkouts: React.FC = () => {
                                   <p className="text-[10px] font-black uppercase tracking-wider text-zinc-600 mb-2">Aree Focus</p>
                                   <div className="flex flex-wrap gap-1.5">
                                     {p.bodyFocus.map((bf: string) => (
-                                      <span key={bf} className="text-[9px] font-bold px-2.5 py-1 bg-red-500/8 text-red-400/70 rounded-full border border-red-500/12">
+                                      <span key={bf} className="text-[9px] font-bold px-2.5 py-1 bg-red-500/10 text-red-400/70 rounded-full border border-red-500/20">
                                         {bf}
                                       </span>
                                     ))}

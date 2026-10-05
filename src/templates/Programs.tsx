@@ -1,65 +1,83 @@
+"use client";
 
-'use client';
-
-import React from 'react';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { ShoppingCart, Check, Zap, Flame, Trophy, Target } from 'lucide-react';
-import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { programData, ProgramDataItem, localizeProgram } from '../data/programs';
-import { useLanguage } from '../context/LanguageContext';
-import LanguageToggle from '../components/LanguageToggle';
-import ShareButton from '../components/ShareButton';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
+import Image from "next/image";
+import { ShoppingCart, Check, Zap, Flame, Trophy, Target, type LucideIcon } from "lucide-react";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
+import { localizeProgram, programData, type ProgramDataItem } from "../data/programs";
+import LanguageToggle from "../components/LanguageToggle";
+import PageHeader from "../components/PageHeader";
+import SectionHeading from "../components/SectionHeading";
+import ShareButton from "../components/ShareButton";
 import SEO from "../components/SEO";
-import Image from 'next/image';
 
-interface SectionHeaderProps {
-  title: string;
-  icon: React.ElementType;
+interface ProgramGroup {
+  key: keyof typeof programData;
+  title: { it: string; en: string };
+  eyebrow: string;
+  icon: LucideIcon;
+  description: { it: string; en: string };
 }
 
-const SectionHeader: React.FC<SectionHeaderProps> = ({ title, icon: Icon }) => (
-  <div className="flex flex-col mb-12">
-    <div className="flex items-center gap-6 mb-6">
-      <div className="p-4 bg-zinc-900 border border-white/10 rounded-2xl">
-        <Icon className="text-red-500" size={28} />
-      </div>
-      <div>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter leading-none">{title}</h2>
-        <div className="flex items-center gap-2 mt-2">
-          <span className="h-2 w-2 rounded-full bg-red-600 animate-pulse" />
-          <span className="text-[12px] font-bold text-zinc-500 uppercase tracking-widest">Mastery Path</span>
-        </div>
-      </div>
-    </div>
-    <div className="relative">
-      <div className="h-px w-full bg-zinc-800 rounded-full overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          whileInView={{ width: '100%' }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.5, ease: "circOut" }}
-          className="h-full bg-linear-to-r from-red-600 via-orange-500 to-transparent rounded-full"
-        />
-      </div>
-    </div>
-  </div>
-);
+const PROGRAM_GROUPS: ProgramGroup[] = [
+  {
+    key: "workout",
+    title: { it: "Workout Base", en: "Foundation Training" },
+    eyebrow: "01 — Fundamentals",
+    icon: Zap,
+    description: {
+      it: "Protocolli gratuiti per costruire le fondamenta: attivazione neurale, stabilità del core e biomeccanica dei movimenti base.",
+      en: "Free protocols to build the foundations: neural activation, core stability and basic movement biomechanics.",
+    },
+  },
+  {
+    key: "frontLever",
+    title: { it: "Front Lever", en: "Front Lever" },
+    eyebrow: "02 — Pull",
+    icon: Flame,
+    description: {
+      it: "Dalla retrazione scapolare alla full front lever: un percorso progressivo per dominare la forza di trazione.",
+      en: "From scapular retraction to the full front lever: a progressive path to master pulling strength.",
+    },
+  },
+  {
+    key: "planche",
+    title: { it: "Planche", en: "Planche" },
+    eyebrow: "03 — Push",
+    icon: Trophy,
+    description: {
+      it: "Dalla protrazione alla full planche: periodizzazione ipertrofica e condizionamento tendineo per la spinta assoluta.",
+      en: "From protraction to the full planche: hypertrophic periodization and tendon conditioning for absolute pushing strength.",
+    },
+  },
+  {
+    key: "skills",
+    title: { it: "Skill Avanzate", en: "Advanced Skills" },
+    eyebrow: "04 — Mastery",
+    icon: Target,
+    description: {
+      it: "Handstand, back lever, human flag, dragon flag e prehab: skill complesse per chi vuole spingersi oltre i limiti.",
+      en: "Handstand, back lever, human flag, dragon flag and prehab: complex skills for those who want to push beyond limits.",
+    },
+  },
+];
 
-interface ProgramCardProps {
+const ProgramCard: React.FC<{
   program: ProgramDataItem;
-  isFree: boolean;
   onToggle: (program: ProgramDataItem) => void;
   isInCart: boolean;
-}
-
-const ProgramCard: React.FC<ProgramCardProps> = ({ program, isFree, onToggle, isInCart }) => {
+}> = ({ program, onToggle, isInCart }) => {
   const navigate = useNavigate();
   const { locale, t } = useLanguage();
   const display = localizeProgram(program, locale);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+
+  const isFree = program.price === 0;
 
   function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
     const { left, top } = currentTarget.getBoundingClientRect();
@@ -68,16 +86,16 @@ const ProgramCard: React.FC<ProgramCardProps> = ({ program, isFree, onToggle, is
   }
 
   return (
-    <motion.div
+    <motion.article
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
+      transition={{ duration: 0.35 }}
       onMouseMove={handleMouseMove}
-      onClick={() => navigate(`/program/${program.id}`)}
-      className="group relative bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden transition-all duration-700 flex flex-col h-full cursor-pointer hover:border-red-500/30 hover:bg-zinc-900/60 shadow-2xl"
+      className="group relative flex flex-col h-full overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/30 cursor-pointer transition-colors duration-300 hover:border-red-500/30 hover:bg-zinc-900/60"
     >
-      {/* Dynamic Spotlight Effect */}
       <motion.div
+        aria-hidden
         className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500 z-10"
         style={{
           background: useMotionTemplate`
@@ -91,98 +109,103 @@ const ProgramCard: React.FC<ProgramCardProps> = ({ program, isFree, onToggle, is
       />
 
       {isFree ? (
-        <div className="absolute top-6 right-6 z-30 bg-white/90 backdrop-blur-md text-black text-[10px] font-black px-4 py-2 rounded-xl shadow-2xl uppercase tracking-[0.2em]">
-          {t('Gratuito', 'Free')}
-        </div>
+        <span className="eyebrow-pill absolute top-4 right-4 z-30 bg-white/90 text-black border-white/0">
+          {t("Gratuito", "Free")}
+        </span>
       ) : (
-        <div className="absolute top-6 right-6 z-30 bg-red-600/20 backdrop-blur-md text-red-400 text-[10px] font-black px-4 py-2 rounded-xl shadow-2xl uppercase tracking-[0.2em] border border-red-500/20">
-          Premium
-        </div>
+        <span className="eyebrow-pill absolute top-4 right-4 z-30">Premium</span>
       )}
 
-      {/* Share link (stops card navigation) */}
       <div
-        className="absolute top-6 left-6 z-30 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity"
+        className="absolute top-4 left-4 z-30 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity"
         onClick={(e) => e.stopPropagation()}
       >
         <ShareButton
           compact
-          url={typeof window !== 'undefined' ? `${window.location.origin}/program/${program.id}` : undefined}
+          url={
+            typeof window !== "undefined"
+              ? `${window.location.origin}/program/${program.id}`
+              : undefined
+          }
           title={display.localizedTitle}
           text={display.localizedDescription}
         />
       </div>
 
-      {/* Image Container with Parallax-like effect on hover */}
-      <div className="relative h-48 overflow-hidden">
+      <div
+        className="relative h-44 overflow-hidden"
+        onClick={() => navigate(`/program/${program.id}`)}
+      >
         <Image
           src={program.image}
           alt={display.localizedTitle}
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
         <div className="absolute inset-0 bg-linear-to-t from-zinc-950 via-zinc-950/40 to-transparent z-20" />
-        
-        {/* Level Badge Overlay */}
-        <div className="absolute bottom-4 left-6 z-30">
-          <span className="px-3 py-1 bg-red-600/10 border border-red-500/20 rounded-lg text-red-500 text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur-md">
-            {display.localizedLevel}
-          </span>
-        </div>
+        <span className="eyebrow-pill absolute bottom-3 left-4 z-30">
+          {display.localizedLevel}
+        </span>
       </div>
 
-      <div className="p-6 grow flex flex-col relative z-20">
-        <h3 className="text-xl font-black text-white mb-3 group-hover:text-red-500 transition-colors tracking-tighter uppercase italic">
+      <div className="relative z-20 flex flex-col grow p-5">
+        <h3
+          className="text-base font-bold tracking-tight text-white group-hover:text-red-500 transition-colors cursor-pointer"
+          onClick={() => navigate(`/program/${program.id}`)}
+        >
           {display.localizedTitle}
         </h3>
-        <p className="text-zinc-400 text-sm mb-8 font-medium leading-relaxed line-clamp-2">
-          {display.localizedDescription}
-        </p>
 
-        <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
+        <p className="prose-block text-sm mt-2 mb-6 line-clamp-2">{display.localizedDescription}</p>
+
+        <div className="mt-auto pt-4 border-t border-white/10 flex items-center justify-between gap-3">
           <div className="flex flex-col">
-            <span className="text-[10px] text-zinc-500 font-black uppercase tracking-widest mb-1">{t('Investimento', 'Investment')}</span>
-            <span className="text-3xl font-black text-white tracking-tighter italic">
-              {program.price === 0 ? 'FREE' : `€${program.price}`}
+            <span className="meta-mono">{t("Investimento", "Investment")}</span>
+            <span className="text-2xl font-bold text-white tracking-tight">
+              {program.price === 0 ? "FREE" : `€${program.price}`}
             </span>
           </div>
 
-          {program.price === 0 ? (
-            <motion.button
-              whileHover={{ scale: 1.05, x: 5 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={(e: { stopPropagation: () => void; }) => {
+          {isFree ? (
+            <button
+              onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/program/${program.id}`);
               }}
-              className="flex items-center gap-3 px-6 py-4 bg-white text-black rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all duration-500 shadow-xl shadow-black/50"
+              className="btn-secondary-sm"
             >
-              {t('Scopri', 'Explore')} <Zap size={14} fill="currentColor" />
-            </motion.button>
+              {t("Scopri", "Explore")}
+              <Zap size={14} aria-hidden />
+            </button>
           ) : (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={(e: { stopPropagation: () => void; }) => {
+            <button
+              onClick={(e) => {
                 e.stopPropagation();
                 onToggle(program);
               }}
-              className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ${isInCart
-                  ? 'bg-green-600 text-white shadow-[0_0_30px_rgba(22,163,74,0.4)]'
-                  : 'bg-white text-black hover:bg-red-600 hover:text-white shadow-xl shadow-black/50'
-                }`}
+              aria-pressed={isInCart}
+              aria-label={
+                isInCart
+                  ? t(`Rimuovi ${display.localizedTitle} dal carrello`, `Remove ${display.localizedTitle} from cart`)
+                  : t(`Aggiungi ${display.localizedTitle} al carrello`, `Add ${display.localizedTitle} to cart`)
+              }
+              className={`btn-base w-11 h-11 rounded-xl text-sm ${
+                isInCart
+                  ? "bg-emerald-600 text-white"
+                  : "btn-secondary text-white"
+              }`}
             >
               {isInCart ? (
-                <Check size={24} strokeWidth={3} />
+                <Check size={18} strokeWidth={3} aria-hidden />
               ) : (
-                <ShoppingCart size={20} strokeWidth={3} />
+                <ShoppingCart size={18} strokeWidth={2} aria-hidden />
               )}
-            </motion.button>
+            </button>
           )}
         </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 };
 
@@ -192,117 +215,85 @@ function Programs() {
   const { t } = useLanguage();
 
   const handleAddToCart = (program: ProgramDataItem) => {
-    const isInCart = cartItems.some(item => item.id === program.id.toString());
+    const isInCart = cartItems.some((item) => item.id === program.id.toString());
+
     if (isInCart) {
       removeFromCart(program.id.toString());
-      addNotification(t('Programma rimosso dal carrello', 'Program removed from cart'), 'error');
+      addNotification(
+        t("Programma rimosso dal carrello", "Program removed from cart"),
+        "error"
+      );
     } else {
       addToCart({
         id: program.id.toString(),
         title: program.title,
         price: program.price,
         image: program.image,
-        stripePriceId: program.stripePriceId
+        stripePriceId: program.stripePriceId,
       });
-      addNotification(t('Programma aggiunto al carrello!', 'Program added to cart!'), 'success');
+      addNotification(
+        t("Programma aggiunto al carrello!", "Program added to cart!"),
+        "success"
+      );
     }
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4 lg:px-6 bg-black">
+    <div className="page-shell px-6 lg:px-8">
       <SEO
-        title={t('Protocolli di Allenamento', 'Training Protocols')}
+        title={t("Protocolli di Allenamento", "Training Protocols")}
         description={t(
           "Scopri i nostri protocolli di allenamento Calisthenics: Base, Front Lever, Planche. Scegli il tuo percorso e inizia a trasformare il tuo corpo.",
           "Explore our Calisthenics training protocols: Foundation, Front Lever, Planche. Choose your path and start transforming your body."
         )}
       />
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+
+      <div className="container-max">
+        <PageHeader
+          eyebrow={t("Programmi di Allenamento", "Training Programs")}
+          title={t("Scegli il tuo percorso.", "Choose your path.")}
+          description={t(
+            "Dal principiante all'elite, ogni programma è progettato con metodologie biomeccaniche avanzate per trasformare il tuo corpo attraverso la forza a corpo libero.",
+            "From beginner to elite, every program is built on advanced biomechanical methods to transform your body through bodyweight strength."
+          )}
         >
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-            <span className="text-red-600 font-black tracking-[0.4em] uppercase text-[10px] block">{t('Programmi di Allenamento', 'Training Programs')}</span>
-            <LanguageToggle />
-          </div>
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-[0.85] tracking-tighter mb-8 px-4">
-            {t('SCEGLI IL', 'CHOOSE YOUR')}
-            <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-700 italic pr-6 pb-2 inline-block">{t('TUO PERCORSO', 'PATH')}</span>
-          </h1>
-          <p className="text-zinc-400 text-lg max-w-3xl font-medium leading-relaxed">
-            {t(
-              "Dal principiante all'elite, ogni programma è progettato con metodologie biomeccaniche avanzate per trasformare il tuo corpo attraverso la forza a corpo libero.",
-              "From beginner to elite, every program is built on advanced biomechanical methods to transform your body through bodyweight strength."
-            )}
-          </p>
-        </motion.div>
+          <LanguageToggle />
+        </PageHeader>
 
-        {/* Section: Workout */}
-        <section className="mt-32 mb-40">
-          <SectionHeader title={t('Workout Base', 'Foundation Training')} icon={Zap} />
-          <p className="-mt-8 mb-10 text-zinc-500 text-sm font-medium leading-relaxed max-w-2xl">
-            {t(
-              'Protocolli gratuiti per costruire le fondamenta: attivazione neurale, stabilità del core e biomeccanica dei movimenti base.',
-              'Free protocols to build the foundations: neural activation, core stability and basic movement biomechanics.'
-            )}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {programData.workout.map((p) => (
-              <ProgramCard key={p.id} program={p} isFree={p.price === 0} isInCart={cartItems.some(i => i.id === p.id.toString())} onToggle={handleAddToCart} />
-            ))}
-          </div>
-        </section>
+        <div className="mt-20 space-y-24">
+          {PROGRAM_GROUPS.map((group) => {
+            const items = programData[group.key] ?? [];
+            const Icon = group.icon;
 
-        {/* Section: Front Lever */}
-        <section className="mb-40">
-          <SectionHeader title="Front Lever" icon={Flame} />
-          <p className="-mt-8 mb-10 text-zinc-500 text-sm font-medium leading-relaxed max-w-2xl">
-            {t(
-              'Dalla retrazione scapolare alla full front lever: un percorso progressivo per dominare la forza di trazione.',
-              'From scapular retraction to the full front lever: a progressive path to master pulling strength.'
-            )}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {programData.frontLever.map((p) => (
-              <ProgramCard key={p.id} program={p} isFree={p.price === 0} isInCart={cartItems.some(i => i.id === p.id.toString())} onToggle={handleAddToCart} />
-            ))}
-          </div>
-        </section>
+            return (
+              <section key={group.key}>
+                <SectionHeading
+                  eyebrow={group.eyebrow}
+                  title={t(group.title.it, group.title.en)}
+                  description={t(group.description.it, group.description.en)}
+                  aside={
+                    <span className="inline-flex items-center gap-2">
+                      <Icon size={14} className="text-red-600" aria-hidden />
+                      {items.length} {t("protocolli", "protocols")}
+                    </span>
+                  }
+                  className="mb-10"
+                />
 
-        {/* Section: Planche */}
-        <section className="mb-40">
-          <SectionHeader title="Planche" icon={Trophy} />
-          <p className="-mt-8 mb-10 text-zinc-500 text-sm font-medium leading-relaxed max-w-2xl">
-            {t(
-              'Dalla protrazione alla full planche: periodizzazione ipertrofica e condizionamento tendineo per la spinta assoluta.',
-              'From protraction to the full planche: hypertrophic periodization and tendon conditioning for absolute pushing strength.'
-            )}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {programData.planche.map((p) => (
-              <ProgramCard key={p.id} program={p} isFree={p.price === 0} isInCart={cartItems.some(i => i.id === p.id.toString())} onToggle={handleAddToCart} />
-            ))}
-          </div>
-        </section>
-
-        {/* Section: Advanced Skills */}
-        <section>
-          <SectionHeader title={t('Skill Avanzate', 'Advanced Skills')} icon={Target} />
-          <p className="-mt-8 mb-10 text-zinc-500 text-sm font-medium leading-relaxed max-w-2xl">
-            {t(
-              'Handstand, back lever, human flag, dragon flag e prehab: skill complesse per chi vuole spingersi oltre i limiti.',
-              'Handstand, back lever, human flag, dragon flag and prehab: complex skills for those who want to push beyond limits.'
-            )}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {programData.skills?.map((p) => (
-              <ProgramCard key={p.id} program={p} isFree={p.price === 0} isInCart={cartItems.some(i => i.id === p.id.toString())} onToggle={handleAddToCart} />
-            ))}
-          </div>
-        </section>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {items.map((program) => (
+                    <ProgramCard
+                      key={program.id}
+                      program={program}
+                      isInCart={cartItems.some((i) => i.id === program.id.toString())}
+                      onToggle={handleAddToCart}
+                    />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

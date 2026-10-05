@@ -7,6 +7,7 @@ import { exerciseDatabase, type Exercise } from '../data/exercises';
 import { useAuth } from '../context/AuthContext';
 import { downloadTxt, downloadJson, downloadPdf, downloadCsv, downloadWeeksTxt, downloadWeeksCsv, downloadWeeksPdf, downloadWeeksJson } from '../lib/exportProgram';
 import type { ProgramForExport } from '../lib/exportProgram';
+import Button from "../components/Button";
 import SEO from "../components/SEO";
 
 const API_URL = '/api';
@@ -663,13 +664,11 @@ const MyProgram: React.FC = () => {
 
   if (error) {
     return (
-      <div className="container mx-auto p-4 md:p-8 bg-black text-white min-h-screen">
-        <p className="text-red-500 text-center text-lg">{error}</p>
-        <div className="text-center mt-8">
-          <button onClick={() => navigate('/create')} className="px-6 py-3 rounded-xl font-bold text-base uppercase tracking-widest text-white bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 transition">
-            Crea il tuo programma
-          </button>
-        </div>
+      <div className="page-shell flex flex-col items-center justify-center px-6 text-center">
+        <p role="alert" className="body-copy text-red-400">{error}</p>
+        <Button size="lg" className="mt-8" onClick={() => navigate('/create')}>
+          Crea il tuo programma
+        </Button>
       </div>
     );
   }
@@ -681,16 +680,19 @@ const MyProgram: React.FC = () => {
         description="Il tuo programma di calisthenics personalizzato su Maxthenics. Visualizza e gestisci il tuo piano di allenamento settimanale."
         keywords="mio programma calisthenics, piano allenamento personalizzato, settimana workout"
       />
-      <div className="container mx-auto p-4 md:p-8 bg-black text-white min-h-screen">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
-          <motion.h1
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-4xl font-bold text-transparent bg-clip-text bg-linear-to-b from-white to-red-500"
-          >
-            Il Tuo Programma di Allenamento
-          </motion.h1>
+      <div className="page-shell px-6 lg:px-8">
+        <div className="container-max flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
+          <div>
+            <p className="eyebrow">Il tuo piano</p>
+            <motion.h1
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="page-title mt-2 text-3xl sm:text-4xl"
+            >
+              Il tuo programma di allenamento
+            </motion.h1>
+          </div>
           <div className="flex items-center gap-2">
             {/* Export dropdown */}
             {program && program.weeks && program.weeks.length > 0 && !isEditing && (

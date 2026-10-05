@@ -72,7 +72,7 @@ const LEVEL_STYLES: Record<string, { bg: string; border: string; glow: string; a
     tag: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
   },
   intermedio: {
-    bg: "bg-red-600/8",
+    bg: "bg-red-600/10",
     border: "border-red-600/30",
     glow: "shadow-[0_0_30px_rgba(220,38,38,0.12)]",
     accent: "text-red-500",
@@ -280,7 +280,7 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
     </p>
 
     {programs.length === 0 ? (
-      <div className="bg-zinc-900/20 border border-dashed border-white/8 rounded-[1.5rem] p-10 text-center">
+      <div className="bg-zinc-900/20 border border-dashed border-white/10 rounded-[1.5rem] p-10 text-center">
         <Layout className="mx-auto text-zinc-800 mb-4" size={40} />
         <p className="text-zinc-600 italic text-sm">Nessun programma creato ancora.</p>
         <p className="text-zinc-700 text-xs mt-1">Compila il wizard e genera il tuo primo piano!</p>
@@ -292,7 +292,7 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
           return (
             <div
               key={i}
-              className="group bg-zinc-900/60 backdrop-blur-sm p-5 rounded-2xl border border-white/8 hover:border-red-500/25 transition-all duration-300 hover:bg-zinc-900/80"
+              className="group bg-zinc-900/60 backdrop-blur-sm p-5 rounded-2xl border border-white/10 hover:border-red-500/25 transition-all duration-300 hover:bg-zinc-900/80"
             >
               {/* Header row */}
               <div className="flex justify-between items-start gap-3">
@@ -759,13 +759,13 @@ const Create: React.FC = () => {
   // a user are guarded at submit time. Logged-out users get a login prompt.
   if (!authLoading && !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black px-6">
+      <div className="page-shell flex items-center justify-center px-6">
         <div className="text-center max-w-sm">
           <h2 className="text-2xl font-black text-white mb-3">Accedi per creare</h2>
           <p className="text-zinc-500 text-sm mb-6">Devi accedere per generare il tuo programma personalizzato.</p>
           <Link
             to="/login"
-            className="inline-block px-8 py-3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-900/30"
+            className="inline-block px-8 py-3 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-900/30"
           >
             Accedi
           </Link>
@@ -862,7 +862,7 @@ const Create: React.FC = () => {
                       value={field.val}
                       onChange={(e) => field.set(e.target.value)}
                       placeholder={field.ph}
-                      className="w-full bg-black/30 border border-white/5 rounded-xl px-4 py-3 text-white font-bold text-2xl focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500/40 transition-all placeholder:text-zinc-700 placeholder:font-normal placeholder:text-sm"
+                      className="w-full bg-zinc-950/40 border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-2xl focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500/40 transition-all placeholder:text-zinc-700 placeholder:font-normal placeholder:text-sm"
                     />
                   </div>
                 );
@@ -1456,7 +1456,7 @@ const Create: React.FC = () => {
         description="Crea il tuo programma di calisthenics personalizzato con Maxthenics."
         keywords="creare programma calisthenics, personalizza workout, allenamento personalizzato"
       />
-      <div className="min-h-screen py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden bg-black">
+      <div className="page-shell relative overflow-hidden px-6 lg:px-8">
         {/* Background blobs */}
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-red-600/4 rounded-full blur-[140px] pointer-events-none -z-10" />
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-orange-600/4 rounded-full blur-[140px] pointer-events-none -z-10" />
@@ -1503,7 +1503,7 @@ const Create: React.FC = () => {
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             {/* ── LEFT: Wizard ────────────────────────────────── */}
             <div className="lg:col-span-7 xl:col-span-8">
-              <div className="bg-zinc-900/30 backdrop-blur-2xl p-6 sm:p-8 md:p-10 rounded-2xl border border-white/8 shadow-2xl relative overflow-hidden">
+              <div className="bg-zinc-900/30 backdrop-blur-2xl p-6 sm:p-8 md:p-10 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden">
                 {/* Top glow bar */}
                 <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent" />
 
@@ -1530,7 +1530,7 @@ const Create: React.FC = () => {
                         type="button"
                         onClick={nextStep}
                         disabled={!canNext}
-                        className={`flex-1 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white py-4 rounded-2xl font-black transition-all shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed ${
+                        className={`flex-1 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white py-4 rounded-2xl font-black transition-all shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed ${
                           step === totalSteps - 1 ? "from-red-600 via-orange-600 to-red-600 bg-[length:200%_100%] animate-gradient" : ""
                         }`}
                       >

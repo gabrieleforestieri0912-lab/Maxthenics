@@ -14,6 +14,7 @@ import {
   Activity,
   History
 } from 'lucide-react';
+import Button from "../components/Button";
 import SEO from "../components/SEO";
 import { safeJsonParse } from "../lib/safeJson";
 import type { SavedProgram } from "@/types/program";
@@ -96,7 +97,7 @@ const DashboardProgramGrid: React.FC = () => {
         </p>
         <button
           onClick={() => navigate("/create")}
-          className="bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-6 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-red-900/20"
+          className="bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-6 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-red-900/20"
         >
           Crea il Tuo Primo Programma
         </button>
@@ -213,56 +214,67 @@ const Dashboard: React.FC = () => {
   const TierIcon = tierInfo[currentTier].icon;
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 md:p-12">
+    <div className="page-shell px-6 lg:px-8">
       <SEO title="Dashboard" description="Gestisci i tuoi programmi e il tuo profilo Maxthenics." />
 
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="container-max space-y-10">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
-            <motion.h1 
+            <p className="eyebrow">Dashboard</p>
+            <motion.h1
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="text-4xl md:text-5xl font-black uppercase tracking-tighter"
+              className="page-title mt-2 text-3xl md:text-4xl"
             >
-              Bentornato, <span className="text-red-600">{profile?.name}</span>
+              Bentornato, <span className="text-red-500">{profile?.name}</span>
             </motion.h1>
-            <p className="text-zinc-500 mt-2 font-medium italic">Il tuo centro di comando per l&apos;eccellenza fisica.</p>
+            <p className="body-copy text-sm mt-2">
+              Il tuo centro di comando per l&apos;eccellenza fisica.
+            </p>
           </div>
-          
-          <div className={`flex items-center gap-4 px-6 py-3 rounded-2xl border border-white/5 ${tierInfo[currentTier].bg}`}>
-            <TierIcon className={tierInfo[currentTier].color} size={24} />
+
+          <div
+            className={`flex items-center gap-3 px-5 py-3 rounded-xl border border-white/10 ${tierInfo[currentTier].bg}`}
+          >
+            <TierIcon className={tierInfo[currentTier].color} size={20} aria-hidden />
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Stato Abbonamento</p>
-              <p className={`font-black uppercase tracking-tight ${tierInfo[currentTier].color}`}>{tierInfo[currentTier].label}</p>
+              <p className="meta-mono">Stato Abbonamento</p>
+              <p className={`text-sm font-bold ${tierInfo[currentTier].color}`}>
+                {tierInfo[currentTier].label}
+              </p>
             </div>
           </div>
         </div>
 
         {/* Main Grid */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-6">
           {/* Left Column: Stats & Quick Actions */}
-          <div className="md:col-span-2 space-y-8">
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-               {[
-                 { label: 'Programmi Attivi', value: profile?.purchases.length || 0, icon: Dumbbell },
-                 { label: 'Giorni di Training', value: '12', icon: Activity },
-                 { label: 'Messaggi AI', value: '42', icon: MessageSquare },
-               ].map((stat, i) => (
-                 <div key={i} className="bg-zinc-900/30 border border-white/5 p-6 rounded-2xl hover:bg-zinc-900/50 transition-colors">
-                    <stat.icon className="text-red-600 mb-4" size={24} />
-                    <p className="text-3xl font-black">{stat.value}</p>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{stat.label}</p>
-                 </div>
-               ))}
+          <div className="md:col-span-2 space-y-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {[
+                { label: "Programmi Attivi", value: profile?.purchases.length || 0, icon: Dumbbell },
+                { label: "Giorni di Training", value: "12", icon: Activity },
+                { label: "Messaggi AI", value: "42", icon: MessageSquare },
+              ].map((stat) => (
+                <div key={stat.label} className="card hover:bg-zinc-900/50 transition-colors p-5">
+                  <stat.icon className="text-red-500 mb-4" size={20} aria-hidden />
+                  <p className="text-2xl font-bold text-white">{stat.value}</p>
+                  <p className="meta-mono mt-1">{stat.label}</p>
+                </div>
+              ))}
             </div>
 
-             {/* Program Library Section */}
-            <div className="bg-zinc-900/30 border border-white/5 rounded-[2.5rem] p-8 md:p-12">
-              <div className="flex justify-between items-center mb-10">
-                <h2 className="text-2xl font-black uppercase tracking-tighter">I Miei Programmi</h2>
-                <Link to="/my-workouts" className="text-red-500 text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
-                  Vedi Tutti <ChevronRight size={14} />
+            {/* Program Library Section */}
+            <div className="card p-6 md:p-8">
+              <div className="flex items-center justify-between gap-4 mb-8">
+                <h2 className="text-lg font-bold tracking-tight text-white">I miei programmi</h2>
+                <Link
+                  to="/my-workouts"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-400 transition-colors"
+                >
+                  Vedi tutti
+                  <ChevronRight size={14} aria-hidden />
                 </Link>
               </div>
 
@@ -271,32 +283,51 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Right Column: Sidebar Actions */}
-          <div className="space-y-6">
-            <div className="bg-linear-to-br from-red-600 to-orange-600 p-8 rounded-[2.5rem] shadow-2xl shadow-red-900/20">
-              <h3 className="text-xl font-black uppercase tracking-tight mb-4 text-white">Neural Coach</h3>
-              <p className="text-white/80 text-sm mb-8 font-medium">Hai domande sul tuo allenamento? Chiedi all&apos;AI d&apos;élite.</p>
-              <Link to="/chat" className="block w-full bg-white text-black py-4 rounded-2xl font-black uppercase tracking-widest text-center text-xs hover:scale-[1.02] transition-transform">
+          <div className="space-y-4">
+            <div className="card border-red-500/20 bg-red-600/[0.08] p-7">
+              <h3 className="text-base font-bold tracking-tight text-white">Neural Coach</h3>
+              <p className="body-copy text-sm mt-2 mb-6">
+                Hai domande sul tuo allenamento? Chiedi all&apos;AI d&apos;élite.
+              </p>
+              <Button to="/chat" variant="secondary" size="md" className="w-full bg-white text-black hover:bg-red-600 hover:text-white border-transparent">
                 Parla con il Coach
-              </Link>
+              </Button>
             </div>
 
-            <div className="bg-zinc-900/30 border border-white/5 p-8 rounded-[2.5rem] space-y-4">
-               <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 mb-6">Impostazioni Account</h4>
-               {[
-                 { label: 'Modifica Profilo', icon: User, path: '/questionnaire' },
-                 { label: 'Cronologia Acquisti', icon: History, path: '/purchase-history' },
-                 { label: 'Metodi di Pagamento', icon: CreditCard, path: '#' },
-                 { label: 'Sicurezza Account', icon: Settings, path: '#' },
-               ].map((item, i) => (
-                 <Link key={i} to={item.path} className="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors group">
-                    <div className="flex items-center gap-4">
-                       <item.icon size={18} className="text-zinc-500 group-hover:text-red-500 transition-colors" />
-                       <span className="text-sm font-bold text-zinc-300 group-hover:text-white transition-colors">{item.label}</span>
-                    </div>
-                    <ChevronRight size={14} className="text-zinc-800 group-hover:text-white transition-all" />
-                 </Link>
-               ))}
-            </div>
+            <nav className="card p-6">
+              <p className="meta-mono mb-4">Impostazioni Account</p>
+              <ul className="space-y-1">
+                {[
+                  { label: "Modifica Profilo", icon: User, path: "/create" },
+                  { label: "Cronologia Acquisti", icon: History, path: "/purchase-history" },
+                  { label: "Metodi di Pagamento", icon: CreditCard, path: "/purchase-history" },
+                  { label: "Sicurezza Account", icon: Settings, path: "/purchase-history" },
+                ].map((item) => (
+                  <li key={item.label}>
+                    <Link
+                      to={item.path}
+                      className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors group"
+                    >
+                      <span className="flex items-center gap-3">
+                        <item.icon
+                          size={16}
+                          className="text-zinc-500 group-hover:text-red-500 transition-colors"
+                          aria-hidden
+                        />
+                        <span className="text-sm font-bold text-zinc-300 group-hover:text-white transition-colors">
+                          {item.label}
+                        </span>
+                      </span>
+                      <ChevronRight
+                        size={14}
+                        className="text-zinc-700 group-hover:text-white transition-colors"
+                        aria-hidden
+                      />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
         </div>
       </div>

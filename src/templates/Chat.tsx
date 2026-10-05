@@ -609,12 +609,12 @@ const Chat: React.FC = () => {
         description="Chatta con Sthenox, l'AI coach di calisthenics, per ricevere consigli personalizzati sul tuo allenamento a corpo libero."
         keywords="AI chat calisthenics, coaching fitness, assistente allenamento"
       />
-      <div className="h-screen bg-[#050505] text-white flex overflow-hidden relative font-sans">
+      <div className="h-screen bg-zinc-950 text-white flex overflow-hidden relative font-sans">
 
         {/* ── Deletion Modal ── */}
         <AnimatePresence>
           {deleteConfirmId && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center p-4">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -1268,7 +1268,7 @@ const Chat: React.FC = () => {
 
           {/* Bottom Input */}
           {hasMessages && (
-            <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-6 bg-linear-to-t from-[#050505] via-[#050505]/90 to-transparent pointer-events-none">
+            <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-6 bg-linear-to-t from-zinc-950 via-zinc-950/90 to-transparent pointer-events-none">
               <div className="max-w-[720px] mx-auto pointer-events-auto">
                 <ChatInput
                   value={input}

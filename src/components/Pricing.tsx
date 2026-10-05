@@ -195,7 +195,7 @@ function PricingCard({ plan, IconComponent, index }: PricingCardProps) {
           onClick={handleSubscription}
           disabled={loading}
           className={`w-full block py-3.5 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] text-center transition-all disabled:opacity-50 disabled:cursor-not-allowed ${plan.highlight
-              ? 'bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white shadow-xl shadow-red-900/20 hover:bg-red-500 hover:scale-[1.02]'
+              ? 'bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white shadow-xl shadow-red-900/20 hover:bg-red-500 hover:scale-[1.02]'
               : 'bg-white text-black hover:bg-zinc-200 active:scale-95'
             }`}
         >
