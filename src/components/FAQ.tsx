@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, HelpCircle, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { faqs, type FAQItemData } from '../data/faq';
@@ -64,19 +64,29 @@ const FAQItem: React.FC<FAQItemProps> = ({ faq, isOpen, onToggle, index }) => {
         </motion.div>
       </button>
 
-      {/* CSS grid transition per animazione fluida — niente height: auto con JS */}
-      <div
-        className={`grid transition-all duration-[400ms] ease-out ${
-          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-        }`}
-        style={{ transitionProperty: "grid-template-rows, opacity" }}
-      >
-        <div className="overflow-hidden">
-          <div className="px-5 pb-5 pl-14 text-sm text-zinc-400 leading-relaxed font-medium">
-            {faq.answer}
-          </div>
-        </div>
-      </div>
+      {/* Animazione fluida di apertura/chiusura con spring su altezza e opacità */}
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            key="answer"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <motion.div
+              initial={{ y: -6 }}
+              animate={{ y: 0 }}
+              exit={{ y: -6 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="px-5 pb-5 pl-14 text-sm text-zinc-400 leading-relaxed font-medium"
+            >
+              {faq.answer}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
