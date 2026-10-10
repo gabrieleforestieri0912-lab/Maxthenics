@@ -26,6 +26,7 @@ import {
 import { Link } from "react-router-dom";
 import SEO from "../components/SEO";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 
 interface Lesson {
   title: string;
@@ -76,8 +77,8 @@ const StepPopup = ({ item, index, anchorEl, onClose }: {
       onMouseEnter={() => {}} // keep visible when inside popup
       onMouseLeave={onClose}
     >
-      <div className="bg-zinc-900 border border-red-500/20 rounded-2xl p-5 shadow-2xl shadow-black/60">
-        <div className={`absolute top-6 w-3 h-3 bg-zinc-900 border-t border-b rotate-45 ${
+      <div className="bg-white dark:bg-zinc-900 border border-red-500/20 rounded-2xl p-5 shadow-2xl shadow-black/60">
+        <div className={`absolute top-6 w-3 h-3 bg-white dark:bg-zinc-900 border-t border-b rotate-45 ${
           index === 2 ? "-left-1.5 border-l border-r-0" : "-right-1.5 border-r border-l-0"
         } border-red-500/20`}
           style={index === 2
@@ -87,11 +88,11 @@ const StepPopup = ({ item, index, anchorEl, onClose }: {
         />
         <div className="flex items-center gap-2 mb-4">
           <span className="w-7 h-7 rounded-lg bg-red-600/10 flex items-center justify-center text-red-500 font-bold text-xs">{item.step}</span>
-          <span className="text-xs font-bold text-white tracking-tight">{item.title}</span>
+          <span className="text-xs font-bold text-zinc-900 dark:text-white tracking-tight">{item.title}</span>
         </div>
         <ul className="space-y-2.5">
           {item.details.map((d: string, di: number) => (
-            <li key={di} className="flex items-start gap-2.5 text-xs text-zinc-400">
+            <li key={di} className="flex items-start gap-2.5 text-xs text-zinc-600 dark:text-zinc-400">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" />
               {d}
             </li>
@@ -104,6 +105,7 @@ const StepPopup = ({ item, index, anchorEl, onClose }: {
 
 const CalisthenicsRoom: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
   const [hasSubscription, setHasSubscription] = useState(false);
   const [, setLoading] = useState(true);
   const [expandedModule, setExpandedModule] = useState(0);
@@ -122,30 +124,30 @@ const CalisthenicsRoom: React.FC = () => {
 
   const courseModules: Module[] = [
     {
-      title: "Fondamenti del Calisthenics",
+      title: t("Fondamenti del Calisthenics", "Calisthenics Foundations"),
       lessons: [
-        { title: "Introduzione alla disciplina", duration: "15 min" },
-        { title: "Esercizi base: Push, Pull, Squat", duration: "30 min" },
-        { title: "Progressions anatomiche", duration: "25 min" },
-        { title: "Esercizi di mobilita", duration: "20 min" },
+        { title: t("Introduzione alla disciplina", "Introduction to the discipline"), duration: t("15 min", "15 min") },
+        { title: t("Esercizi base: Push, Pull, Squat", "Basic exercises: Push, Pull, Squat"), duration: t("30 min", "30 min") },
+        { title: t("Progressions anatomiche", "Anatomical progressions"), duration: t("25 min", "25 min") },
+        { title: t("Esercizi di mobilita", "Mobility exercises"), duration: t("20 min", "20 min") },
       ],
     },
     {
-      title: "Skill progressions",
+      title: t("Skill progressions", "Skill progressions"),
       lessons: [
-        { title: "Front Lever progression", duration: "35 min" },
-        { title: "Planche progression", duration: "35 min" },
-        { title: "Muscle-up tecnica", duration: "25 min" },
-        { title: "Handstand basics", duration: "30 min" },
+        { title: t("Front Lever progression", "Front Lever progression"), duration: t("35 min", "35 min") },
+        { title: t("Planche progression", "Planche progression"), duration: t("35 min", "35 min") },
+        { title: t("Muscle-up tecnica", "Muscle-up technique"), duration: t("25 min", "25 min") },
+        { title: t("Handstand basics", "Handstand basics"), duration: t("30 min", "30 min") },
       ],
     },
     {
-      title: "Programmazione Avanzata",
+      title: t("Programmazione Avanzata", "Advanced Programming"),
       lessons: [
-        { title: "Costruire Routine", duration: "20 min" },
-        { title: "Progress overload", duration: "25 min" },
-        { title: "Deload e recupero", duration: "15 min" },
-        { title: "Periodizzazione", duration: "30 min" },
+        { title: t("Costruire Routine", "Building Routines"), duration: t("20 min", "20 min") },
+        { title: t("Progress overload", "Progressive overload"), duration: t("25 min", "25 min") },
+        { title: t("Deload e recupero", "Deload and recovery"), duration: t("15 min", "15 min") },
+        { title: t("Periodizzazione", "Periodization"), duration: t("30 min", "30 min") },
       ],
     },
   ];
@@ -212,42 +214,45 @@ const CalisthenicsRoom: React.FC = () => {
       if (response.ok && data?.url) {
         window.location.href = data.url;
       } else {
-        setPurchaseError(data?.message || "Checkout non riuscito. Riprova.");
+        setPurchaseError(data?.message || t("Checkout non riuscito. Riprova.", "Checkout failed. Try again."));
       }
     } catch (error) {
       console.error("Errore checkout:", error);
-      setPurchaseError("Errore di connessione. Riprova.");
+      setPurchaseError(t("Errore di connessione. Riprova.", "Connection error. Try again."));
     }
   };
 
   // ─── NON-SUBSCRIBER VIEW ──────────────────────────────────────────────────────
   if (!isAuthenticated || !hasSubscription) {
     const allFeatures = [
-      { icon: <Video className="text-red-500" />, text: "Videochiamata settimanale 1 a 1 con me" },
-      { icon: <Users className="text-red-500" />, text: "Videochiamata settimanale di gruppo" },
-      { icon: <MessageCircle className="text-red-500" />, text: "Community esclusiva" },
-      { icon: <Target className="text-red-500" />, text: "Ti aiuto a sbloccare il Front Lever" },
-      { icon: <Brain className="text-red-500" />, text: "Mentalità applicata al Calisthenics" },
-      { icon: <Flame className="text-red-500" />, text: "Costruisci il fisico dei tuoi sogni" },
-      { icon: <Award className="text-red-500" />, text: "Migliora la tua disciplina" },
-      { icon: <ShieldCheck className="text-red-500" />, text: "Impara a non saltare neanche un allenamento" },
-      { icon: <Sparkles className="text-red-500" />, text: "Elimina la procrastinazione" },
-      { icon: <BookOpen className="text-red-500" />, text: "Programmi di allenamento personalizzati" },
-      { icon: <PlayCircle className="text-red-500" />, text: "Corsi sul Calisthenics e sulla mentalità" },
-      { icon: <CheckCircle className="text-red-500" />, text: "Crea e rispetta una dieta sana" },
+      { icon: <Video className="text-red-500" />, text: t("Videochiamata settimanale 1 a 1 con me", "Weekly 1-on-1 video call with me") },
+      { icon: <Users className="text-red-500" />, text: t("Videochiamata settimanale di gruppo", "Weekly group video call") },
+      { icon: <MessageCircle className="text-red-500" />, text: t("Community esclusiva", "Exclusive community") },
+      { icon: <Target className="text-red-500" />, text: t("Ti aiuto a sbloccare il Front Lever", "I'll help you unlock the Front Lever") },
+      { icon: <Brain className="text-red-500" />, text: t("Mentalità applicata al Calisthenics", "Mindset applied to Calisthenics") },
+      { icon: <Flame className="text-red-500" />, text: t("Costruisci il fisico dei tuoi sogni", "Build the physique of your dreams") },
+      { icon: <Award className="text-red-500" />, text: t("Migliora la tua disciplina", "Improve your discipline") },
+      { icon: <ShieldCheck className="text-red-500" />, text: t("Impara a non saltare neanche un allenamento", "Learn to never skip a workout") },
+      { icon: <Sparkles className="text-red-500" />, text: t("Elimina la procrastinazione", "Eliminate procrastination") },
+      { icon: <BookOpen className="text-red-500" />, text: t("Programmi di allenamento personalizzati", "Personalized training programs") },
+      { icon: <PlayCircle className="text-red-500" />, text: t("Corsi sul Calisthenics e sulla mentalità", "Courses on Calisthenics and mindset") },
+      { icon: <CheckCircle className="text-red-500" />, text: t("Crea e rispetta una dieta sana", "Create and stick to a healthy diet") },
     ];
 
     const bonuses = [
-      "1 Anno di MIND PROJECT incluso",
-      "Videochiamate di gruppo precedenti registrate",
-      "Template Guida completa sul Calisthenics",
+      t("1 Anno di MIND PROJECT incluso", "1 Year of MIND PROJECT included"),
+      t("Videochiamate di gruppo precedenti registrate", "Recorded past group video calls"),
+      t("Template Guida completa sul Calisthenics", "Complete Calisthenics Guide template"),
     ];
 
     return (
       <div className="page-shell">
         <SEO
-          title="Calisthenics Room - Elite Coaching"
-          description="L'esperienza definitiva di coaching 1:1 e programmazione avanzata."
+          title={t("Calisthenics Room - Elite Coaching", "Calisthenics Room - Elite Coaching")}
+          description={t(
+            "L'esperienza definitiva di coaching 1:1 e programmazione avanzata.",
+            "The ultimate 1:1 coaching and advanced programming experience."
+          )}
         />
 
         {/* ── HERO ── */}
@@ -268,7 +273,7 @@ const CalisthenicsRoom: React.FC = () => {
               className="eyebrow-pill mb-8"
             >
               <Sparkles size={12} aria-hidden />
-              Coaching d&apos;Élite
+              {t("Coaching d'Élite", "Élite Coaching")}
             </motion.div>
 
             <motion.h1
@@ -288,8 +293,10 @@ const CalisthenicsRoom: React.FC = () => {
               transition={{ delay: 0.3, duration: 0.6 }}
               className="body-copy text-lg max-w-3xl mx-auto mb-10"
             >
-              L&apos;unico percorso che trasforma radicalmente il tuo fisico e la tua mentalità<br className="hidden md:block" />
-              attraverso la scienza della performance.
+              {t(
+                "L'unico percorso che trasforma radicalmente il tuo fisico e la tua mentalità attraverso la scienza della performance.",
+                "The only path that radically transforms your physique and mindset through performance science."
+              )}
             </motion.p>
 
             <motion.div
@@ -299,10 +306,10 @@ const CalisthenicsRoom: React.FC = () => {
               className="flex flex-col sm:flex-row items-center justify-center gap-3"
             >
               <a href="#offers" className="btn-primary-lg">
-                Inizia il percorso
+                {t("Inizia il percorso", "Start the journey")}
               </a>
               <a href="#features" className="btn-secondary-lg">
-                Scopri di più
+                {t("Scopri di più", "Learn more")}
               </a>
             </motion.div>
           </div>
@@ -312,9 +319,9 @@ const CalisthenicsRoom: React.FC = () => {
         <section id="features" className="section-padding relative">
           <div className="container-max relative">
             <div className="text-center mb-12">
-              <p className="eyebrow mb-3">Il metodo</p>
+              <p className="eyebrow mb-3">{t("Il metodo", "The method")}</p>
               <h2 className="page-title">
-                Come <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">funziona</span>
+                {t("Come", "How")} <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">{t("funziona", "it works")}</span>
               </h2>
             </div>
 
@@ -340,40 +347,40 @@ const CalisthenicsRoom: React.FC = () => {
                 const steps = [
                   {
                     step: "01",
-                    title: "Analisi & Obiettivi",
-                    brief: "Valutazione iniziale",
-                    desc: "Ti conosco, valuto il tuo livello, la tua biomeccanica e i tuoi limiti. Impostiamo obiettivi chiari e misurabili con scadenze precise.",
+                    title: t("Analisi & Obiettivi", "Analysis & Goals"),
+                    brief: t("Valutazione iniziale", "Initial assessment"),
+                    desc: t("Ti conosco, valuto il tuo livello, la tua biomeccanica e i tuoi limiti. Impostiamo obiettivi chiari e misurabili con scadenze precise.", "I get to know you, assess your level, biomechanics and limits. We set clear, measurable goals with precise deadlines."),
                     details: [
-                      "Valutazione biomeccanica completa",
-                      "Test di forza e mobilità",
-                      "Definizione obiettivi SMART",
-                      "Analisi abitudini alimentari",
+                      t("Valutazione biomeccanica completa", "Full biomechanical assessment"),
+                      t("Test di forza e mobilità", "Strength and mobility testing"),
+                      t("Definizione obiettivi SMART", "SMART goal setting"),
+                      t("Analisi abitudini alimentari", "Eating habits analysis"),
                     ],
                     icon: <Target size={28} />,
                   },
                   {
                     step: "02",
-                    title: "Programmazione",
-                    brief: "Percorso su misura",
-                    desc: "Costruisco un percorso su misura per te: skill, forza, volume, recupero. Ogni variabile è calibrata sul tuo corpo.",
+                    title: t("Programmazione", "Programming"),
+                    brief: t("Percorso su misura", "Tailored path"),
+                    desc: t("Costruisco un percorso su misura per te: skill, forza, volume, recupero. Ogni variabile è calibrata sul tuo corpo.", "I build a path tailored to you: skills, strength, volume, recovery. Every variable is calibrated on your body."),
                     details: [
-                      "Scheda personalizzata settimanale",
-                      "Progressioni skill-specifiche",
-                      "Periodizzazione dei carichi",
-                      "Piano nutrizionale base",
+                      t("Scheda personalizzata settimanale", "Weekly personalized plan"),
+                      t("Progressioni skill-specifiche", "Skill-specific progressions"),
+                      t("Periodizzazione dei carichi", "Load periodization"),
+                      t("Piano nutrizionale base", "Basic nutrition plan"),
                     ],
                     icon: <Brain size={28} />,
                   },
                   {
                     step: "03",
-                    title: "Checkpoint Costanti",
-                    brief: "Monitoraggio continuo",
-                    desc: "Ogni settimana rivediamo i progressi, correggiamo la tecnica, aggiustiamo il carico. Nessuna sessione lasciata al caso.",
+                    title: t("Checkpoint Costanti", "Constant Checkpoints"),
+                    brief: t("Monitoraggio continuo", "Continuous monitoring"),
+                    desc: t("Ogni settimana rivediamo i progressi, correggiamo la tecnica, aggiustiamo il carico. Nessuna sessione lasciata al caso.", "Every week we review progress, fix technique, adjust load. No session left to chance."),
                     details: [
-                      "Video analisi settimanale",
-                      "Correzione tecnica in tempo reale",
-                      "Aggiustamento carichi e volumi",
-                      "Report mensile dei progressi",
+                      t("Video analisi settimanale", "Weekly video analysis"),
+                      t("Correzione tecnica in tempo reale", "Real-time technique correction"),
+                      t("Aggiustamento carichi e volumi", "Load and volume adjustment"),
+                      t("Report mensile dei progressi", "Monthly progress report"),
                     ],
                     icon: <Flame size={28} />,
                   },
@@ -406,7 +413,7 @@ const CalisthenicsRoom: React.FC = () => {
                               <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5 text-red-500 group-hover:scale-110 transition-transform">
                                 {item.icon}
                               </div>
-                              <h3 className="text-lg font-bold text-white mb-2 tracking-tight">{item.title}</h3>
+                              <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2 tracking-tight">{item.title}</h3>
                               <p className="body-copy text-sm">{item.desc}</p>
                             </div>
                           </motion.div>
@@ -436,18 +443,18 @@ const CalisthenicsRoom: React.FC = () => {
             <div className="grid md:grid-cols-3 gap-6">
               {[
                 {
-                  title: "Coaching 1:1",
-                  desc: "Correzioni video e feedback personalizzati direttamente da me ogni settimana. Ogni tua ripetizione viene analizzata.",
+                  title: t("Coaching 1:1", "1:1 Coaching"),
+                  desc: t("Correzioni video e feedback personalizzati direttamente da me ogni settimana. Ogni tua ripetizione viene analizzata.", "Video corrections and personalized feedback directly from me every week. Every single rep gets analyzed."),
                   icon: <PlayCircle />,
                 },
                 {
-                  title: "Protocolli Elite",
-                  desc: "Accesso totale a tutti i programmi Mastery: Planche, Front Lever, Handstand. Segui il percorso giusto per ogni skill.",
+                  title: t("Protocolli Elite", "Elite Protocols"),
+                  desc: t("Accesso totale a tutti i programmi Mastery: Planche, Front Lever, Handstand. Segui il percorso giusto per ogni skill.", "Full access to all Mastery programs: Planche, Front Lever, Handstand. Follow the right path for every skill."),
                   icon: <Award />,
                 },
                 {
-                  title: "Mindset & Disciplina",
-                  desc: "Strategie psicologiche per eliminare la procrastinazione e costruire abitudini incrollabili. La mente comanda il corpo.",
+                  title: t("Mindset & Disciplina", "Mindset & Discipline"),
+                  desc: t("Strategie psicologiche per eliminare la procrastinazione e costruire abitudini incrollabili. La mente comanda il corpo.", "Psychological strategies to kill procrastination and build unshakable habits. Mind commands body."),
                   icon: <Crown />,
                 },
               ].map((item, i) => (
@@ -460,10 +467,10 @@ const CalisthenicsRoom: React.FC = () => {
                   className="group"
                 >
                   <div className="text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-zinc-900/80 border hairline flex items-center justify-center mx-auto mb-6 group-hover:border-red-500/40 group-hover:bg-zinc-900 transition-colors duration-300">
+                    <div className="w-16 h-16 rounded-2xl bg-white dark:bg-zinc-900/80 border hairline flex items-center justify-center mx-auto mb-6 group-hover:border-red-500/40 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-900 transition-colors duration-300">
                       {React.cloneElement(item.icon as any, { size: 32, className: "text-red-500 group-hover:scale-110 transition-transform duration-300" })}
                     </div>
-                    <h3 className="text-lg font-bold mb-2 tracking-tight text-white">{item.title}</h3>
+                    <h3 className="text-lg font-bold mb-2 tracking-tight text-zinc-900 dark:text-white">{item.title}</h3>
                     <p className="body-copy text-sm max-w-xs mx-auto">{item.desc}</p>
                   </div>
                 </motion.div>
@@ -476,9 +483,9 @@ const CalisthenicsRoom: React.FC = () => {
         <section id="offers" className="section-padding relative">
           <div className="container-max max-w-4xl">
             <div className="text-center mb-12">
-              <p className="eyebrow mb-3">Cosa ottieni</p>
+              <p className="eyebrow mb-3">{t("Cosa ottieni", "What you get")}</p>
               <h2 className="page-title">
-                Il <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">protocollo</span> completo
+                {t("Il", "The")} <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">{t("protocollo", "protocol")}</span> {t("completo", "complete")}
               </h2>
             </div>
 
@@ -487,7 +494,7 @@ const CalisthenicsRoom: React.FC = () => {
               <div className="card p-6 md:p-8">
                 <div className="eyebrow-pill mb-8">
                   <Sparkles size={12} aria-hidden />
-                  Cosa include
+                  {t("Cosa include", "What's included")}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
@@ -498,12 +505,12 @@ const CalisthenicsRoom: React.FC = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.04 }}
-                      className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border hairline hover:border-red-500/20 hover:bg-red-500/5 transition-colors duration-300 group"
+                      className="flex items-start gap-4 p-4 rounded-xl bg-zinc-900/[0.02] dark:bg-white/[0.02] border hairline hover:border-red-500/20 hover:bg-red-500/5 transition-colors duration-300 group"
                     >
                       <div className="w-7 h-7 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
                         <CheckCircle size={16} className="text-green-500" />
                       </div>
-                      <span className="text-sm font-bold leading-snug text-zinc-300 group-hover:text-white transition-colors">
+                      <span className="text-sm font-bold leading-snug text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
                         {f.text}
                       </span>
                     </motion.div>
@@ -520,7 +527,7 @@ const CalisthenicsRoom: React.FC = () => {
                   <div className="relative z-10">
                     <div className="eyebrow-pill mb-8 bg-amber-500/10 border-amber-500/20 text-amber-500">
                       <Sparkles size={12} aria-hidden />
-                      Bonus esclusivi
+                      {t("Bonus esclusivi", "Exclusive bonuses")}
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-4">
@@ -536,15 +543,15 @@ const CalisthenicsRoom: React.FC = () => {
                           <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                             <Crown size={20} className="text-amber-500" />
                           </div>
-                          <span className="text-white font-bold text-sm md:text-base tracking-tight">{bonus}</span>
+                          <span className="text-zinc-900 dark:text-white font-bold text-sm md:text-base tracking-tight">{bonus}</span>
                         </motion.div>
                       ))}
                     </div>
 
                     <div className="mt-8 p-5 card border-red-500/20 bg-red-600/[0.08] flex items-center gap-3">
                       <Sparkles size={16} className="text-amber-500 shrink-0" aria-hidden />
-                      <p className="meta-mono text-zinc-300">
-                        Bonus inclusi in tutti i piani
+                      <p className="meta-mono text-zinc-600 dark:text-zinc-300">
+                        {t("Bonus inclusi in tutti i piani", "Bonuses included in all plans")}
                       </p>
                     </div>
                   </div>
@@ -558,17 +565,17 @@ const CalisthenicsRoom: React.FC = () => {
         <section className="section-padding" id="pricing">
           <div className="container-max">
             <div className="text-center mb-12">
-              <p className="eyebrow mb-3">Investimento</p>
+              <p className="eyebrow mb-3">{t("Investimento", "Investment")}</p>
               <h2 className="page-title">
-                Scegli il tuo <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">percorso</span>
+                {t("Scegli il tuo", "Choose your")} <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">{t("percorso", "path")}</span>
               </h2>
-              <p className="body-copy mt-4 max-w-xl mx-auto">Più investi su di te, più il costo per mese scende. Il miglior affare? Il pacchetto annuale.</p>
+              <p className="body-copy mt-4 max-w-xl mx-auto">{t("Più investi su di te, più il costo per mese scende. Il miglior affare? Il pacchetto annuale.", "The more you invest in yourself, the lower the monthly cost. The best deal? The yearly package.")}</p>
             </div>
 
             {/* Frequency Toggle */}
             <div className="flex justify-center mb-12">
               <div className="inline-flex items-center gap-2 px-5 py-2.5 card rounded-full">
-                {["Mensile", "Semestrale", "Annuale"].map((freq, fi) => (
+                {[t("Mensile", "Monthly"), t("Semestrale", "6-Month"), t("Annuale", "Yearly")].map((freq, fi) => (
                   <span
                     key={fi}
                     className={`px-4 py-1.5 rounded-full meta-mono transition-colors cursor-default ${
@@ -586,62 +593,62 @@ const CalisthenicsRoom: React.FC = () => {
             <div className="grid md:grid-cols-3 gap-6 lg:gap-8 items-stretch max-w-5xl mx-auto">
               {[
                 {
-                  period: "Mensile",
+                  period: t("Mensile", "Monthly"),
                   price: "79",
                   priceValue: 79,
-                  label: "FLESSIBILE",
-                  desc: "Nessun vincolo, nessun impegno. Attiva e disattiva quando vuoi.",
+                  label: t("FLESSIBILE", "FLEXIBLE"),
+                  desc: t("Nessun vincolo, nessun impegno. Attiva e disattiva quando vuoi.", "No strings attached. Turn on and off whenever you want."),
                   monthly: null,
                   save: null,
                   highlight: false,
-                  cta: "Inizia Mensile",
+                  cta: t("Inizia Mensile", "Start Monthly"),
                   badge: null,
                   features: [
-                    "Coaching 1:1 settimanale",
-                    "Videochiamata di gruppo",
-                    "Community esclusiva",
-                    "Programma personalizzato",
-                    "Cancella quando vuoi",
+                    t("Coaching 1:1 settimanale", "Weekly 1:1 coaching"),
+                    t("Videochiamata di gruppo", "Group video call"),
+                    t("Community esclusiva", "Exclusive community"),
+                    t("Programma personalizzato", "Personalized program"),
+                    t("Cancella quando vuoi", "Cancel anytime"),
                   ],
                 },
                 {
-                  period: "6 Mesi",
+                  period: t("6 Mesi", "6 Months"),
                   price: "297",
                   priceValue: 297,
                   label: "PROGRESSION",
-                  desc: "Il giusto commitment per vedere risultati reali e trasformare il tuo fisico.",
-                  monthly: "€49,50/mese",
-                  save: "Risparmi il 37%",
+                  desc: t("Il giusto commitment per vedere risultati reali e trasformare il tuo fisico.", "The right commitment to see real results and transform your physique."),
+                  monthly: t("€49,50/mese", "€49.50/mo"),
+                  save: t("Risparmi il 37%", "Save 37%"),
                   highlight: false,
-                  cta: "Inizia Progression",
+                  cta: t("Inizia Progression", "Start Progression"),
                   badge: null,
                   features: [
-                    "Coaching 1:1 settimanale",
-                    "Videochiamata di gruppo",
-                    "Community esclusiva",
-                    "Programma personalizzato",
-                    "Corsi Calisthenics completi",
-                    "Template pianificazione",
+                    t("Coaching 1:1 settimanale", "Weekly 1:1 coaching"),
+                    t("Videochiamata di gruppo", "Group video call"),
+                    t("Community esclusiva", "Exclusive community"),
+                    t("Programma personalizzato", "Personalized program"),
+                    t("Corsi Calisthenics completi", "Full Calisthenics courses"),
+                    t("Template pianificazione", "Planning template"),
                   ],
                 },
                 {
-                  period: "1 Anno",
+                  period: t("1 Anno", "1 Year"),
                   price: "547",
                   priceValue: 547,
-                  label: "MASTERY ELITE",
-                  desc: "Il pacchetto completo: massimo risparmio, tutti i bonus e supporto continuo.",
-                  monthly: "€45,58/mese",
-                  save: "Risparmi il 42%",
+                  label: t("MASTERY ELITE", "MASTERY ELITE"),
+                  desc: t("Il pacchetto completo: massimo risparmio, tutti i bonus e supporto continuo.", "The full package: maximum savings, all bonuses and continuous support."),
+                  monthly: t("€45,58/mese", "€45.58/mo"),
+                  save: t("Risparmi il 42%", "Save 42%"),
                   highlight: true,
-                  cta: "Scegli Mastery Elite",
-                  badge: "Miglior Valore",
+                  cta: t("Scegli Mastery Elite", "Choose Mastery Elite"),
+                  badge: t("Miglior Valore", "Best Value"),
                   features: [
-                    "Tutto del piano Progression",
-                    "1 anno di MIND PROJECT incluso",
-                    "Videochiamate gruppo registrate",
-                    "Guida Completa PDF",
-                    "Certificato Mastery",
-                    "Priorità supporto 24/7",
+                    t("Tutto del piano Progression", "Everything in Progression"),
+                    t("1 anno di MIND PROJECT incluso", "1 year of MIND PROJECT included"),
+                    t("Videochiamate gruppo registrate", "Recorded group calls"),
+                    t("Guida Completa PDF", "Complete PDF Guide"),
+                    t("Certificato Mastery", "Mastery Certificate"),
+                    t("Priorità supporto 24/7", "24/7 priority support"),
                   ],
                 },
               ].map((plan, i) => (
@@ -697,7 +704,7 @@ const CalisthenicsRoom: React.FC = () => {
                     {/* Price */}
                     <div className="mt-6 mb-2">
                       <div className="flex items-end gap-2">
-                        <span className="text-4xl md:text-5xl font-bold tracking-tight text-white">
+                        <span className={`text-4xl md:text-5xl font-bold tracking-tight ${plan.highlight ? "text-white" : "text-zinc-900 dark:text-white"}`}>
                           €{plan.price}
                         </span>
                         <span className={`text-sm font-bold mb-1.5 ${
@@ -733,7 +740,7 @@ const CalisthenicsRoom: React.FC = () => {
                             }`}
                           />
                           <span className={`text-sm leading-snug ${
-                            plan.highlight ? "text-red-50" : "text-zinc-300"
+                            plan.highlight ? "text-red-50" : "text-zinc-700 dark:text-zinc-300"
                           }`}>
                             {feat}
                           </span>
@@ -765,20 +772,20 @@ const CalisthenicsRoom: React.FC = () => {
                 </p>
               )}
               <div className="meta-mono flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-                <span className="flex items-center gap-1.5"><ShieldCheck size={12} aria-hidden /> Pagamento sicuro Stripe</span>
-                <span className="w-1 h-1 rounded-full bg-zinc-700" aria-hidden />
-                <span className="flex items-center gap-1.5"><Sparkles size={12} aria-hidden /> Accesso immediato</span>
-                <span className="w-1 h-1 rounded-full bg-zinc-700" aria-hidden />
-                <span className="flex items-center gap-1.5"><Award size={12} aria-hidden /> Garanzia 14 giorni</span>
+                <span className="flex items-center gap-1.5"><ShieldCheck size={12} aria-hidden /> {t("Pagamento sicuro Stripe", "Secure Stripe payment")}</span>
+                <span className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-700" aria-hidden />
+                <span className="flex items-center gap-1.5"><Sparkles size={12} aria-hidden /> {t("Accesso immediato", "Instant access")}</span>
+                <span className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-700" aria-hidden />
+                <span className="flex items-center gap-1.5"><Award size={12} aria-hidden /> {t("Garanzia 14 giorni", "14-day guarantee")}</span>
               </div>
               {!isAuthenticated && (
                 <div className="flex flex-wrap items-center justify-center gap-3 mt-4">
-                  <span className="body-copy text-sm">Hai già un account?</span>
+                  <span className="body-copy text-sm">{t("Hai già un account?", "Already have an account?")}</span>
                   <Link to="/login" className="btn-secondary-sm">
-                    Accedi
+                    {t("Accedi", "Log in")}
                   </Link>
                   <Link to="/register" className="btn-primary-sm">
-                    Registrati
+                    {t("Registrati", "Sign up")}
                   </Link>
                 </div>
               )}
@@ -790,15 +797,15 @@ const CalisthenicsRoom: React.FC = () => {
         <section className="section-padding">
           <div className="container-max max-w-3xl">
             <div className="text-center mb-12">
-              <p className="eyebrow mb-3">Dubbi?</p>
-              <h2 className="page-title">Domande <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">frequenti</span></h2>
+              <p className="eyebrow mb-3">{t("Dubbi?", "Questions?")}</p>
+              <h2 className="page-title">{t("Domande", "Frequently")} <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">{t("frequenti", "asked")}</span></h2>
             </div>
 
             <div className="space-y-3">
               {[
-                { q: "Cosa serve per iniziare?", a: "Solo la voglia di migliorare. Non serve esperienza pregressa: partiamo dal tuo livello attuale e costruiamo da lì." },
-                { q: "Quanto tempo devo dedicare?", a: "Minimo 3 sessioni a settimana da 60-90 minuti. I risultati arrivano con la costanza, non con la quantità." },
-                { q: "E se non vedo risultati?", a: "Ogni settimana abbiamo un check-point. Se qualcosa non funziona, lo correggiamo subito. Nessun mese sprecato." },
+                { q: t("Cosa serve per iniziare?", "What do I need to start?"), a: t("Solo la voglia di migliorare. Non serve esperienza pregressa: partiamo dal tuo livello attuale e costruiamo da lì.", "Just the will to improve. No prior experience needed: we start from your current level and build from there.") },
+                { q: t("Quanto tempo devo dedicare?", "How much time must I dedicate?"), a: t("Minimo 3 sessioni a settimana da 60-90 minuti. I risultati arrivano con la costanza, non con la quantità.", "Minimum 3 sessions per week, 60-90 minutes. Results come from consistency, not quantity.") },
+                { q: t("E se non vedo risultati?", "What if I see no results?"), a: t("Ogni settimana abbiamo un check-point. Se qualcosa non funziona, lo correggiamo subito. Nessun mese sprecato.", "Every week we have a check-point. If something doesn't work, we fix it immediately. No wasted month.") },
               ].map((faq, i) => (
                 <motion.div
                   key={i}
@@ -808,7 +815,7 @@ const CalisthenicsRoom: React.FC = () => {
                   transition={{ delay: i * 0.1 }}
                   className="card card-hover group p-6"
                 >
-                  <h3 className="font-bold text-white tracking-tight mb-2 text-sm">{faq.q}</h3>
+                  <h3 className="font-bold text-zinc-900 dark:text-white tracking-tight mb-2 text-sm">{faq.q}</h3>
                   <p className="prose-block">{faq.a}</p>
                 </motion.div>
               ))}
@@ -823,8 +830,11 @@ const CalisthenicsRoom: React.FC = () => {
   return (
     <div className="page-shell selection:bg-red-500/30">
       <SEO
-        title="Calisthenics Room - Area Riservata"
-        description="Benvenuto nella Calisthenics Room. Accedi al tuo coaching e ai tuoi programmi."
+        title={t("Calisthenics Room - Area Riservata", "Calisthenics Room - Members Area")}
+        description={t(
+          "Benvenuto nella Calisthenics Room. Accedi al tuo coaching e ai tuoi programmi.",
+          "Welcome to the Calisthenics Room. Access your coaching and programs."
+        )}
       />
 
       {/* Status Banner */}
@@ -840,14 +850,14 @@ const CalisthenicsRoom: React.FC = () => {
                 <Crown size={20} className="text-white" aria-hidden />
               </div>
               <div>
-                <p className="meta-mono">Stato abbonamento</p>
-                <p className="text-sm font-bold text-white tracking-tight">
-                  Piano {user?.subscriptionTier || 'Elite'} <span className="text-red-500">• Attivo</span>
+                <p className="meta-mono">{t("Stato abbonamento", "Subscription status")}</p>
+                <p className="text-sm font-bold text-zinc-900 dark:text-white tracking-tight">
+                  {t("Piano", "Plan")} {user?.subscriptionTier || 'Elite'} <span className="text-red-500">• {t("Attivo", "Active")}</span>
                 </p>
               </div>
             </div>
             <Link to="/purchase-history" className="btn-secondary-sm">
-              Gestisci abbonamento
+              {t("Gestisci abbonamento", "Manage subscription")}
             </Link>
           </motion.div>
         </div>
@@ -862,12 +872,12 @@ const CalisthenicsRoom: React.FC = () => {
             transition={{ delay: 0.1 }}
           >
             <div className="eyebrow-pill mb-4">
-              <Sparkles size={12} aria-hidden /> Bentornato
+              <Sparkles size={12} aria-hidden /> {t("Bentornato", "Welcome back")}
             </div>
             <h1 className="page-title mb-4">
-              La tua <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">room</span>
+              {t("La tua", "Your")} <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">room</span>
             </h1>
-            <p className="body-copy text-lg">Il tuo portale d&apos;élite per la massima performance fisica.</p>
+            <p className="body-copy text-lg">{t("Il tuo portale d'élite per la massima performance fisica.", "Your elite portal for peak physical performance.")}</p>
           </motion.div>
         </div>
       </section>
@@ -879,22 +889,22 @@ const CalisthenicsRoom: React.FC = () => {
         <section>
           <div className="flex items-center gap-3 mb-6">
             <div className="w-1 h-8 bg-red-600 rounded-full" aria-hidden />
-            <h2 className="text-xl font-bold tracking-tight text-white">Risorse e guide</h2>
+            <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">{t("Risorse e guide", "Resources & guides")}</h2>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
             {[
               {
-                title: "Guida Completa al Calisthenics Moderno",
-                desc: "Scienza applicata, programmazione avanzata e protocolli di recupero.",
-                action: "Apri la Guida",
+                title: t("Guida Completa al Calisthenics Moderno", "Complete Modern Calisthenics Guide"),
+                desc: t("Scienza applicata, programmazione avanzata e protocolli di recupero.", "Applied science, advanced programming and recovery protocols."),
+                action: t("Apri la Guida", "Open the Guide"),
                 to: "/guide",
                 icon: <BookOpen size={28} />,
               },
               {
-                title: "Template Scheda Settimanale",
-                desc: "Il planner settimanale per tracciare volume, intensità e recupero.",
-                action: "Crea Scheda",
+                title: t("Template Scheda Settimanale", "Weekly Plan Template"),
+                desc: t("Il planner settimanale per tracciare volume, intensità e recupero.", "The weekly planner to track volume, intensity and recovery."),
+                action: t("Crea Scheda", "Create Plan"),
                 to: "/create",
                 icon: <Target size={28} />,
               },
@@ -911,7 +921,7 @@ const CalisthenicsRoom: React.FC = () => {
                   <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6 text-red-500">
                     {res.icon}
                   </div>
-                  <h3 className="text-lg font-bold mb-2 tracking-tight text-white">{res.title}</h3>
+                  <h3 className="text-lg font-bold mb-2 tracking-tight text-zinc-900 dark:text-white">{res.title}</h3>
                   <p className="body-copy text-sm mb-6">{res.desc}</p>
                   <Link to={res.to} className="btn-primary-sm">
                     {res.action} <ArrowRight size={14} aria-hidden />
@@ -926,7 +936,7 @@ const CalisthenicsRoom: React.FC = () => {
         <section>
           <div className="flex items-center gap-3 mb-6">
             <div className="w-1 h-8 bg-red-600 rounded-full" aria-hidden />
-            <h2 className="text-xl font-bold tracking-tight text-white">Masterclass video</h2>
+            <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">{t("Masterclass video", "Video masterclass")}</h2>
           </div>
 
           <div className="space-y-3">
@@ -944,19 +954,19 @@ const CalisthenicsRoom: React.FC = () => {
                   className="w-full p-5 flex items-center justify-between"
                 >
                   <div className="flex items-center gap-4 text-left">
-                    <div className="w-12 h-12 rounded-xl bg-zinc-900 border hairline flex items-center justify-center text-red-500 font-bold text-lg group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 transition-colors duration-300">
+                    <div className="w-12 h-12 rounded-xl bg-zinc-200 dark:bg-zinc-900 border hairline flex items-center justify-center text-red-500 font-bold text-lg group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 transition-colors duration-300">
                       {moduleIndex + 1}
                     </div>
                     <div>
-                      <h3 className="font-bold text-white tracking-tight text-sm">{module.title}</h3>
-                      <p className="meta-mono mt-0.5">{module.lessons.length} lezioni</p>
+                      <h3 className="font-bold text-zinc-900 dark:text-white tracking-tight text-sm">{module.title}</h3>
+                      <p className="meta-mono mt-0.5">{module.lessons.length} {t("lezioni", "lessons")}</p>
                     </div>
                   </div>
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${expandedModule === moduleIndex ? "bg-red-600/20" : "bg-white/5"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${expandedModule === moduleIndex ? "bg-red-600/20" : "bg-zinc-900/5 dark:bg-white/5"}`}>
                     {expandedModule === moduleIndex ? (
                       <ChevronDown size={18} className="text-red-500" aria-hidden />
                     ) : (
-                      <ChevronRight size={18} className="text-zinc-600" aria-hidden />
+                      <ChevronRight size={18} className="text-zinc-500 dark:text-zinc-600" aria-hidden />
                     )}
                   </div>
                 </button>
@@ -969,13 +979,13 @@ const CalisthenicsRoom: React.FC = () => {
                     {module.lessons.map((lesson, lessonIndex) => (
                       <div
                         key={lessonIndex}
-                        className="flex items-center justify-between p-4 rounded-xl border hairline bg-zinc-950/40 hover:bg-zinc-950/70 transition-colors group/lesson"
+                        className="flex items-center justify-between p-4 rounded-xl border hairline bg-zinc-100 dark:bg-zinc-950/40 hover:bg-zinc-200 dark:hover:bg-zinc-950/70 transition-colors group/lesson"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-lg bg-red-600/10 flex items-center justify-center text-red-500 group-hover/lesson:bg-red-600 group-hover/lesson:text-white transition-colors">
                             <PlayCircle size={16} aria-hidden />
                           </div>
-                          <span className="text-sm font-bold text-zinc-300 group-hover/lesson:text-white transition-colors">{lesson.title}</span>
+                          <span className="text-sm font-bold text-zinc-700 dark:text-zinc-300 group-hover/lesson:text-zinc-900 dark:group-hover/lesson:text-white transition-colors">{lesson.title}</span>
                         </div>
                         <span className="meta-mono flex items-center gap-1.5">
                           <Clock size={10} aria-hidden /> {lesson.duration}
@@ -994,7 +1004,7 @@ const CalisthenicsRoom: React.FC = () => {
       <footer className="section-padding border-t hairline text-center">
         <div className="container-max max-w-5xl">
           <Link to="/" className="btn-ghost text-sm">
-            Torna alla home <ArrowRight size={14} aria-hidden />
+            {t("Torna alla home", "Back home")} <ArrowRight size={14} aria-hidden />
           </Link>
         </div>
       </footer>
