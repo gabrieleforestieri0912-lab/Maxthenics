@@ -262,14 +262,18 @@ function Programs() {
                   className="mb-10"
                 />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="flex flex-wrap justify-center items-stretch gap-4">
                   {items.map((program) => (
-                    <ProgramCard
+                    <div
                       key={program.id}
-                      program={program}
-                      isInCart={cartItems.some((i) => i.id === program.id.toString())}
-                      onToggle={handleAddToCart}
-                    />
+                      className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)] xl:w-[calc(25%-0.75rem)]"
+                    >
+                      <ProgramCard
+                        program={program}
+                        isInCart={cartItems.some((i) => i.id === program.id.toString())}
+                        onToggle={handleAddToCart}
+                      />
+                    </div>
                   ))}
                 </div>
               </section>
