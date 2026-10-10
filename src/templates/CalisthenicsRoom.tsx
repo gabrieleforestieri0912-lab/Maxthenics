@@ -196,6 +196,7 @@ const CalisthenicsRoom: React.FC = () => {
         body: JSON.stringify({
           cartItems: [
             {
+              id: `calisthenics-room-${plan.period.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
               title: `Calisthenics Room - ${plan.period}`,
               description: `Accesso coaching 1:1 per ${plan.period}`,
               price: plan.priceValue,

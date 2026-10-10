@@ -40,13 +40,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cartItems]);
 
+  // I programmi sono beni digitali unici: un articolo già presente non viene duplicato.
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((i) => i.id === item.id);
       if (existingItem) {
-        return prevItems.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
+        return prevItems;
       }
       return [...prevItems, { ...item, quantity: 1 }];
     });

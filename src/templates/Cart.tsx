@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Trash2, ShoppingBag, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import { Trash2, ShoppingBag, ArrowRight, ArrowLeft, Loader2, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
@@ -14,11 +14,11 @@ import SEO from "../components/SEO";
 function CartBackLink() {
   return (
     <Link
-      to="/"
+      to="/programs"
       className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors font-bold text-sm group"
     >
       <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" aria-hidden />
-      Home
+      Programmi
     </Link>
   );
 }
@@ -28,6 +28,16 @@ const Cart: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmClear, setConfirmClear] = useState(false);
+
+  const handleClearCart = () => {
+    if (!confirmClear) {
+      setConfirmClear(true);
+      return;
+    }
+    clearCart();
+    setConfirmClear(false);
+  };
 
   if (authLoading) {
     return (
@@ -64,8 +74,10 @@ const Cart: React.FC = () => {
   }
 
   const handleCheckout = async () => {
+    if (cartItems.length === 0 || loading) return;
     try {
       setLoading(true);
+      setError(null);
       const response = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",
         headers: {
@@ -77,14 +89,14 @@ const Cart: React.FC = () => {
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
 
-      if (data.url) {
+      if (response.ok && data?.url) {
         window.location.href = data.url;
       } else {
         setError(
           "Errore durante la creazione della sessione di checkout: " +
-            (data.message || "Errore sconosciuto")
+            (data?.message || "Errore sconosciuto")
         );
       }
     } catch (err) {
@@ -151,11 +163,12 @@ const Cart: React.FC = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={clearCart}
-              className="text-zinc-500 hover:text-red-500"
+              onClick={handleClearCart}
+              onBlur={() => setConfirmClear(false)}
+              className={confirmClear ? "text-red-500" : "text-zinc-500 hover:text-red-500"}
             >
               <Trash2 className="w-4 h-4" aria-hidden />
-              Svuota
+              {confirmClear ? "Confermi?" : "Svuota"}
             </Button>
           </PageHeader>
 
@@ -178,7 +191,7 @@ const Cart: React.FC = () => {
                   <div className="grow text-center sm:text-left min-w-0">
                     <h3 className="text-lg font-bold tracking-tight text-white">{item.title}</h3>
                     {item.level && <p className="meta-mono mt-1.5">{item.level}</p>}
-                    <p className="text-2xl font-bold text-red-500 mt-2">€{item.price}</p>
+                    <p className="text-2xl font-bold text-red-500 mt-2">€{item.price.toFixed(2)}</p>
                   </div>
 
                   <Button
@@ -204,10 +217,6 @@ const Cart: React.FC = () => {
                     <dt className="text-zinc-400">Programmi ({cartItems.length})</dt>
                     <dd className="text-zinc-200">€{cartTotal.toFixed(2)}</dd>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <dt className="text-zinc-400">Sconto</dt>
-                    <dd className="text-emerald-500">-€0.00</dd>
-                  </div>
                   <div className="flex justify-between pt-4 mt-1 border-t border-white/10">
                     <dt className="text-base font-bold text-white">Totale</dt>
                     <dd className="text-xl font-bold text-red-500">€{cartTotal.toFixed(2)}</dd>
@@ -226,9 +235,14 @@ const Cart: React.FC = () => {
                   loading={loading}
                   className="w-full mt-6"
                 >
-                  {loading ? "Elaborazione..." : "Checkout"}
+                  {loading ? "Elaborazione..." : "Vai al pagamento"}
                   {!loading && <ArrowRight className="w-4 h-4" aria-hidden />}
                 </Button>
+
+                <p className="meta-mono mt-4 flex items-center justify-center gap-1.5 text-center">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" aria-hidden />
+                  Pagamento sicuro con Stripe
+                </p>
 
                 <Link
                   to="/programs"

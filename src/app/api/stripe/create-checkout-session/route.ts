@@ -4,6 +4,7 @@ import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import { getEnv } from '@/lib/env';
 import { getStripe } from '@/lib/clients';
+import { getProgramByIdList } from '@/data/programs';
 
 const CLIENT_URL = getEnv().CLIENT_URL;
 
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
     await dbConnect();
 
     const { cartItems, userId, tier } = await request.json() as {
-      cartItems?: Array<{ id: string; title: string; price: number; image?: string; quantity?: number; level?: string; description?: string }>;
+      cartItems?: Array<{ id?: string; title?: string; price?: number; image?: string; quantity?: number; level?: string; description?: string }>;
       userId?: string;
       tier?: string;
     };
@@ -24,11 +25,28 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate cart items
+    // Validate cart items shape
     for (const item of cartItems) {
-      if (!item.id || !item.title || !item.price || item.price <= 0) {
+      if (
+        !item ||
+        typeof item.id !== 'string' ||
+        item.id.trim() === '' ||
+        typeof item.title !== 'string' ||
+        item.title.trim() === '' ||
+        typeof item.price !== 'number' ||
+        !Number.isFinite(item.price) ||
+        item.price <= 0
+      ) {
         return NextResponse.json(
           { message: 'Articolo carrello non valido' },
+          { status: 400 }
+        );
+      }
+      // Never trust client prices for catalog programs: verify against the catalog.
+      const catalogProgram = getProgramByIdList(item.id);
+      if (catalogProgram && catalogProgram.price !== item.price) {
+        return NextResponse.json(
+          { message: 'Prezzo articolo non valido' },
           { status: 400 }
         );
       }
@@ -55,7 +73,7 @@ export async function POST(request: Request) {
           },
           unit_amount: Math.round((item.price || 0) * 100), // Convert to cents
         },
-        quantity: item.quantity || 1,
+        quantity: Math.max(1, Math.floor(item.quantity || 1)),
       };
     });
 
