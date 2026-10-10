@@ -6,19 +6,21 @@ import { Trash2, ShoppingBag, ArrowRight, ArrowLeft, Loader2, ShieldCheck } from
 import Image from "next/image";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import Button from "../components/Button";
 import EmptyState from "../components/EmptyState";
 import PageHeader from "../components/PageHeader";
 import SEO from "../components/SEO";
 
 function CartBackLink() {
+  const { t } = useLanguage();
   return (
     <Link
       to="/programs"
-      className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors font-bold text-sm group"
+      className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors font-bold text-sm group"
     >
       <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" aria-hidden />
-      Programmi
+      {t("Programmi", "Programs")}
     </Link>
   );
 }
@@ -26,6 +28,7 @@ function CartBackLink() {
 const Cart: React.FC = () => {
   const { cartItems, removeFromCart, cartTotal, clearCart } = useCart();
   const { user, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
@@ -50,7 +53,10 @@ const Cart: React.FC = () => {
   if (!user) {
     return (
       <>
-        <SEO title="Carrello" description="Accedi per visualizzare il carrello." />
+        <SEO
+          title={t("Carrello", "Cart")}
+          description={t("Accedi per visualizzare il carrello.", "Log in to view your cart.")}
+        />
         <div className="page-shell flex flex-col items-center justify-center px-6 relative">
           <div className="absolute top-6 left-6">
             <CartBackLink />
@@ -59,11 +65,14 @@ const Cart: React.FC = () => {
           <div className="w-full max-w-md">
             <EmptyState
               icon={ShoppingBag}
-              title="Accedi per continuare"
-              description="Devi aver effettuato l'accesso per vedere il carrello."
+              title={t("Accedi per continuare", "Log in to continue")}
+              description={t(
+                "Devi aver effettuato l'accesso per vedere il carrello.",
+                "You must be logged in to see your cart."
+              )}
             >
               <Button to="/login?redirect=/cart" size="lg" className="w-full">
-                Accedi
+                {t("Accedi", "Log in")}
                 <ArrowRight size={16} aria-hidden />
               </Button>
             </EmptyState>
@@ -95,13 +104,13 @@ const Cart: React.FC = () => {
         window.location.href = data.url;
       } else {
         setError(
-          "Errore durante la creazione della sessione di checkout: " +
-            (data?.message || "Errore sconosciuto")
+          t("Errore durante la creazione della sessione di checkout: ", "Error creating the checkout session: ") +
+            (data?.message || t("Errore sconosciuto", "Unknown error"))
         );
       }
     } catch (err) {
       console.error("Errore checkout:", err);
-      setError("Si è verificato un errore durante il checkout.");
+      setError(t("Si è verificato un errore durante il checkout.", "An error occurred during checkout."));
     } finally {
       setLoading(false);
     }
@@ -111,8 +120,11 @@ const Cart: React.FC = () => {
     return (
       <>
         <SEO
-          title="Carrello Vuoto"
-          description="Il tuo carrello è vuoto. Esplora i programmi di calisthenics su Maxthenics e inizia il tuo allenamento."
+          title={t("Carrello Vuoto", "Empty Cart")}
+          description={t(
+            "Il tuo carrello è vuoto. Esplora i programmi di calisthenics su Maxthenics e inizia il tuo allenamento.",
+            "Your cart is empty. Explore Maxthenics calisthenics programs and start training."
+          )}
           keywords="carrello programmi calisthenics, acquista allenamento"
         />
         <div className="page-shell flex flex-col items-center justify-center px-6 relative">
@@ -123,11 +135,14 @@ const Cart: React.FC = () => {
           <div className="w-full max-w-md">
             <EmptyState
               icon={ShoppingBag}
-              title="Il carrello è vuoto"
-              description="Non hai ancora aggiunto alcun programma."
+              title={t("Il carrello è vuoto", "Your cart is empty")}
+              description={t(
+                "Non hai ancora aggiunto alcun programma.",
+                "You haven't added any program yet."
+              )}
             >
               <Button to="/programs" size="lg" className="w-full">
-                Vedi i Programmi
+                {t("Vedi i Programmi", "See Programs")}
                 <ArrowRight size={16} aria-hidden />
               </Button>
             </EmptyState>
@@ -140,8 +155,11 @@ const Cart: React.FC = () => {
   return (
     <>
       <SEO
-        title="Carrello"
-        description="Gestisci il tuo carrello di programmi di calisthenics su Maxthenics. Acquista programmi personalizzati per Front Lever, Planche e altro."
+        title={t("Carrello", "Cart")}
+        description={t(
+          "Gestisci il tuo carrello di programmi di calisthenics su Maxthenics. Acquista programmi personalizzati per Front Lever, Planche e altro.",
+          "Manage your Maxthenics calisthenics program cart. Buy custom programs for Front Lever, Planche and more."
+        )}
         keywords="carrello calisthenics, acquisto programmi, checkout fitness"
       />
 
@@ -155,10 +173,13 @@ const Cart: React.FC = () => {
             eyebrow="Checkout"
             title={
               <>
-                Il tuo <span className="text-red-500">carrello</span>
+                {t("Il tuo", "Your")} <span className="text-red-500">{t("carrello", "cart")}</span>
               </>
             }
-            description={`${cartItems.length} ${cartItems.length === 1 ? "programma selezionato" : "programmi selezionati"}. L'accesso ai protocolti acquistati è a vita.`}
+            description={t(
+              `${cartItems.length} ${cartItems.length === 1 ? "programma selezionato" : "programmi selezionati"}. L'accesso ai protocolli acquistati è a vita.`,
+              `${cartItems.length} ${cartItems.length === 1 ? "selected program" : "selected programs"}. Lifetime access to purchased protocols.`
+            )}
           >
             <Button
               variant="ghost"
@@ -168,7 +189,7 @@ const Cart: React.FC = () => {
               className={confirmClear ? "text-red-500" : "text-zinc-500 hover:text-red-500"}
             >
               <Trash2 className="w-4 h-4" aria-hidden />
-              {confirmClear ? "Confermi?" : "Svuota"}
+              {confirmClear ? t("Confermi?", "Confirm?") : t("Svuota", "Clear")}
             </Button>
           </PageHeader>
 
@@ -179,7 +200,7 @@ const Cart: React.FC = () => {
                   key={item.id}
                   className="card flex flex-col sm:flex-row items-center gap-5 p-4"
                 >
-                  <div className="relative w-full sm:w-28 h-36 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-zinc-950">
+                  <div className="relative w-full sm:w-28 h-36 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-zinc-200 dark:bg-zinc-950">
                     <Image
                       src={item.image || "/maxthenics.png"}
                       alt={item.title}
@@ -189,7 +210,7 @@ const Cart: React.FC = () => {
                   </div>
 
                   <div className="grow text-center sm:text-left min-w-0">
-                    <h3 className="text-lg font-bold tracking-tight text-white">{item.title}</h3>
+                    <h3 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-white">{item.title}</h3>
                     {item.level && <p className="meta-mono mt-1.5">{item.level}</p>}
                     <p className="text-2xl font-bold text-red-500 mt-2">€{item.price.toFixed(2)}</p>
                   </div>
@@ -198,27 +219,27 @@ const Cart: React.FC = () => {
                     variant="secondary"
                     size="sm"
                     onClick={() => removeFromCart(item.id)}
-                    ariaLabel={`Rimuovi ${item.title} dal carrello`}
-                    className="w-full sm:w-auto text-zinc-400 hover:text-red-500"
+                    ariaLabel={t(`Rimuovi ${item.title} dal carrello`, `Remove ${item.title} from cart`)}
+                    className="w-full sm:w-auto text-zinc-500 hover:text-red-500"
                   >
                     <Trash2 className="w-4 h-4" aria-hidden />
-                    <span className="sm:hidden">Rimuovi</span>
+                    <span className="sm:hidden">{t("Rimuovi", "Remove")}</span>
                   </Button>
                 </div>
               ))}
             </div>
 
             <div className="lg:col-span-1">
-              <div className="card bg-zinc-900/60 p-6 lg:sticky lg:top-28">
-                <h3 className="text-base font-bold tracking-tight text-white">Riepilogo</h3>
+              <div className="card bg-white dark:bg-zinc-900/60 p-6 lg:sticky lg:top-28">
+                <h3 className="text-base font-bold tracking-tight text-zinc-900 dark:text-white">{t("Riepilogo", "Summary")}</h3>
 
                 <dl className="mt-6 space-y-3">
                   <div className="flex justify-between text-sm">
-                    <dt className="text-zinc-400">Programmi ({cartItems.length})</dt>
-                    <dd className="text-zinc-200">€{cartTotal.toFixed(2)}</dd>
+                    <dt className="text-zinc-500 dark:text-zinc-400">{t("Programmi", "Programs")} ({cartItems.length})</dt>
+                    <dd className="text-zinc-900 dark:text-zinc-200">€{cartTotal.toFixed(2)}</dd>
                   </div>
-                  <div className="flex justify-between pt-4 mt-1 border-t border-white/10">
-                    <dt className="text-base font-bold text-white">Totale</dt>
+                  <div className="flex justify-between pt-4 mt-1 border-t border-zinc-200 dark:border-white/10">
+                    <dt className="text-base font-bold text-zinc-900 dark:text-white">{t("Totale", "Total")}</dt>
                     <dd className="text-xl font-bold text-red-500">€{cartTotal.toFixed(2)}</dd>
                   </div>
                 </dl>
@@ -235,20 +256,20 @@ const Cart: React.FC = () => {
                   loading={loading}
                   className="w-full mt-6"
                 >
-                  {loading ? "Elaborazione..." : "Vai al pagamento"}
+                  {loading ? t("Elaborazione...", "Processing...") : t("Vai al pagamento", "Go to payment")}
                   {!loading && <ArrowRight className="w-4 h-4" aria-hidden />}
                 </Button>
 
                 <p className="meta-mono mt-4 flex items-center justify-center gap-1.5 text-center">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" aria-hidden />
-                  Pagamento sicuro con Stripe
+                  {t("Pagamento sicuro con Stripe", "Secure payment with Stripe")}
                 </p>
 
                 <Link
                   to="/programs"
-                  className="mt-4 block text-center text-xs font-bold text-zinc-500 hover:text-white transition-colors"
+                  className="mt-4 block text-center text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
                 >
-                  Continua lo shopping
+                  {t("Continua lo shopping", "Continue shopping")}
                 </Link>
               </div>
             </div>
