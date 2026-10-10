@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { useLanguage } from "./LanguageContext";
 
 export interface IUser {
   id: string;
@@ -48,6 +49,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
    const [user, setUser] = useState<IUser | null>(null);
    const [loading, setLoading] = useState(true);
    const [notifications, setNotifications] = useState<Notification[]>([]);
+   const { t } = useLanguage();
 
   // Fetch current user from cookies
   const fetchCurrentUser = useCallback(async () => {
@@ -97,18 +99,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Errore durante il login");
+        throw new Error(data.message || t("Errore durante il login", "Login error"));
       }
 
       // Fetch user after successful login
       await fetchCurrentUser();
-      addNotification("Accesso effettuato con successo!", "success");
+      addNotification(t("Accesso effettuato con successo!", "Logged in successfully!"), "success");
       return true;
     } catch (error) {
       if (error instanceof Error) {
         addNotification(error.message);
       } else {
-        addNotification("Errore durante il login");
+        addNotification(t("Errore durante il login", "Login error"));
       }
       return false;
     }
@@ -126,18 +128,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Errore durante la registrazione");
+        throw new Error(data.message || t("Errore durante la registrazione", "Registration error"));
       }
 
       // Fetch user after successful registration
       await fetchCurrentUser();
-      addNotification("Account creato con successo!", "success");
+      addNotification(t("Account creato con successo!", "Account created successfully!"), "success");
       return true;
     } catch (error) {
       if (error instanceof Error) {
         addNotification(error.message);
       } else {
-        addNotification("Errore durante la registrazione");
+        addNotification(t("Errore durante la registrazione", "Registration error"));
       }
       return false;
     }
@@ -154,7 +156,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.error("Logout error:", error);
     } finally {
       setUser(null);
-      addNotification("Sessione terminata", "success");
+      addNotification(t("Sessione terminata", "Session ended"), "success");
     }
   };
 

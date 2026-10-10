@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { AlertCircle, Clock, Package, ShoppingBag } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import Button from "../components/Button";
 import EmptyState from "../components/EmptyState";
 import PageHeader from "../components/PageHeader";
@@ -25,9 +26,9 @@ interface Purchase {
   items?: PurchaseItem[];
 }
 
-function formatDate(value?: string) {
-  if (!value) return "N/D";
-  return new Date(value).toLocaleDateString("it-IT", {
+function formatDate(value: string | undefined, locale: string) {
+  if (!value) return locale === "en" ? "N/A" : "N/D";
+  return new Date(value).toLocaleDateString(locale === "en" ? "en-US" : "it-IT", {
     day: "2-digit",
     month: "long",
     year: "numeric",
@@ -36,6 +37,7 @@ function formatDate(value?: string) {
 
 const PurchaseHistoryPage: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
+  const { locale, t } = useLanguage();
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +64,12 @@ const PurchaseHistoryPage: React.FC = () => {
 
         if (!response.ok) {
           if (response.status === 401) {
-            setError("Authentication failed. Please log in again.");
+            setError(
+              t(
+                "Autenticazione fallita. Effettua di nuovo l'accesso.",
+                "Authentication failed. Please log in again."
+              )
+            );
             window.location.href = "/login";
           } else {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -89,23 +96,29 @@ const PurchaseHistoryPage: React.FC = () => {
   return (
     <div className="page-shell px-6 lg:px-8">
       <SEO
-        title="I Tuoi Acquisti"
-        description="Visualizza la tua cronologia acquisti e i protocolli sbloccati su Maxthenics."
+        title={t("I Tuoi Acquisti", "Your Purchases")}
+        description={t(
+          "Visualizza la tua cronologia acquisti e i protocolli sbloccati su Maxthenics.",
+          "View your purchase history and unlocked protocols on Maxthenics."
+        )}
       />
 
       <div className="container-max max-w-5xl">
         <PageHeader
           eyebrow="Billing"
-          title="I tuoi acquisti"
-          description="Consulta lo storico dei tuoi ordini e verifica i protocolli di allenamento che hai sbloccato nel tuo account."
+          title={t("I tuoi acquisti", "Your purchases")}
+          description={t(
+            "Consulta lo storico dei tuoi ordini e verifica i protocolli di allenamento che hai sbloccato nel tuo account.",
+            "Browse your order history and check the training protocols you have unlocked in your account."
+          )}
         />
 
         {loading && (
           <div className="space-y-3 mt-10" aria-hidden="true">
             {[0, 1, 2].map((i) => (
               <div key={i} className="card p-6 animate-pulse">
-                <div className="h-4 w-1/3 bg-white/10 rounded mb-3" />
-                <div className="h-3 w-2/3 bg-white/5 rounded" />
+                <div className="h-4 w-1/3 bg-zinc-900/10 dark:bg-white/10 rounded mb-3" />
+                <div className="h-3 w-2/3 bg-zinc-900/5 dark:bg-white/5 rounded" />
               </div>
             ))}
           </div>
@@ -122,11 +135,14 @@ const PurchaseHistoryPage: React.FC = () => {
           <div className="mt-10">
             <EmptyState
               icon={ShoppingBag}
-              title="Nessun acquisto trovato"
-              description="Non hai ancora sbloccato alcun protocollo. Esplora l'Accademia per iniziare il tuo percorso."
+              title={t("Nessun acquisto trovato", "No purchases found")}
+              description={t(
+                "Non hai ancora sbloccato alcun protocollo. Esplora l'Accademia per iniziare il tuo percorso.",
+                "You haven't unlocked any protocols yet. Explore the Academy to start your journey."
+              )}
             >
               <Button to="/programs" size="lg" className="w-full">
-Esplora l&apos;Accademia
+                {t("Esplora l'Accademia", "Explore the Academy")}
               </Button>
             </EmptyState>
           </div>
@@ -140,7 +156,7 @@ Esplora l&apos;Accademia
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="card hover:bg-zinc-900/60 transition-colors"
+                className="card hover:bg-white dark:hover:bg-zinc-900/60 transition-colors"
               >
                 <div className="p-6 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
                   <div className="flex items-start gap-4 xl:w-1/3">
@@ -149,51 +165,56 @@ Esplora l&apos;Accademia
                     </div>
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <h3 className="text-base font-bold tracking-tight text-white">
-                          Ordine {purchase.orderNumber || `#${purchase.id || purchase._id}`}
+                        <h3 className="text-base font-bold tracking-tight text-zinc-900 dark:text-white">
+                          {t("Ordine", "Order")} {purchase.orderNumber || `#${purchase.id || purchase._id}`}
                         </h3>
                         <span
                           className={`px-2 py-1 rounded-md border text-[10px] font-black uppercase tracking-[0.2em] ${
-                            purchase.status === "Completato"
+                            purchase.status === "Completato" || purchase.status === "Completed"
                               ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                               : "bg-amber-500/10 text-amber-500 border-amber-500/20"
                           }`}
                         >
-                          {purchase.status || "Sconosciuto"}
+                          {purchase.status === "Completato" || purchase.status === "Completed"
+                            ? t("Completato", "Completed")
+                            : purchase.status || t("Sconosciuto", "Unknown")}
                         </span>
                       </div>
                       <span className="meta-mono inline-flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5" aria-hidden />
-                        {formatDate(purchase.date)}
+                        {formatDate(purchase.date, locale)}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex-1 rounded-xl bg-zinc-950/40 border border-white/10 p-5">
+                  <div className="flex-1 rounded-xl bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-white/10 p-5">
                     {purchase.items && purchase.items.length > 0 ? (
                       <ul className="space-y-3">
                         {purchase.items.map((item, i) => (
                           <li key={i} className="flex justify-between items-center gap-4 text-sm">
-                            <span className="text-zinc-300 font-medium line-clamp-1">
+                            <span className="text-zinc-700 dark:text-zinc-300 font-medium line-clamp-1">
                               {item.title}
                             </span>
                             <span className="text-zinc-500 font-bold shrink-0">
-                              {item.price === 0 ? "GRATUITO" : `€${item.price.toFixed(2)}`}
+                              {item.price === 0 ? t("GRATUITO", "FREE") : `€${item.price.toFixed(2)}`}
                             </span>
                           </li>
                         ))}
                       </ul>
                     ) : (
                       <p className="text-sm text-zinc-500">
-                        Nessun dettaglio disponibile per questo ordine.
+                        {t(
+                          "Nessun dettaglio disponibile per questo ordine.",
+                          "No details available for this order."
+                        )}
                       </p>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between xl:flex-col xl:items-end gap-1 shrink-0 border-t border-white/10 xl:border-t-0 pt-5 xl:pt-0 xl:w-1/6">
-                    <span className="meta-mono">Totale</span>
-                    <span className="text-2xl font-bold text-white tracking-tight">
-                      {purchase.total === 0 ? "FREE" : `€${purchase.total?.toFixed(2)}`}
+                  <div className="flex items-center justify-between xl:flex-col xl:items-end gap-1 shrink-0 border-t border-zinc-200 dark:border-white/10 xl:border-t-0 pt-5 xl:pt-0 xl:w-1/6">
+                    <span className="meta-mono">{t("Totale", "Total")}</span>
+                    <span className="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">
+                      {purchase.total === 0 ? t("GRATIS", "FREE") : `€${purchase.total?.toFixed(2)}`}
                     </span>
                   </div>
                 </div>

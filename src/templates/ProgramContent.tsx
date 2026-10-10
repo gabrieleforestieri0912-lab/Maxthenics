@@ -645,7 +645,7 @@ const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, hi
     >
       <div
         ref={rowRef}
-        className={`border-b border-white/10 last:border-0 group relative rounded-xl transition-shadow ${isDragTarget ? 'opacity-40' : ''} ${highlighted ? 'ring-2 ring-red-500/60 bg-red-500/[0.04]' : ''}`}
+        className={`border-b border-zinc-200 dark:border-white/10 last:border-0 group relative rounded-xl transition-shadow ${isDragTarget ? 'opacity-40' : ''} ${highlighted ? 'ring-2 ring-red-500/60 bg-red-500/[0.04]' : ''}`}
         draggable
         onDragStart={onDragStart}
         onDragOver={onDragOver}
@@ -653,7 +653,7 @@ const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, hi
         onDragEnd={onDragEnd}
       >
       <div
-        className="p-3 sm:p-4 flex items-center justify-between hover:bg-white/5 cursor-pointer transition-colors"
+        className="p-3 sm:p-4 flex items-center justify-between hover:bg-zinc-900/5 dark:hover:bg-white/5 cursor-pointer transition-colors"
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center gap-2">
@@ -662,20 +662,20 @@ const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, hi
             {exerciseIndex + 1}
           </div>
           <div>
-            <h4 className="font-bold text-white text-sm">{exercise.exercise.name}</h4>
+            <h4 className="font-bold text-zinc-900 dark:text-white text-sm">{exercise.exercise.name}</h4>
             <p className="text-[10px] text-zinc-500 uppercase">{muscles.join(', ')}</p>
           </div>
         </div>
         <div className="hidden sm:flex items-center gap-5 text-xs">
-          <div className="text-center"><span className="text-zinc-500 block">SET</span><span className="font-bold text-white">{w.sets}</span></div>
-          <div className="text-center"><span className="text-zinc-500 block">REP</span><span className="font-bold text-white">{w.reps}</span></div>
-          <div className="text-center"><span className="text-zinc-500 block">REST</span><span className="font-bold text-white">{w.rest}</span></div>
+          <div className="text-center"><span className="text-zinc-500 block">SET</span><span className="font-bold text-zinc-900 dark:text-white">{w.sets}</span></div>
+          <div className="text-center"><span className="text-zinc-500 block">REP</span><span className="font-bold text-zinc-900 dark:text-white">{w.reps}</span></div>
+          <div className="text-center"><span className="text-zinc-500 block">REST</span><span className="font-bold text-zinc-900 dark:text-white">{w.rest}</span></div>
         </div>
         <ChevronDown size={16} className={`text-zinc-500 transition-transform ${expanded ? 'rotate-180' : ''}`} />
       </div>
 
       {expanded && (
-        <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} className="px-4 pb-4 space-y-2 bg-zinc-950/30">
+        <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} className="px-4 pb-4 space-y-2 bg-white dark:bg-zinc-950/30">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3">
             {[
               { label: 'Sets', val: String(w.sets) },
@@ -683,18 +683,18 @@ const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, hi
               { label: 'Rest', val: w.rest },
               { label: 'Tempo', val: w.tempo },
             ].map((cell) => (
-              <div key={cell.label} className="rounded-lg bg-zinc-950/40 border border-white/10 p-3">
+              <div key={cell.label} className="rounded-lg bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-white/10 p-3">
                 <span className="text-[10px] text-zinc-500 uppercase block mb-1">{cell.label}</span>
-                <span className="font-bold text-white text-lg">{cell.val}</span>
+                <span className="font-bold text-zinc-900 dark:text-white text-lg">{cell.val}</span>
               </div>
             ))}
           </div>
-          <div className="flex items-start gap-2 p-3 bg-zinc-900/50 rounded-lg">
+          <div className="flex items-start gap-2 p-3 bg-zinc-100 dark:bg-zinc-900/50 rounded-lg">
             <Target size={14} className="text-red-500 mt-0.5 shrink-0" />
-            <span className="text-xs text-zinc-400">{notes}</span>
+            <span className="text-xs text-zinc-600 dark:text-zinc-400">{notes}</span>
           </div>
           {progressions.length > 0 && (
-            <div className="p-3 bg-zinc-900/50 rounded-lg">
+            <div className="p-3 bg-zinc-100 dark:bg-zinc-900/50 rounded-lg">
               <span className="text-[10px] text-zinc-500 uppercase block mb-2">
                 {t('Progressioni consigliate', 'Recommended progressions')}: {progressions.join(' → ')}
               </span>
@@ -750,15 +750,15 @@ const DayCard: React.FC<DayCardProps> = ({ day }) => {
     <motion.div
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-zinc-900/30 border border-white/10 rounded-2xl overflow-hidden"
+      className="bg-white dark:bg-zinc-900/30 border border-zinc-200 dark:border-white/10 rounded-2xl overflow-hidden"
     >
-      <button onClick={() => setExpanded(!expanded)} className="w-full p-4 flex items-center justify-between bg-zinc-900/50">
+      <button onClick={() => setExpanded(!expanded)} className="w-full p-4 flex items-center justify-between bg-zinc-100 dark:bg-zinc-900/50">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${day.day <= 2 ? 'bg-red-600 text-white' : 'bg-zinc-800 text-zinc-400'}`}>
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${day.day <= 2 ? 'bg-red-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'}`}>
             {day.day}
           </div>
           <div className="text-left">
-            <h3 className="font-bold text-white text-sm">{t('Settimana', 'Week')} {day.week} — {t('Giorno', 'Day')} {day.day}</h3>
+            <h3 className="font-bold text-zinc-900 dark:text-white text-sm">{t('Settimana', 'Week')} {day.week} — {t('Giorno', 'Day')} {day.day}</h3>
             <p className="text-[10px] text-zinc-500">{day.focus} · {exercises.length} {t('esercizi', 'exercises')}</p>
           </div>
         </div>
@@ -806,8 +806,8 @@ const WeekTabs: React.FC<WeekTabsProps> = ({ plan, weekIndex, setWeekIndex }) =>
           onClick={() => setWeekIndex(wi)}
           className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
             wi === weekIndex
-              ? 'bg-red-600 text-white shadow-lg shadow-red-900/30'
-              : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'
+              ? 'bg-red-600 text-zinc-900 dark:text-white shadow-lg shadow-red-900/30'
+              : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-300 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-white'
           }`}
         >
           S{wk.week}
@@ -884,13 +884,13 @@ const ProgramContent: React.FC = () => {
     <>
       <SEO
         title={`Programma ${program.title}`}
-        description={`Visualizza il contenuto del programma ${program.title} su Maxthenics. Esercizi, serie, ripetizioni e progressioni dettagliate.`}
+        description={t(`Visualizza il contenuto del programma ${program.title} su Maxthenics. Esercizi, serie, ripetizioni e progressioni dettagliate.`, `View the ${program.title} program content on Maxthenics. Detailed exercises, sets, reps and progressions.`)}
         keywords={`programma calisthenics ${program.title.toLowerCase()}, workout, esercizi, progressioni`}
       />
       <div className="page-shell px-6 lg:px-8">
         <div className="container-max max-w-5xl">
           <div className="flex items-center justify-between gap-4 mb-6">
-            <Link to="/programs" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors font-bold text-sm group">
+            <Link to="/programs" className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors font-bold text-sm group">
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" aria-hidden />
               {t('Torna ai Programmi', 'Back to Programs')}
             </Link>
@@ -905,11 +905,11 @@ const ProgramContent: React.FC = () => {
             <div className="flex flex-wrap items-center gap-5">
               <div className="flex items-center gap-2">
                 <span className="meta-mono">{t('Durata', 'Duration')}</span>
-                <span className="text-sm font-bold text-white">{program.duration || plan.weeks.length + (locale === 'en' ? ' Weeks' : ' Settimane')}</span>
+                <span className="text-sm font-bold text-zinc-900 dark:text-white">{program.duration || plan.weeks.length + (locale === 'en' ? ' Weeks' : ' Settimane')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="meta-mono">{t('Livello', 'Level')}</span>
-                <span className="text-sm font-bold text-white">{program.level}</span>
+                <span className="text-sm font-bold text-zinc-900 dark:text-white">{program.level}</span>
               </div>
             </div>
           </div>
@@ -930,19 +930,19 @@ const ProgramContent: React.FC = () => {
                   <h3 className="font-bold text-red-400 text-sm mb-2 flex items-center gap-2">
                     <Flame size={16} /> {t('Settimana', 'Week')} {currentWeek.week}: {currentWeek.theme}
                   </h3>
-                  <p className="text-zinc-400 text-sm">
+                  <p className="text-zinc-600 dark:text-zinc-400 text-sm">
                     {t('Giorni di allenamento', 'Training days')}: {currentWeek.days.length} · Focus: {currentWeek.days.map((d) => d.focus).join(' · ')}
                   </p>
                 </div>
               )}
 
               <div className="card p-5">
-                <h3 className="font-bold text-white mb-4 flex items-center gap-2"><Target size={16} className="text-red-500" /> {t('Panoramica Settimanale', 'Weekly Overview')}</h3>
+                <h3 className="font-bold text-zinc-900 dark:text-white mb-4 flex items-center gap-2"><Target size={16} className="text-red-500" /> {t('Panoramica Settimanale', 'Weekly Overview')}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {currentWeek?.days.map((d) => (
-                    <div key={d.day} className={`p-4 rounded-xl border ${d.exercises.length > 0 ? 'bg-zinc-900/50 border-white/10' : 'bg-zinc-950/30 border-white/10 opacity-50'}`}>
+                    <div key={d.day} className={`p-4 rounded-xl border ${d.exercises.length > 0 ? 'bg-zinc-100 dark:bg-zinc-900/50 border-zinc-200 dark:border-white/10' : 'bg-white dark:bg-zinc-950/30 border-zinc-200 dark:border-white/10 opacity-50'}`}>
                       <span className="text-[10px] text-zinc-500 uppercase block mb-1">{t('Giorno', 'Day')} {d.day}</span>
-                      <span className="font-bold text-white text-sm">{d.focus}</span>
+                      <span className="font-bold text-zinc-900 dark:text-white text-sm">{d.focus}</span>
                       <span className="text-[10px] text-zinc-500 block mt-1">{d.exercises.length} {t('esercizi', 'exercises')}</span>
                     </div>
                   )) || null}
@@ -950,10 +950,10 @@ const ProgramContent: React.FC = () => {
               </div>
 
               <div className="card p-5">
-                <h3 className="font-bold text-white mb-4 flex items-center gap-2"><BookOpen size={16} className="text-red-500" /> {t('Riscaldamento', 'Warm-up')}</h3>
+                <h3 className="font-bold text-zinc-900 dark:text-white mb-4 flex items-center gap-2"><BookOpen size={16} className="text-red-500" /> {t('Riscaldamento', 'Warm-up')}</h3>
                 <ul className="space-y-2">
                   {warmUp.map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
+                    <li key={i} className="flex items-center gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                       <span className="w-6 h-6 rounded-full bg-red-500/10 text-red-500 text-[10px] font-black flex items-center justify-center">{i + 1}</span>
                       {item}
                     </li>
@@ -962,10 +962,10 @@ const ProgramContent: React.FC = () => {
               </div>
 
               <div className="card p-5">
-                <h3 className="font-bold text-white mb-4 flex items-center gap-2"><Dumbbell size={16} className="text-red-500" /> {t('Defaticamento', 'Cool-down')}</h3>
+                <h3 className="font-bold text-zinc-900 dark:text-white mb-4 flex items-center gap-2"><Dumbbell size={16} className="text-red-500" /> {t('Defaticamento', 'Cool-down')}</h3>
                 <ul className="space-y-2">
                   {coolDown.map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
+                    <li key={i} className="flex items-center gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                       <CheckCircle />
                       {item}
                     </li>
@@ -974,23 +974,23 @@ const ProgramContent: React.FC = () => {
               </div>
 
               <div className="card p-5">
-                <h3 className="font-bold text-white mb-3 flex items-center gap-2"><Zap size={16} className="text-red-500" /> {t('Info Programma', 'Program Info')}</h3>
+                <h3 className="font-bold text-zinc-900 dark:text-white mb-3 flex items-center gap-2"><Zap size={16} className="text-red-500" /> {t('Info Programma', 'Program Info')}</h3>
                 <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="rounded-lg bg-zinc-950/40 border border-white/10 p-3">
+                  <div className="rounded-lg bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-white/10 p-3">
                     <span className="meta-mono block">{t('Durata Totale', 'Total Duration')}</span>
-                    <span className="font-bold text-white">{program.duration || plan.weeks.length + (locale === 'en' ? ' Weeks' : ' Settimane')}</span>
+                    <span className="font-bold text-zinc-900 dark:text-white">{program.duration || plan.weeks.length + (locale === 'en' ? ' Weeks' : ' Settimane')}</span>
                   </div>
-                  <div className="rounded-lg bg-zinc-950/40 border border-white/10 p-3">
+                  <div className="rounded-lg bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-white/10 p-3">
                     <span className="meta-mono block">{t('Frequenza', 'Frequency')}</span>
-                    <span className="font-bold text-white">{t('4 giorni/settimana', '4 days/week')}</span>
+                    <span className="font-bold text-zinc-900 dark:text-white">{t('4 giorni/settimana', '4 days/week')}</span>
                   </div>
-                  <div className="rounded-lg bg-zinc-950/40 border border-white/10 p-3">
+                  <div className="rounded-lg bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-white/10 p-3">
                     <span className="meta-mono block">{t('Livello', 'Level')}</span>
-                    <span className="font-bold text-white">{program.level}</span>
+                    <span className="font-bold text-zinc-900 dark:text-white">{program.level}</span>
                   </div>
-                  <div className="rounded-lg bg-zinc-950/40 border border-white/10 p-3">
+                  <div className="rounded-lg bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-white/10 p-3">
                     <span className="meta-mono block">{t('Esercizi Totali', 'Total Exercises')}</span>
-                    <span className="font-bold text-white">{programExercises.length}</span>
+                    <span className="font-bold text-zinc-900 dark:text-white">{programExercises.length}</span>
                   </div>
                 </div>
               </div>
@@ -1033,22 +1033,22 @@ const ProgramContent: React.FC = () => {
 
           {activeTab === 'warmup' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-              <div className="bg-zinc-900/30 border border-red-500/20 p-6 rounded-2xl">
-                <h3 className="font-bold text-white mb-4 text-lg flex items-center gap-2"><Flame className="text-red-500" size={20} /> {t('Riscaldamento Pre-Allenamento', 'Pre-Workout Warm-up')}</h3>
+              <div className="bg-white dark:bg-zinc-900/30 border border-red-500/20 p-6 rounded-2xl">
+                <h3 className="font-bold text-zinc-900 dark:text-white mb-4 text-lg flex items-center gap-2"><Flame className="text-red-500" size={20} /> {t('Riscaldamento Pre-Allenamento', 'Pre-Workout Warm-up')}</h3>
                 <ul className="space-y-3">
                   {warmUp.map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
+                    <li key={i} className="flex items-center gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                       <span className="w-7 h-7 rounded-full bg-red-500/20 text-red-500 text-xs font-black flex items-center justify-center shrink-0">{i + 1}</span>
                       <span className="font-medium">{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="bg-zinc-900/30 border border-green-500/10 p-6 rounded-2xl">
-                <h3 className="font-bold text-white mb-4 text-lg flex items-center gap-2"><Dumbbell className="text-green-500" size={20} /> {t('Defaticamento Post-Allenamento', 'Post-Workout Cool-down')}</h3>
+              <div className="bg-white dark:bg-zinc-900/30 border border-green-500/10 p-6 rounded-2xl">
+                <h3 className="font-bold text-zinc-900 dark:text-white mb-4 text-lg flex items-center gap-2"><Dumbbell className="text-green-500" size={20} /> {t('Defaticamento Post-Allenamento', 'Post-Workout Cool-down')}</h3>
                 <ul className="space-y-3">
                   {coolDown.map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
+                    <li key={i} className="flex items-center gap-3 text-sm text-zinc-700 dark:text-zinc-300">
                       <CheckCircle />
                       <span className="font-medium">{item}</span>
                     </li>
@@ -1091,7 +1091,7 @@ const ProgramContent: React.FC = () => {
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                   activeTab === tab.key
                     ? 'bg-red-600 text-white'
-                    : 'bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800'
+                    : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800'
                 }`}
               >
                 <tab.icon size={13} />

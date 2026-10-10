@@ -134,7 +134,7 @@ const ProgramDetails: React.FC = () => {
 
   const handleUnlockFree = async () => {
     if (!user) {
-      addNotification("Accedi per sbloccare il programma gratuitamente!", "error");
+      addNotification(t("Accedi per sbloccare il programma gratuitamente!", "Log in to unlock the program for free!"), "error");
       navigate("/login");
       return;
     }

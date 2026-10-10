@@ -8,24 +8,27 @@ import Button from "../components/Button";
 import EmptyState from "../components/EmptyState";
 import PageHeader from "../components/PageHeader";
 import SEO from "../components/SEO";
+import { useLanguage } from "../context/LanguageContext";
 
 interface Category {
   id: string;
-  label: string;
+  it: string;
+  en: string;
 }
 
 const categories: Category[] = [
-  { id: "app", label: "App & Interfaccia" },
-  { id: "programs", label: "Programmi di Allenamento" },
-  { id: "ai", label: "Assistente AI" },
-  { id: "bug", label: "Segnala un Bug" },
-  { id: "suggestion", label: "Suggerimento" },
+  { id: "app", it: "App & Interfaccia", en: "App & Interface" },
+  { id: "programs", it: "Programmi di Allenamento", en: "Training Programs" },
+  { id: "ai", it: "Assistente AI", en: "AI Assistant" },
+  { id: "bug", it: "Segnala un Bug", en: "Report a Bug" },
+  { id: "suggestion", it: "Suggerimento", en: "Suggestion" },
 ];
 
 const INPUT_CLASS =
-  "w-full rounded-xl border border-white/10 bg-zinc-950 px-4 py-3 text-sm text-white transition-colors placeholder:text-zinc-700 focus:border-red-500/50 focus:outline-none focus:ring-2 focus:ring-red-500/30";
+  "w-full rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-950 px-4 py-3 text-sm text-zinc-900 dark:text-white transition-colors placeholder:text-zinc-700 focus:border-red-500/50 focus:outline-none focus:ring-2 focus:ring-red-500/30";
 
 const Feedback: React.FC = () => {
+  const { t } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Category>(categories[0]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -55,16 +58,22 @@ const Feedback: React.FC = () => {
   if (submitted) {
     return (
       <>
-        <SEO title="Feedback inviato" description="Grazie per il tuo contributo." />
+        <SEO
+          title={t("Feedback inviato", "Feedback submitted")}
+          description={t("Grazie per il tuo contributo.", "Thanks for your contribution.")}
+        />
         <div className="page-shell flex items-center justify-center px-6">
           <div className="w-full max-w-md">
             <EmptyState
               icon={Send}
-              title="Feedback inviato"
-              description="Grazie per il tuo contributo. Lo leggiamo tutto."
+              title={t("Feedback inviato", "Feedback submitted")}
+              description={t(
+                "Grazie per il tuo contributo. Lo leggiamo tutto.",
+                "Thanks for your contribution. We read everything."
+              )}
             >
               <Button to="/" size="lg" className="w-full">
-                Torna alla Dashboard
+                {t("Torna alla Dashboard", "Back to Dashboard")}
               </Button>
             </EmptyState>
           </div>
@@ -76,14 +85,17 @@ const Feedback: React.FC = () => {
   return (
     <div className="page-shell px-6 lg:px-8">
       <SEO
-        title="Invia Feedback"
-        description="Aiutaci a migliorare Maxthenics inviando i tuoi suggerimenti."
+        title={t("Invia Feedback", "Send Feedback")}
+        description={t(
+          "Aiutaci a migliorare Maxthenics inviando i tuoi suggerimenti.",
+          "Help us improve Maxthenics by sending your suggestions."
+        )}
       />
 
       <div className="container-max max-w-2xl">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors mb-8 group"
+          className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors mb-8 group"
         >
           <ArrowLeft
             size={15}
@@ -94,19 +106,22 @@ const Feedback: React.FC = () => {
         </Link>
 
         <PageHeader
-          eyebrow="Contattaci"
+          eyebrow={t("Contattaci", "Contact us")}
           title={
             <>
-              Il tuo <span className="text-red-500">feedback</span>
+              {t("Il tuo", "Your")} <span className="text-red-500">feedback</span>
             </>
           }
-          description="Ogni segnalazione viene letta. Raccontaci cosa funziona e cosa non funziona."
+          description={t(
+            "Ogni segnalazione viene letta. Raccontaci cosa funziona e cosa non funziona.",
+            "Every report is read. Tell us what works and what doesn't."
+          )}
         />
 
-        <form onSubmit={handleSubmit} className="card bg-zinc-900/60 p-6 md:p-8 mt-10 space-y-6">
+        <form onSubmit={handleSubmit} className="card bg-white dark:bg-zinc-900/60 p-6 md:p-8 mt-10 space-y-6">
           <div className="relative" ref={dropdownRef}>
             <label className="meta-mono block mb-2" id="category-label">
-              Categoria
+              {t("Categoria", "Category")}
             </label>
             <button
               type="button"
@@ -116,7 +131,7 @@ const Feedback: React.FC = () => {
               aria-labelledby="category-label"
               className={`${INPUT_CLASS} flex items-center justify-between font-bold`}
             >
-              <span>{selectedCategory.label}</span>
+              <span>{t(selectedCategory.it, selectedCategory.en)}</span>
               <ChevronDown
                 size={16}
                 className={`text-zinc-500 transition-transform duration-200 ${
@@ -134,7 +149,7 @@ const Feedback: React.FC = () => {
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.15 }}
                   role="listbox"
-                  className="absolute left-0 right-0 mt-2 rounded-xl bg-zinc-900 border border-white/10 overflow-hidden z-50 shadow-2xl shadow-black"
+                  className="absolute left-0 right-0 mt-2 rounded-xl bg-zinc-200 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 overflow-hidden z-50 shadow-2xl shadow-black"
                 >
                   {categories.map((cat) => (
                     <button
@@ -149,10 +164,10 @@ const Feedback: React.FC = () => {
                       className={`w-full px-4 py-3 text-left text-sm font-bold transition-colors flex items-center justify-between ${
                         selectedCategory.id === cat.id
                           ? "bg-red-600 text-white"
-                          : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                          : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-900/5 dark:hover:bg-white/5 hover:text-zinc-900 dark:hover:text-white"
                       }`}
                     >
-                      {cat.label}
+                      {t(cat.it, cat.en)}
                       {selectedCategory.id === cat.id && <Check size={14} aria-hidden />}
                     </button>
                   ))}
@@ -163,19 +178,22 @@ const Feedback: React.FC = () => {
 
           <div>
             <label htmlFor="message" className="meta-mono block mb-2">
-              Dettagli
+              {t("Dettagli", "Details")}
             </label>
             <textarea
               id="message"
               rows={5}
-              placeholder="Raccontaci la tua esperienza o suggerisci un miglioramento..."
+              placeholder={t(
+                "Raccontaci la tua esperienza o suggerisci un miglioramento...",
+                "Tell us about your experience or suggest an improvement..."
+              )}
               required
               className={`${INPUT_CLASS} resize-none leading-relaxed`}
             />
           </div>
 
           <Button type="submit" size="lg" className="w-full">
-            Invia
+            {t("Invia", "Send")}
             <Send size={15} aria-hidden />
           </Button>
         </form>

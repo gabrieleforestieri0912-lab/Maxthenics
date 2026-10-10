@@ -5,10 +5,12 @@ import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, LayoutDashboard } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useLanguage } from "../context/LanguageContext";
 import Button from "../components/Button";
 import SEO from "../components/SEO";
 
 const Success: React.FC = () => {
+  const { t } = useLanguage();
   const { clearCart } = useCart();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
@@ -21,8 +23,11 @@ const Success: React.FC = () => {
   return (
     <div className="page-shell relative overflow-hidden flex items-center justify-center px-6">
       <SEO
-        title="Pagamento Completato"
-        description="Grazie per il tuo acquisto su Maxthenics. Il tuo percorso verso la maestria del calisthenics inizia ora."
+        title={t("Pagamento Completato", "Payment Complete")}
+        description={t(
+          "Grazie per il tuo acquisto su Maxthenics. Il tuo percorso verso la maestria del calisthenics inizia ora.",
+          "Thank you for your Maxthenics purchase. Your journey to calisthenics mastery starts now."
+        )}
       />
 
       <div
@@ -38,7 +43,7 @@ const Success: React.FC = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="card bg-zinc-900/60 backdrop-blur-xl p-8 md:p-12 text-center relative z-10 w-full max-w-lg"
+        className="card bg-white dark:bg-zinc-900/60 backdrop-blur-xl p-8 md:p-12 text-center relative z-10 w-full max-w-lg"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -49,25 +54,27 @@ const Success: React.FC = () => {
           <CheckCircle2 className="w-8 h-8 text-emerald-500" aria-hidden />
         </motion.div>
 
-        <p className="eyebrow">Pagamento ricevuto</p>
+        <p className="eyebrow">{t("Pagamento ricevuto", "Payment received")}</p>
 
         <h1 className="page-title mt-3 text-3xl md:text-4xl">
-          Ordine <span className="text-emerald-500">completato</span>
+          {t("Ordine", "Order")} <span className="text-emerald-500">{t("completato", "complete")}</span>
         </h1>
 
         <p className="body-copy mt-4">
-          Grazie per aver scelto Maxthenics. I tuoi nuovi protocolli sono ora sbloccati e pronti
-          per essere dominati.
+          {t(
+            "Grazie per aver scelto Maxthenics. I tuoi nuovi protocolli sono ora sbloccati e pronti per essere dominati.",
+            "Thank you for choosing Maxthenics. Your new protocols are now unlocked and ready to be mastered."
+          )}
         </p>
 
         <div className="mt-8 flex flex-col gap-3">
           <Button to="/my-program" size="lg" className="w-full">
-            Vai ai miei programmi
+            {t("Vai ai miei programmi", "Go to my programs")}
             <ArrowRight className="w-4 h-4" aria-hidden />
           </Button>
           <Button to="/dashboard" variant="secondary" size="lg" className="w-full">
             <LayoutDashboard className="w-4 h-4" aria-hidden />
-            Torna alla dashboard
+            {t("Torna alla dashboard", "Back to dashboard")}
           </Button>
         </div>
 

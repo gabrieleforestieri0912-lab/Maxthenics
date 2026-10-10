@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useLanguage } from '../context/LanguageContext';
 
 interface SEOProps {
   title?: string;
@@ -34,8 +35,11 @@ const SEO: React.FC<SEOProps> = ({
   noindex = false,
   nofollow = false,
 }) => {
+  const { locale } = useLanguage();
   const defaultTitle = "Maxthenics - Calisthenics Mastery";
-  const defaultDescription = "La piattaforma definitiva per il Calisthenics. Programmi personalizzati, tracking avanzato e coaching 1:1 per raggiungere le tue goals skills come Front Lever e Planche.";
+  const defaultDescription = locale === "en"
+    ? "The definitive Calisthenics platform. Custom programs, advanced tracking and 1:1 coaching to reach your goal skills like Front Lever and Planche."
+    : "La piattaforma definitiva per il Calisthenics. Programmi personalizzati, tracking avanzato e coaching 1:1 per raggiungere le tue goals skills come Front Lever e Planche.";
   const defaultImage = "/maxthenics.png";
   const defaultUrl = "https://maxthenics.com";
 

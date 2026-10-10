@@ -1,11 +1,12 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Button from "../components/Button";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function NotFound() {
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -34,20 +35,23 @@ export default function NotFound() {
             404
           </p>
 
-          <p className="eyebrow mt-6">Pagina non trovata</p>
+          <p className="eyebrow mt-6">{t("Pagina non trovata", "Page not found")}</p>
 
-          <h1 className="page-title mt-3">Questa pagina non esiste</h1>
+          <h1 className="page-title mt-3">{t("Questa pagina non esiste", "This page doesn't exist")}</h1>
 
           <p className="body-copy mt-4">
-            La pagina che stai cercando è stata spostata, eliminata o non è mai esistita.
+            {t(
+              "La pagina che stai cercando è stata spostata, eliminata o non è mai esistita.",
+              "The page you are looking for was moved, deleted, or never existed."
+            )}
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button to="/" size="lg" className="w-full sm:w-auto">
-              Torna alla Home
+              {t("Torna alla Home", "Back to home")}
             </Button>
             <Button to="/programs" variant="secondary" size="lg" className="w-full sm:w-auto">
-              Vedi i Programmi
+              {t("Vedi i Programmi", "Browse programs")}
             </Button>
           </div>
         </motion.div>

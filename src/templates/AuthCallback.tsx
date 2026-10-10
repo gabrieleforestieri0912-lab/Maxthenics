@@ -4,11 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { getSupabaseBrowser } from "../lib/supabase-browser";
 import EmptyState from "../components/EmptyState";
 import Button from "../components/Button";
 
 const AuthCallback: React.FC = () => {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { fetchCurrentUser } = useAuth();
   const [status, setStatus] = useState<"syncing" | "error">("syncing");
@@ -69,15 +71,18 @@ const AuthCallback: React.FC = () => {
         <div className="w-full max-w-sm">
           <EmptyState
             icon={AlertCircle}
-            title="Errore di accesso"
-            description="Impossibile completare l'accesso con Google. Riprova."
+            title={t("Errore di accesso", "Sign-in error")}
+            description={t(
+              "Impossibile completare l'accesso con Google. Riprova.",
+              "Could not complete Google sign-in. Please try again."
+            )}
           >
             <Button
               size="lg"
               className="w-full"
               onClick={() => navigate("/login", { replace: true })}
             >
-              Torna al login
+              {t("Torna al login", "Back to login")}
             </Button>
           </EmptyState>
         </div>
@@ -88,10 +93,10 @@ const AuthCallback: React.FC = () => {
   return (
     <div className="page-shell flex items-center justify-center px-6">
       <div className="text-center">
-        <div className="w-12 h-12 rounded-xl border border-white/10 bg-zinc-900 flex items-center justify-center mx-auto mb-5">
+        <div className="w-12 h-12 rounded-xl border border-zinc-200 dark:border-white/10 bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center mx-auto mb-5">
           <Loader2 className="w-5 h-5 text-red-500 animate-spin" aria-hidden />
         </div>
-        <p className="meta-mono">Accesso in corso...</p>
+        <p className="meta-mono">{t("Accesso in corso...", "Signing in...")}</p>
       </div>
     </div>
   );

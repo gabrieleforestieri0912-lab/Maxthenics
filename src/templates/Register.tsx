@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { getSupabaseBrowser } from "../lib/supabase-browser";
 import AuthShell, {
   AuthDivider,
@@ -12,9 +13,10 @@ import AuthShell, {
 } from "../components/AuthShell";
 
 const INPUT_CLASS =
-  "w-full rounded-lg border border-white/10 bg-zinc-950 px-3 py-2.5 text-sm text-white transition-colors placeholder:text-zinc-700 focus:border-red-500/50 focus:outline-none focus:ring-2 focus:ring-red-500/30";
+  "w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-950 px-3 py-2.5 text-sm text-zinc-900 dark:text-white transition-colors placeholder:text-zinc-700 focus:border-red-500/50 focus:outline-none focus:ring-2 focus:ring-red-500/30";
 
 const Register: React.FC = () => {
+  const { t } = useLanguage();
   const { register, addNotification } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -31,7 +33,7 @@ const Register: React.FC = () => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      addNotification("Le password non coincidono");
+      addNotification(t("Le password non coincidono", "Passwords do not match"));
       return;
     }
 
@@ -61,7 +63,11 @@ const Register: React.FC = () => {
       });
       if (error) {
         addNotification(
-          error.message || "Registrazione Google non riuscita. Riprova.",
+          error.message ||
+            t(
+              "Registrazione Google non riuscita. Riprova.",
+              "Google sign-up failed. Please try again."
+            ),
           "error"
         );
         return;
@@ -69,10 +75,16 @@ const Register: React.FC = () => {
       if (data?.url) {
         window.location.href = data.url;
       } else {
-        addNotification("Registrazione Google non riuscita. Riprova.", "error");
+        addNotification(
+          t("Registrazione Google non riuscita. Riprova.", "Google sign-up failed. Please try again."),
+          "error"
+        );
       }
     } catch {
-      addNotification("Registrazione Google non riuscita. Riprova.", "error");
+      addNotification(
+        t("Registrazione Google non riuscita. Riprova.", "Google sign-up failed. Please try again."),
+        "error"
+      );
     } finally {
       setGoogleLoading(false);
     }
@@ -80,45 +92,54 @@ const Register: React.FC = () => {
 
   return (
     <AuthShell
-      seoTitle="Registrazione"
-      seoDescription="Crea il tuo account Maxthenics e inizia il tuo percorso nel calisthenics con programmi personalizzati e coaching 1:1."
-      seoKeywords="registrazione calisthenics, account fitness, iscrizione programma allenamento"
-      titleLead="Unisciti a"
-      description="Crea il tuo account e inizia la tua trasformazione oggi."
-      footerLead="Hai già un account?"
-      footerActionLabel="Accedi"
+      seoTitle={t("Registrazione", "Sign up")}
+      seoDescription={t(
+        "Crea il tuo account Maxthenics e inizia il tuo percorso nel calisthenics con programmi personalizzati e coaching 1:1.",
+        "Create your Maxthenics account and start your calisthenics journey with personalized programs and 1:1 coaching."
+      )}
+      seoKeywords={t(
+        "registrazione calisthenics, account fitness, iscrizione programma allenamento",
+        "calisthenics sign-up, fitness account, training program enrollment"
+      )}
+      titleLead={t("Unisciti a", "Join")}
+      description={t(
+        "Crea il tuo account e inizia la tua trasformazione oggi.",
+        "Create your account and start your transformation today."
+      )}
+      footerLead={t("Hai già un account?", "Already have an account?")}
+      footerActionLabel={t("Accedi", "Sign in")}
       footerActionTo="/login"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Field label="Nome Completo" htmlFor="name">
+        <Field label={t("Nome Completo", "Full Name")} htmlFor="name">
           <input
             id="name"
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Mario Rossi"
+            placeholder={t("Mario Rossi", "John Smith")}
             autoComplete="name"
             className={INPUT_CLASS}
             required
           />
         </Field>
 
-        <Field label="Email" htmlFor="register-email">
+        <Field label={t("Email", "Email")} htmlFor="register-email">
           <input
             id="register-email"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="tu@esempio.com"
+            placeholder={t("tu@esempio.com", "you@example.com")}
             autoComplete="email"
             className={INPUT_CLASS}
             required
           />
         </Field>
 
-        <Field label="Password" htmlFor="register-password">
+        <Field label={t("Password", "Password")} htmlFor="register-password">
           <PasswordInput
             id="register-password"
             name="password"
@@ -130,7 +151,7 @@ const Register: React.FC = () => {
           />
         </Field>
 
-        <Field label="Conferma Password" htmlFor="confirm-password">
+        <Field label={t("Conferma Password", "Confirm Password")} htmlFor="confirm-password">
           <PasswordInput
             id="confirm-password"
             name="confirmPassword"
@@ -143,7 +164,7 @@ const Register: React.FC = () => {
         </Field>
 
         <button type="submit" className="btn-primary w-full py-3">
-          Crea Account
+          {t("Crea Account", "Create Account")}
         </button>
       </form>
 
@@ -152,7 +173,7 @@ const Register: React.FC = () => {
       <GoogleButton
         loading={googleLoading}
         onClick={handleGoogleRegister}
-        label="Registrati con Google"
+        label={t("Registrati con Google", "Sign up with Google")}
       />
     </AuthShell>
   );

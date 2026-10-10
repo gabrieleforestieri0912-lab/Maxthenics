@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Check, Loader2, Edit, X, Plus, Trash2, Search, Download, ChevronDown } from 'lucide-react';
 import { exerciseDatabase, type Exercise } from '../data/exercises';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { downloadTxt, downloadJson, downloadPdf, downloadCsv, downloadWeeksTxt, downloadWeeksCsv, downloadWeeksPdf, downloadWeeksJson } from '../lib/exportProgram';
 import type { ProgramForExport } from '../lib/exportProgram';
 import Button from "../components/Button";
@@ -66,6 +67,7 @@ interface Program {
 const MyProgram: React.FC = () => {
   const navigate = useNavigate();
   const { addNotification } = useAuth();
+  const { locale, t } = useLanguage();
   const [program, setProgram] = useState<Program | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -128,7 +130,7 @@ const MyProgram: React.FC = () => {
             setLoading(false);
             return;
           }
-          throw new Error('Errore nel caricamento del profilo utente.');
+          throw new Error(t('Errore nel caricamento del profilo utente.', 'Error loading the user profile.'));
         }
         const profileData = await profileResponse.json();
 
@@ -165,7 +167,7 @@ const MyProgram: React.FC = () => {
             weekNumber: 1,
             days: [{
               id: 'day-1',
-              name: 'Giorno 1',
+              name: t('Giorno 1', 'Day 1'),
               workouts: [{
                 id: 'workout-1',
                 name: programData.title || 'Full Body',
@@ -186,13 +188,25 @@ const MyProgram: React.FC = () => {
 
       } catch (err: any) {
         console.error("Error fetching program:", err);
-        setError(err.message || "Impossibile caricare il tuo programma. Riprova.");
+        setError(err.message || t("Impossibile caricare il tuo programma. Riprova.", "Unable to load your program. Please try again."));
       } finally {
         setLoading(false);
       }
     };
     fetchProgram();
   }, [navigate]);
+
+  const programMessage = (msg?: string) => {
+    if (!msg) return msg;
+    const map: Record<string, { it: string; en: string }> = {
+      login: { it: "Accedi per visualizzare il tuo programma personalizzato.", en: "Log in to view your personalized program." },
+      expired: { it: "Sessione scaduta. Accedi nuovamente.", en: "Session expired. Please log in again." },
+      profile: { it: "Completa il tuo profilo per generare un programma.", en: "Complete your profile to generate a program." },
+      empty: { it: "Nessun programma generato. Utilizza l'AI o contatta il coach per crearne uno.", en: "No program generated yet. Use the AI or contact your coach to create one." },
+    };
+    const key = Object.keys(map).find((k) => map[k].it === msg);
+    return key ? t(map[key].it, map[key].en) : msg;
+  };
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -208,7 +222,7 @@ const MyProgram: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        setError("Devi effettuare l'accesso per salvare il programma");
+        setError(t("Devi effettuare l'accesso per salvare il programma", "You must be logged in to save the program"));
         setLoading(false);
         return;
       }
@@ -221,18 +235,18 @@ const MyProgram: React.FC = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Errore nel salvataggio del programma');
+        throw new Error(errorData.message || t('Errore nel salvataggio del programma', 'Error saving the program'));
       }
 
       const result = await response.json();
       // The API persists scalar fields; keep the edited structure as source of truth.
       setProgram(result && result.weeks ? result : editedProgram);
       setIsEditing(false);
-      addNotification('Programma salvato con successo!', 'success');
+      addNotification(t('Programma salvato con successo!', 'Program saved successfully!'), 'success');
 
     } catch (err: any) {
       console.error("Error saving program:", err);
-      setError(err.message || "Impossibile salvare il programma.");
+      setError(err.message || t("Impossibile salvare il programma.", "Unable to save the program."));
     } finally {
       setLoading(false);
     }
@@ -264,7 +278,7 @@ const MyProgram: React.FC = () => {
       notes: '',
       order: newProgram.weeks[weekIdx].days[dayIdx].workouts[workoutIdx].exercises.length,
     // eslint-disable-next-line react-hooks/purity
-    } : { exercise: { id: `custom-${Date.now()}`, name: 'Nuovo Esercizio' }, sets: 3, reps: '10', rest: '60s', notes: '', order: 0 };
+    } : { exercise: { id: `custom-${Date.now()}`, name: t('Nuovo Esercizio', 'New Exercise') }, sets: 3, reps: '10', rest: '60s', notes: '', order: 0 };
     newProgram.weeks[weekIdx].days[dayIdx].workouts[workoutIdx].exercises.push(newEx);
     setEditedProgram(newProgram);
   };
@@ -279,7 +293,7 @@ const MyProgram: React.FC = () => {
   const handleAddWorkout = (weekIdx: number, dayIdx: number) => {
     if (!editedProgram) return;
     const newProgram = JSON.parse(JSON.stringify(editedProgram)) as Program;
-    newProgram.weeks[weekIdx].days[dayIdx].workouts.push({ id: `workout-${Date.now()}`, name: 'Nuovo Allenamento', exercises: [] });
+    newProgram.weeks[weekIdx].days[dayIdx].workouts.push({ id: `workout-${Date.now()}`, name: t('Nuovo Allenamento', 'New Workout'), exercises: [] });
     setEditedProgram(newProgram);
   };
 
@@ -338,7 +352,7 @@ const MyProgram: React.FC = () => {
   const handleAddDay = (weekIdx: number) => {
     if (!editedProgram) return;
     const newProgram = JSON.parse(JSON.stringify(editedProgram)) as Program;
-    newProgram.weeks[weekIdx].days.push({ id: `day-${Date.now()}`, name: 'Nuovo Giorno', workouts: [] });
+    newProgram.weeks[weekIdx].days.push({ id: `day-${Date.now()}`, name: t('Nuovo Giorno', 'New Day'), workouts: [] });
     setEditedProgram(newProgram);
   };
 
@@ -355,8 +369,8 @@ const MyProgram: React.FC = () => {
     const num = newProgram.weeks.length + 1;
     newProgram.weeks.push({
       weekNumber: num,
-      theme: 'Nuova Settimana',
-      days: [{ id: `day-${Date.now()}`, name: 'Giorno 1', workouts: [] }],
+      theme: t('Nuova Settimana', 'New Week'),
+      days: [{ id: `day-${Date.now()}`, name: t('Giorno 1', 'Day 1'), workouts: [] }],
     });
     setEditedProgram(newProgram);
   };
@@ -388,7 +402,7 @@ const MyProgram: React.FC = () => {
     ) || [];
     const exportProgram: ProgramForExport = {
       _id: program.id || '',
-      title: program.title || 'Programma',
+      title: program.title || t('Programma', 'Program'),
       description: program.description || '',
       level: program.level || '',
       price: 0,
@@ -399,7 +413,7 @@ const MyProgram: React.FC = () => {
         rest: ex.rest,
         notes: ex.notes,
       })),
-      date: new Date().toLocaleDateString('it-IT'),
+      date: new Date().toLocaleDateString(locale === 'en' ? 'en-US' : 'it-IT'),
       daysPerWeek: program.daysPerWeek,
       goals: program.goals,
       focus: program.focus,
@@ -412,13 +426,13 @@ const MyProgram: React.FC = () => {
 
   const handleExportWeeks = (format: 'txt' | 'csv' | 'pdf' | 'json') => {
     if (!program || !program.weeks) return;
-    const progTitle = program.title || 'Programma';
+    const progTitle = program.title || t('Programma', 'Program');
     const prog: any = {
       id: program.id || '',
       title: progTitle,
       level: program.level || '',
       focus: program.focus || '',
-      date: new Date().toLocaleDateString('it-IT'),
+      date: new Date().toLocaleDateString(locale === 'en' ? 'en-US' : 'it-IT'),
     };
     if (format === 'txt') downloadWeeksTxt(prog, program.weeks);
     else if (format === 'csv') downloadWeeksCsv(prog, program.weeks);
@@ -428,7 +442,7 @@ const MyProgram: React.FC = () => {
 
   const renderProgramContent = (programData: Program | null, isEditable: boolean) => {
     if (!programData) return null;
-    if (programData.message) return <p className="text-center text-zinc-400">{programData.message}</p>;
+    if (programData.message) return <p className="text-center text-zinc-600 dark:text-zinc-400">{programMessage(programData.message)}</p>;
 
     const weeks = programData.weeks || (programData.weeklyPlan ? [{
       weekNumber: 1,
@@ -442,15 +456,15 @@ const MyProgram: React.FC = () => {
           <div key={week.weekNumber} className="mb-16">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <h2 className="text-2xl font-bold text-white">
-                  Settimana {week.weekNumber}
+                <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
+                  {t("Settimana", "Week")} {week.weekNumber}
                 </h2>
                 {week.theme && (
                   <span className="text-sm text-zinc-500">{week.theme}</span>
                 )}
                 {week.isDeload && (
                   <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                    Scarico
+                    {t("Scarico", "Deload")}
                   </span>
                 )}
               </div>
@@ -474,10 +488,10 @@ const MyProgram: React.FC = () => {
                         newProgram.weeks[weekIdx].days[dayIdx].name = e.target.value;
                         setEditedProgram(newProgram);
                       }}
-                      className="text-xl font-bold text-white bg-transparent border-b-2 border-red-500 focus:outline-none w-1/2"
+                      className="text-xl font-bold text-zinc-900 dark:text-white bg-transparent border-b-2 border-red-500 focus:outline-none w-1/2"
                     />
                   ) : (
-                    <h3 className="text-xl font-bold text-white">{day.name}</h3>
+                    <h3 className="text-xl font-bold text-zinc-900 dark:text-white">{day.name}</h3>
                   )}
                   {isEditable && (
                     <button onClick={() => handleRemoveDay(weekIdx, dayIdx)} className="text-red-500 hover:text-red-400 transition">
@@ -487,7 +501,7 @@ const MyProgram: React.FC = () => {
                 </div>
 
                 {day.workouts.map((workout, workoutIdx) => (
-                  <div key={workout.id || workoutIdx} className={`mb-6 p-5 rounded-lg ${isEditable ? 'bg-zinc-900/70 border border-zinc-700' : 'bg-zinc-900/30'}`}>
+                  <div key={workout.id || workoutIdx} className={`mb-6 p-5 rounded-lg ${isEditable ? 'bg-white dark:bg-zinc-900/70 border border-zinc-300 dark:border-zinc-700' : 'bg-white dark:bg-zinc-900/30'}`}>
                     <div className="flex justify-between items-center mb-4">
                       {isEditable ? (
                         <input
@@ -531,7 +545,7 @@ const MyProgram: React.FC = () => {
                           onDragOver={handleExerciseDragOver(weekIdx, dayIdx, workoutIdx, exerciseIdx)}
                           onDrop={handleExerciseDrop(weekIdx, dayIdx, workoutIdx, exerciseIdx)}
                           onDragEnd={handleExerciseDragEnd}
-                          className={`p-4 rounded-lg group relative ${isDropTarget ? 'ring-2 ring-red-500' : ''} ${isDragSrc ? 'opacity-40' : ''} ${isEditable ? 'bg-zinc-800 border border-zinc-700' : 'bg-zinc-800/50'}`}
+                          className={`p-4 rounded-lg group relative ${isDropTarget ? 'ring-2 ring-red-500' : ''} ${isDragSrc ? 'opacity-40' : ''} ${isEditable ? 'bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700' : 'bg-white dark:bg-zinc-800/50'}`}
                         >
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                             <div className="flex-1 md:w-1/3 flex items-center gap-2">
@@ -552,18 +566,18 @@ const MyProgram: React.FC = () => {
                                     type="text"
                                     value={exercise.exercise.name}
                                     onChange={(e) => handleExerciseChange(weekIdx, dayIdx, workoutIdx, exerciseIdx, 'exercise', { ...exercise.exercise, name: e.target.value })}
-                                    className="font-semibold text-white bg-transparent border-b-2 border-zinc-600 focus:outline-none w-full"
+                                    className="font-semibold text-zinc-900 dark:text-white bg-transparent border-b-2 border-zinc-600 focus:outline-none w-full"
                                   />
                                   <button
                                     onClick={() => openExerciseBrowser(weekIdx, dayIdx, workoutIdx)}
                                     className="text-zinc-500 hover:text-red-500 transition shrink-0"
-                                    title="Cerca esercizio nel database"
+                                    title={t("Cerca esercizio nel database", "Search exercise in the database")}
                                   >
                                     <Search size={16} />
                                   </button>
                                 </div>
                               ) : (
-                                <span className="font-semibold text-white">{exercise.exercise.name}</span>
+                                <span className="font-semibold text-zinc-900 dark:text-white">{exercise.exercise.name}</span>
                               )}
                               {exercise.exercise.muscleGroups && exercise.exercise.muscleGroups.length > 0 && !isEditable && (
                                 <p className="text-[10px] text-zinc-500 uppercase mt-1">
@@ -574,12 +588,12 @@ const MyProgram: React.FC = () => {
 
                             <div className="flex flex-wrap items-center gap-4 md:w-2/3 md:justify-end">
                               {[
-                                { label: 'Serie', field: 'sets', type: 'number', width: 'w-16' },
-                                { label: 'Ripetizioni', field: 'reps', type: 'text', width: 'w-20' },
-                                { label: 'Recupero', field: 'rest', type: 'text', width: 'w-20' },
+                                { label: t('Serie', 'Sets'), field: 'sets', type: 'number', width: 'w-16' },
+                                { label: t('Ripetizioni', 'Reps'), field: 'reps', type: 'text', width: 'w-20' },
+                                { label: t('Recupero', 'Rest'), field: 'rest', type: 'text', width: 'w-20' },
                               ].map(f => (
                                 <div key={f.field} className="flex items-center gap-2">
-                                  <span className="text-zinc-400 text-xs">{f.label}:</span>
+                                  <span className="text-zinc-600 dark:text-zinc-400 text-xs">{f.label}:</span>
                                   {isEditable ? (
                                     <input
                                       type={f.type}
@@ -590,10 +604,10 @@ const MyProgram: React.FC = () => {
                                         f.type === 'number' ? parseInt(e.target.value, 10) || 0 : e.target.value
                                       )}
                                       min="1"
-                                      className={`${f.width} p-1 border border-zinc-600 rounded bg-zinc-900 text-center text-sm`}
+                                      className={`${f.width} p-1 border border-zinc-600 rounded bg-zinc-200 dark:bg-zinc-900 text-center text-sm text-zinc-900 dark:text-white`}
                                     />
                                   ) : (
-                                    <span className="text-white text-sm font-medium">{(exercise as any)[f.field]}</span>
+                                    <span className="text-zinc-900 dark:text-white text-sm font-medium">{(exercise as any)[f.field]}</span>
                                   )}
                                 </div>
                               ))}
@@ -609,8 +623,8 @@ const MyProgram: React.FC = () => {
                             )}
                           </div>
                           {exercise.notes && (
-                            <div className="mt-2 text-xs text-zinc-400">
-                              Note: {exercise.notes}
+                            <div className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
+                              {t("Note:", "Notes:")} {exercise.notes}
                             </div>
                           )}
                         </div>
@@ -624,13 +638,13 @@ const MyProgram: React.FC = () => {
                           onClick={() => handleAddExercise(weekIdx, dayIdx, workoutIdx)}
                           className="flex items-center text-red-500 hover:text-red-400 transition text-sm"
                         >
-                          <Plus size={16} className="mr-1" /> Aggiungi Esercizio
+                          <Plus size={16} className="mr-1" /> {t("Aggiungi Esercizio", "Add Exercise")}
                         </button>
                         <button
                           onClick={() => openExerciseBrowser(weekIdx, dayIdx, workoutIdx)}
-                          className="flex items-center text-zinc-400 hover:text-red-400 transition text-sm"
+                          className="flex items-center text-zinc-600 dark:text-zinc-400 hover:text-red-400 transition text-sm"
                         >
-                          <Search size={14} className="mr-1" /> Da Database
+                          <Search size={14} className="mr-1" /> {t("Da Database", "From Database")}
                         </button>
                       </div>
                     )}
@@ -639,7 +653,7 @@ const MyProgram: React.FC = () => {
 
                 {isEditable && (
                   <button onClick={() => handleAddWorkout(weekIdx, dayIdx)} className="flex items-center text-red-500 hover:text-red-400 transition text-sm">
-                    <Plus size={16} className="mr-1" /> Aggiungi Allenamento
+                    <Plus size={16} className="mr-1" /> {t("Aggiungi Allenamento", "Add Workout")}
                   </button>
                 )}
               </div>
@@ -647,7 +661,7 @@ const MyProgram: React.FC = () => {
 
             {isEditable && (
               <button onClick={() => handleAddDay(weekIdx)} className="flex items-center text-red-500 hover:text-red-400 transition text-sm">
-                <Plus size={16} className="mr-1" /> Aggiungi Giorno a Settimana {week.weekNumber}
+                <Plus size={16} className="mr-1" /> {t("Aggiungi Giorno a Settimana", "Add Day to Week")} {week.weekNumber}
               </button>
             )}
           </div>
@@ -655,7 +669,7 @@ const MyProgram: React.FC = () => {
 
         {isEditable && (
           <button onClick={handleAddWeek} className="flex items-center text-red-500 hover:text-red-400 transition text-sm mt-4">
-            <Plus size={18} className="mr-2" /> Aggiungi Settimana
+            <Plus size={18} className="mr-2" /> {t("Aggiungi Settimana", "Add Week")}
           </button>
         )}
       </>
@@ -667,7 +681,7 @@ const MyProgram: React.FC = () => {
       <div className="page-shell flex flex-col items-center justify-center px-6 text-center">
         <p role="alert" className="body-copy text-red-400">{error}</p>
         <Button size="lg" className="mt-8" onClick={() => navigate('/create')}>
-          Crea il tuo programma
+          {t("Crea il tuo programma", "Create your program")}
         </Button>
       </div>
     );
@@ -676,60 +690,60 @@ const MyProgram: React.FC = () => {
   return (
     <>
       <SEO
-        title="Mio Programma"
-        description="Il tuo programma di calisthenics personalizzato su Maxthenics. Visualizza e gestisci il tuo piano di allenamento settimanale."
-        keywords="mio programma calisthenics, piano allenamento personalizzato, settimana workout"
+        title={t("Mio Programma", "My Program")}
+        description={t("Il tuo programma di calisthenics personalizzato su Maxthenics. Visualizza e gestisci il tuo piano di allenamento settimanale.", "Your personalized calisthenics program on Maxthenics. View and manage your weekly training plan.")}
+        keywords={t("mio programma calisthenics, piano allenamento personalizzato, settimana workout", "my calisthenics program, personalized training plan, workout week")}
       />
       <div className="page-shell px-6 lg:px-8">
         <div className="container-max flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
           <div>
-            <p className="eyebrow">Il tuo piano</p>
+            <p className="eyebrow">{t("Il tuo piano", "Your plan")}</p>
             <motion.h1
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="page-title mt-2 text-3xl sm:text-4xl"
             >
-              Il tuo programma di allenamento
+              {t("Il tuo programma di allenamento", "Your training program")}
             </motion.h1>
           </div>
           <div className="flex items-center gap-2">
             {/* Export dropdown */}
             {program && program.weeks && program.weeks.length > 0 && !isEditing && (
               <div className="relative group">
-                <button className="flex items-center px-3 py-2 rounded-lg text-white bg-zinc-800 hover:bg-zinc-700 transition text-sm">
-                  <Download size={16} className="mr-1" /> Esporta <ChevronDown size={14} className="ml-1" />
+                <button className="flex items-center px-3 py-2 rounded-lg text-zinc-900 dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition text-sm">
+                  <Download size={16} className="mr-1" /> {t("Esporta", "Export")} <ChevronDown size={14} className="ml-1" />
                 </button>
-                <div className="absolute right-0 top-full mt-1 z-50 w-52 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden hidden group-hover:block">
+                <div className="absolute right-0 top-full mt-1 z-50 w-52 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl shadow-2xl overflow-hidden hidden group-hover:block">
                   <div className="p-2">
-                    <p className="text-[9px] text-zinc-500 uppercase tracking-wider px-2 py-1">Semplice (lista piatta)</p>
-                    <button onClick={() => handleExportSimple('txt')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">TXT</button>
-                    <button onClick={() => handleExportSimple('csv')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">CSV</button>
-                    <button onClick={() => handleExportSimple('json')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">JSON</button>
-                    <button onClick={() => handleExportSimple('pdf')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">PDF / Stampa</button>
+                    <p className="text-[9px] text-zinc-500 uppercase tracking-wider px-2 py-1">{t("Semplice (lista piatta)", "Simple (flat list)")}</p>
+                    <button onClick={() => handleExportSimple('txt')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">TXT</button>
+                    <button onClick={() => handleExportSimple('csv')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">CSV</button>
+                    <button onClick={() => handleExportSimple('json')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">JSON</button>
+                    <button onClick={() => handleExportSimple('pdf')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">{t("PDF / Stampa", "PDF / Print")}</button>
                   </div>
-                  <div className="border-t border-white/5 p-2">
-                    <p className="text-[9px] text-zinc-500 uppercase tracking-wider px-2 py-1">Completo (per settimane)</p>
-                    <button onClick={() => handleExportWeeks('txt')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">TXT</button>
-                    <button onClick={() => handleExportWeeks('csv')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">CSV</button>
-                    <button onClick={() => handleExportWeeks('json')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">JSON</button>
-                    <button onClick={() => handleExportWeeks('pdf')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors">PDF / Stampa</button>
+                  <div className="border-t border-zinc-200 dark:border-white/5 p-2">
+                    <p className="text-[9px] text-zinc-500 uppercase tracking-wider px-2 py-1">{t("Completo (per settimane)", "Full (by weeks)")}</p>
+                    <button onClick={() => handleExportWeeks('txt')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">TXT</button>
+                    <button onClick={() => handleExportWeeks('csv')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">CSV</button>
+                    <button onClick={() => handleExportWeeks('json')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">JSON</button>
+                    <button onClick={() => handleExportWeeks('pdf')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">{t("PDF / Stampa", "PDF / Print")}</button>
                   </div>
                 </div>
               </div>
             )}
             {!isEditing && program && program.weeks && program.weeks.length > 0 && (
-              <button onClick={handleEditToggle} className="flex items-center px-4 py-2 rounded-lg text-white bg-zinc-800 hover:bg-zinc-700 transition">
-                <Edit size={18} className="mr-1" /> Modifica
+              <button onClick={handleEditToggle} className="flex items-center px-4 py-2 rounded-lg text-zinc-900 dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition">
+                <Edit size={18} className="mr-1" /> {t("Modifica", "Edit")}
               </button>
             )}
             {isEditing && (
               <>
                 <button onClick={handleSaveProgram} disabled={loading} className="flex items-center px-4 py-2 rounded-lg text-white bg-green-600 hover:bg-green-500 transition mr-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin mr-1" /> : <Check size={18} className="mr-1" />} Salva Modifiche
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin mr-1" /> : <Check size={18} className="mr-1" />} {t("Salva Modifiche", "Save Changes")}
                 </button>
-                <button onClick={handleEditToggle} className="flex items-center px-4 py-2 rounded-lg text-white bg-zinc-700 hover:bg-zinc-600 transition">
-                  Annulla
+                <button onClick={handleEditToggle} className="flex items-center px-4 py-2 rounded-lg text-zinc-900 dark:text-white bg-zinc-300 dark:bg-zinc-700 hover:bg-zinc-400 dark:hover:bg-zinc-600 transition">
+                  {t("Annulla", "Cancel")}
                 </button>
               </>
             )}
@@ -742,44 +756,44 @@ const MyProgram: React.FC = () => {
 
       {/* Exercise Browser Modal */}
       {showExerciseBrowser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-3xl max-h-[80vh] flex flex-col shadow-2xl">
-            <div className="flex items-center justify-between p-4 border-b border-zinc-700">
-              <h3 className="text-lg font-bold text-white">Database Esercizi</h3>
-              <button onClick={() => setShowExerciseBrowser(false)} className="text-zinc-400 hover:text-white transition">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-500/30 dark:bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-2xl w-full max-w-3xl max-h-[80vh] flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between p-4 border-b border-zinc-300 dark:border-zinc-700">
+              <h3 className="text-lg font-bold text-zinc-900 dark:text-white">{t("Database Esercizi", "Exercise Database")}</h3>
+              <button onClick={() => setShowExerciseBrowser(false)} className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition">
                 <X size={20} />
               </button>
             </div>
 
-            <div className="p-4 border-b border-zinc-800 space-y-3">
+            <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 space-y-3">
               <div className="relative">
                 <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
                 <input
                   type="text"
                   value={exerciseSearch}
                   onChange={(e) => setExerciseSearch(e.target.value)}
-                  placeholder="Cerca per nome, muscolo, attrezzatura..."
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                  placeholder={t("Cerca per nome, muscolo, attrezzatura...", "Search by name, muscle, equipment...")}
+                  className="w-full bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg pl-10 pr-4 py-2 text-sm text-zinc-900 dark:text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
                 />
               </div>
               <div className="flex gap-2 overflow-x-auto pb-1">
                 <button
                   onClick={() => setExerciseFilter(null)}
                   className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
-                    !exerciseFilter ? 'bg-red-600 text-white' : 'bg-zinc-800 text-zinc-400 hover:text-white'
+                    !exerciseFilter ? 'bg-red-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                   }`}
                 >
-                  Tutti
+                  {t("Tutti", "All")}
                 </button>
                 {['beginner', 'intermediate', 'advanced'].map(d => (
                   <button
                     key={d}
                     onClick={() => setExerciseFilter(exerciseFilter === d ? null : d)}
                     className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
-                      exerciseFilter === d ? 'bg-red-600 text-white' : 'bg-zinc-800 text-zinc-400 hover:text-white'
+                      exerciseFilter === d ? 'bg-red-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                     }`}
                   >
-                    {d === 'beginner' ? 'Princip.' : d === 'intermediate' ? 'Intermed.' : 'Avanz.'}
+                    {d === 'beginner' ? t('Princip.', 'Begin.') : d === 'intermediate' ? t('Intermed.', 'Interm.') : t('Avanz.', 'Adv.')}
                   </button>
                 ))}
                 {muscleGroups.slice(0, 8).map(m => (
@@ -787,7 +801,7 @@ const MyProgram: React.FC = () => {
                     key={m}
                     onClick={() => setExerciseFilter(exerciseFilter === m ? null : m)}
                     className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
-                      exerciseFilter === m ? 'bg-red-600 text-white' : 'bg-zinc-800 text-zinc-400 hover:text-white'
+                      exerciseFilter === m ? 'bg-red-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                     }`}
                   >
                     {m.slice(0, 12)}
@@ -805,9 +819,9 @@ const MyProgram: React.FC = () => {
                       addExerciseFromBrowser(ex);
                       setShowExerciseBrowser(false);
                     }}
-                    className="text-left p-3 rounded-xl bg-zinc-800/50 border border-zinc-700/50 hover:border-red-500/30 hover:bg-zinc-800 transition-all group"
+                    className="text-left p-3 rounded-xl bg-white dark:bg-zinc-800/50 border border-zinc-300 dark:border-zinc-700/50 hover:border-red-500/30 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all group"
                   >
-                    <p className="font-semibold text-white text-sm group-hover:text-red-400 transition-colors">{ex.name}</p>
+                    <p className="font-semibold text-zinc-900 dark:text-white text-sm group-hover:text-red-400 transition-colors">{ex.name}</p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {ex.muscleGroups.primary.slice(0, 2).map(m => (
                         <span key={m} className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-400/70">{m}</span>
@@ -823,12 +837,12 @@ const MyProgram: React.FC = () => {
                 ))}
               </div>
               {filteredExercises.length === 0 && (
-                <p className="text-center text-zinc-500 py-8">Nessun esercizio trovato</p>
+                <p className="text-center text-zinc-500 py-8">{t("Nessun esercizio trovato", "No exercises found")}</p>
               )}
             </div>
 
-            <div className="p-3 border-t border-zinc-800 text-center text-xs text-zinc-600">
-              {filteredExercises.length} di {exercises.length} esercizi
+            <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 text-center text-xs text-zinc-600">
+              {filteredExercises.length} {t("di", "of")} {exercises.length} {t("esercizi", "exercises")}
             </div>
           </div>
         </div>

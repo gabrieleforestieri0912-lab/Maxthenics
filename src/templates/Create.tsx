@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import {
   User,
   Award,
@@ -50,31 +51,37 @@ import { safeJsonParse } from "../lib/safeJson";
 import SEO from "../components/SEO";
 import type { SavedProgram } from "../types/program";
 
+interface LocalizedText {
+  it: string;
+  en: string;
+}
+
 interface ExperienceOption {
-  label: string;
+  val: string;
+  label: LocalizedText;
   icon: LucideIcon;
   color: string;
-  desc: string;
+  desc: LocalizedText;
 }
 
 interface WorkoutIntensity {
   value: string;
-  label: string;
-  desc: string;
+  label: LocalizedText;
+  desc: LocalizedText;
   barColor: string;
 }
 
 interface FocusOption {
   val: string;
-  label: string;
+  label: LocalizedText;
   icon: LucideIcon;
-  desc: string;
+  desc: LocalizedText;
   gradient: string;
 }
 
 interface GenderOption {
   val: string;
-  label: string;
+  label: LocalizedText;
 }
 
 const LEVEL_STYLES: Record<string, { bg: string; border: string; glow: string; accent: string; tag: string }> = {
@@ -102,65 +109,76 @@ const LEVEL_STYLES: Record<string, { bg: string; border: string; glow: string; a
 };
 
 const FOCUS_OPTIONS: FocusOption[] = [
-  { val: "ipertrofia", icon: Dumbbell, label: "Ipertrofia", desc: "Aumenta la massa muscolare e definizione", gradient: "from-red-600/20 to-red-500/5" },
-  { val: "forza", icon: Zap, label: "Forza Pura", desc: "Rafforza il sistema neuromuscolare e la potenza", gradient: "from-blue-600/20 to-blue-500/5" },
-  { val: "resistenza", icon: Activity, label: "Resistenza", desc: "Migliora la resistenza cardiovascolare e muscolare", gradient: "from-green-600/20 to-green-500/5" },
-  { val: "skills", icon: Target, label: "Skills & Moves", desc: "Padroneggia le mosse avanzate", gradient: "from-violet-600/20 to-violet-500/5" },
-  { val: "dimagrimento", icon: Flame, label: "Dimagrimento", desc: "Riduci la massa grassa con allenamenti intensi", gradient: "from-orange-600/20 to-orange-500/5" },
-  { val: "mobilita", icon: Wind, label: "Mobilità & Recupero", desc: "Aumenta la flessibilità articolare e previeni infortuni", gradient: "from-cyan-600/20 to-cyan-500/5" },
+  { val: "ipertrofia", icon: Dumbbell, label: { it: "Ipertrofia", en: "Hypertrophy" }, desc: { it: "Aumenta la massa muscolare e definizione", en: "Build muscle mass and definition" }, gradient: "from-red-600/20 to-red-500/5" },
+  { val: "forza", icon: Zap, label: { it: "Forza Pura", en: "Pure Strength" }, desc: { it: "Rafforza il sistema neuromuscolare e la potenza", en: "Strengthen the neuromuscular system and power" }, gradient: "from-blue-600/20 to-blue-500/5" },
+  { val: "resistenza", icon: Activity, label: { it: "Resistenza", en: "Endurance" }, desc: { it: "Migliora la resistenza cardiovascolare e muscolare", en: "Improve cardiovascular and muscular endurance" }, gradient: "from-green-600/20 to-green-500/5" },
+  { val: "skills", icon: Target, label: { it: "Skills & Moves", en: "Skills & Moves" }, desc: { it: "Padroneggia le mosse avanzate", en: "Master advanced moves" }, gradient: "from-violet-600/20 to-violet-500/5" },
+  { val: "dimagrimento", icon: Flame, label: { it: "Dimagrimento", en: "Fat Loss" }, desc: { it: "Riduci la massa grassa con allenamenti intensi", en: "Reduce body fat with intense training" }, gradient: "from-orange-600/20 to-orange-500/5" },
+  { val: "mobilita", icon: Wind, label: { it: "Mobilità & Recupero", en: "Mobility & Recovery" }, desc: { it: "Aumenta la flessibilità articolare e previeni infortuni", en: "Increase joint mobility and prevent injuries" }, gradient: "from-cyan-600/20 to-cyan-500/5" },
 ];
 
 const INTENSITY_OPTIONS: WorkoutIntensity[] = [
-  { value: "baja", label: "Bassa", desc: "Sessione leggera, ideale per recupero o principianti", barColor: "bg-emerald-500" },
-  { value: "media", label: "Media", desc: "Allenamento bilanciato — adatto alla maggior parte", barColor: "bg-amber-500" },
-  { value: "alta", label: "Alta", desc: "Massimo impegno — richiede esperienza", barColor: "bg-red-500" },
+  { value: "baja", label: { it: "Bassa", en: "Low" }, desc: { it: "Sessione leggera, ideale per recupero o principianti", en: "Light session, ideal for recovery or beginners" }, barColor: "bg-emerald-500" },
+  { value: "media", label: { it: "Media", en: "Medium" }, desc: { it: "Allenamento bilanciato — adatto alla maggior parte", en: "Balanced training — suitable for most people" }, barColor: "bg-amber-500" },
+  { value: "alta", label: { it: "Alta", en: "High" }, desc: { it: "Massimo impegno — richiede esperienza", en: "Maximum effort — requires experience" }, barColor: "bg-red-500" },
 ];
 
 const EXPERIENCE_OPTIONS: ExperienceOption[] = [
-  { label: "0-1 anni", icon: Sprout, color: "text-emerald-400", desc: "Inizio del percorso" },
-  { label: "1-3 anni", icon: Zap, color: "text-red-400", desc: "Fondamenti solidi" },
-  { label: "3-5 anni", icon: Flame, color: "text-orange-400", desc: "Consolidamento" },
-  { label: "5+ anni", icon: Crown, color: "text-amber-400", desc: "Livello esperto" },
+  { val: "0-1", label: { it: "0-1 anni", en: "0-1 years" }, icon: Sprout, color: "text-emerald-400", desc: { it: "Inizio del percorso", en: "Start of the journey" } },
+  { val: "1-3", label: { it: "1-3 anni", en: "1-3 years" }, icon: Zap, color: "text-red-400", desc: { it: "Fondamenti solidi", en: "Solid foundations" } },
+  { val: "3-5", label: { it: "3-5 anni", en: "3-5 years" }, icon: Flame, color: "text-orange-400", desc: { it: "Consolidamento", en: "Consolidation" } },
+  { val: "5+", label: { it: "5+ anni", en: "5+ years" }, icon: Crown, color: "text-amber-400", desc: { it: "Livello esperto", en: "Expert level" } },
 ];
 
-const BODY_FOCUS_OPTIONS: { label: string; icon: LucideIcon; group: string }[] = [
-  { label: "Petto", icon: Dumbbell, group: "Upper" },
-  { label: "Schiena", icon: MoveLeft, group: "Upper" },
-  { label: "Spalle", icon: Crosshair, group: "Upper" },
-  { label: "Bicipiti", icon: Dumbbell, group: "Upper" },
-  { label: "Tricipiti", icon: Dumbbell, group: "Upper" },
-  { label: "Addominali", icon: Flame, group: "Core" },
-  { label: "Core", icon: Shield, group: "Core" },
-  { label: "Quadricipiti", icon: Footprints, group: "Lower" },
-  { label: "Femorali", icon: Footprints, group: "Lower" },
-  { label: "Glutei", icon: Circle, group: "Lower" },
-  { label: "Polpacci", icon: Footprints, group: "Lower" },
-  { label: "Gambe Completo", icon: Building2, group: "Lower" },
+const BODY_FOCUS_OPTIONS: { label: LocalizedText; icon: LucideIcon; group: string }[] = [
+  { label: { it: "Petto", en: "Chest" }, icon: Dumbbell, group: "Upper" },
+  { label: { it: "Schiena", en: "Back" }, icon: MoveLeft, group: "Upper" },
+  { label: { it: "Spalle", en: "Shoulders" }, icon: Crosshair, group: "Upper" },
+  { label: { it: "Bicipiti", en: "Biceps" }, icon: Dumbbell, group: "Upper" },
+  { label: { it: "Tricipiti", en: "Triceps" }, icon: Dumbbell, group: "Upper" },
+  { label: { it: "Addominali", en: "Abs" }, icon: Flame, group: "Core" },
+  { label: { it: "Core", en: "Core" }, icon: Shield, group: "Core" },
+  { label: { it: "Quadricipiti", en: "Quadriceps" }, icon: Footprints, group: "Lower" },
+  { label: { it: "Femorali", en: "Hamstrings" }, icon: Footprints, group: "Lower" },
+  { label: { it: "Glutei", en: "Glutes" }, icon: Circle, group: "Lower" },
+  { label: { it: "Polpacci", en: "Calves" }, icon: Footprints, group: "Lower" },
+  { label: { it: "Gambe Completo", en: "Full Legs" }, icon: Building2, group: "Lower" },
 ];
 
 const GENDER_OPTIONS: GenderOption[] = [
-  { val: "male", label: "Maschile" },
-  { val: "female", label: "Femminile" },
-  { val: "other", label: "Altro" },
-  { val: "prefer-not-say", label: "Preferisco non dire" },
+  { val: "male", label: { it: "Maschile", en: "Male" } },
+  { val: "female", label: { it: "Femminile", en: "Female" } },
+  { val: "other", label: { it: "Altro", en: "Other" } },
+  { val: "prefer-not-say", label: { it: "Preferisco non dire", en: "Prefer not to say" } },
 ];
 
-const DURATION_OPTIONS = [
-  { val: "30", label: "30 min", sub: "Breve & intenso" },
-  { val: "45", label: "45 min", sub: "Standard equilibrato" },
-  { val: "60", label: "60 min", sub: "Sessione completa" },
-  { val: "75", label: "75 min", sub: "Allenamento lungo" },
-  { val: "90", label: "90 min", sub: "Massimale su tutto" },
+const DURATION_OPTIONS: { val: string; label: string; sub: LocalizedText }[] = [
+  { val: "30", label: "30 min", sub: { it: "Breve & intenso", en: "Short & intense" } },
+  { val: "45", label: "45 min", sub: { it: "Standard equilibrato", en: "Balanced standard" } },
+  { val: "60", label: "60 min", sub: { it: "Sessione completa", en: "Full session" } },
+  { val: "75", label: "75 min", sub: { it: "Allenamento lungo", en: "Long workout" } },
+  { val: "90", label: "90 min", sub: { it: "Massimale su tutto", en: "Maximum on everything" } },
 ];
 
-const TRAINING_TYPES: { val: string; icon: LucideIcon; label: string; desc: string }[] = [
-  { val: "street-workout", icon: Building2, label: "Street Workout", desc: "Esplosività, tricking, muscle-up, movimenti dinamici" },
-  { val: "skill-work", icon: Crosshair, label: "Skill Work", desc: "Front Lever, Planche, Handstand, progressioni tecniche" },
-  { val: "freestyle", icon: Orbit, label: "Freestyle & Flow", desc: "Combinazioni creative, transizioni fluide, stile libero" },
-  { val: "power", icon: Bomb, label: "Power & Static Holds", desc: "Massimale isometrico, tenute statiche, forza bruta" },
-  { val: "rings", icon: Circle, label: "Anelli & Gymnastics", desc: "Lavoro agli anelli, elementi olimpici, controllo" },
-  { val: "hypertrophy", icon: Dumbbell, label: "Ipertrofia & Estetica", desc: "Volume alto, definizione, scheda estetica classica" },
-  { val: "endurance", icon: HeartPulse, label: "Endurance & High Rep", desc: "Resistenza muscolare, high rep, circuiti" },
+const TRAINING_TYPES: { val: string; icon: LucideIcon; label: LocalizedText; desc: LocalizedText }[] = [
+  { val: "street-workout", icon: Building2, label: { it: "Street Workout", en: "Street Workout" }, desc: { it: "Esplosività, tricking, muscle-up, movimenti dinamici", en: "Explosiveness, tricking, muscle-ups, dynamic moves" } },
+  { val: "skill-work", icon: Crosshair, label: { it: "Skill Work", en: "Skill Work" }, desc: { it: "Front Lever, Planche, Handstand, progressioni tecniche", en: "Front Lever, Planche, Handstand, technical progressions" } },
+  { val: "freestyle", icon: Orbit, label: { it: "Freestyle & Flow", en: "Freestyle & Flow" }, desc: { it: "Combinazioni creative, transizioni fluide, stile libero", en: "Creative combos, fluid transitions, freestyle" } },
+  { val: "power", icon: Bomb, label: { it: "Power & Static Holds", en: "Power & Static Holds" }, desc: { it: "Massimale isometrico, tenute statiche, forza bruta", en: "Max isometrics, static holds, raw strength" } },
+  { val: "rings", icon: Circle, label: { it: "Anelli & Gymnastics", en: "Rings & Gymnastics" }, desc: { it: "Lavoro agli anelli, elementi olimpici, controllo", en: "Ring work, gymnastic elements, control" } },
+  { val: "hypertrophy", icon: Dumbbell, label: { it: "Ipertrofia & Estetica", en: "Hypertrophy & Aesthetics" }, desc: { it: "Volume alto, definizione, scheda estetica classica", en: "High volume, definition, classic aesthetic split" } },
+  { val: "endurance", icon: HeartPulse, label: { it: "Endurance & High Rep", en: "Endurance & High Rep" }, desc: { it: "Resistenza muscolare, high rep, circuiti", en: "Muscular endurance, high reps, circuits" } },
+];
+
+const EQUIPMENT_OPTIONS: { val: string; icon: LucideIcon; label: LocalizedText; sub: LocalizedText }[] = [
+  { val: "nessuna", icon: User, label: { it: "Solo Corpo Libero", en: "Bodyweight Only" }, sub: { it: "Nessun attrezzo", en: "No equipment" } },
+  { val: "sbarra", icon: Building2, label: { it: "Sbarra Trazioni", en: "Pull-up Bar" }, sub: { it: "Pull-up bar", en: "Pull-up bar" } },
+  { val: "parallele", icon: MoveLeft, label: { it: "Parallette", en: "Parallettes" }, sub: { it: "Dip bars / P-bars", en: "Dip bars / P-bars" } },
+  { val: "anelli", icon: Circle, label: { it: "Anelli", en: "Rings" }, sub: { it: "Anelli ginnici", en: "Gymnastics rings" } },
+  { val: "bande", icon: RefreshCw, label: { it: "Bande Elastiche", en: "Resistance Bands" }, sub: { it: "Bande di resistenza", en: "Resistance bands" } },
+  { val: "zavorra", icon: Dumbbell, label: { it: "Zavorra", en: "Weighted" }, sub: { it: "Giubbotto / Cintura", en: "Weight vest / Belt" } },
+  { val: "base", icon: Building2, label: { it: "Set Base", en: "Basic Set" }, sub: { it: "Sbarra + Parallele", en: "Bar + Parallettes" } },
+  { val: "completo", icon: Layers, label: { it: "Completo", en: "Full Kit" }, sub: { it: "Tutto disponibile", en: "Everything available" } },
 ];
 
 // ─── EXTRACTED COMPONENTS ─────────────────────────────────────────────────
@@ -170,14 +188,16 @@ interface StepProgressProps {
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const StepProgress: React.FC<StepProgressProps> = ({ step, setStep }) => (
+const StepProgress: React.FC<StepProgressProps> = ({ step, setStep }) => {
+  const { t } = useLanguage();
+  return (
   <div className="space-y-4">
     {[
-      { n: 1, label: "Identità", icon: User },
-      { n: 2, label: "Livello & Esperienza", icon: Award },
-      { n: 3, label: "Logistica", icon: Activity },
-      { n: 4, label: "Obiettivi", icon: Target },
-      { n: 5, label: "Riepilogo", icon: CheckCircle2 },
+      { n: 1, label: { it: "Identità", en: "Identity" }, icon: User },
+      { n: 2, label: { it: "Livello & Esperienza", en: "Level & Experience" }, icon: Award },
+      { n: 3, label: { it: "Logistica", en: "Logistics" }, icon: Activity },
+      { n: 4, label: { it: "Obiettivi", en: "Goals" }, icon: Target },
+      { n: 5, label: { it: "Riepilogo", en: "Summary" }, icon: CheckCircle2 },
     ].map((s) => {
       const Icon = s.icon;
       const active = step === s.n;
@@ -197,7 +217,7 @@ const StepProgress: React.FC<StepProgressProps> = ({ step, setStep }) => (
                 ? "bg-red-600 text-white shadow-lg shadow-red-900/30"
                 : active
                 ? "bg-red-600/15 border border-red-600/40 text-red-500 scale-110"
-                : "bg-zinc-800/50 border border-white/5 text-zinc-600 group-hover:border-white/10"
+                : "bg-zinc-200 dark:bg-zinc-800/50 border border-zinc-200 dark:border-white/5 text-zinc-600 group-hover:border-zinc-300 dark:group-hover:border-white/10"
             }`}
           >
             {done ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
@@ -205,12 +225,12 @@ const StepProgress: React.FC<StepProgressProps> = ({ step, setStep }) => (
           <div className="flex-1 min-w-0">
             <p
               className={`text-xs font-black uppercase tracking-widest transition-colors ${
-                done || active ? "text-white" : "text-zinc-600"
+                done || active ? "text-zinc-900 dark:text-white" : "text-zinc-600"
               }`}
             >
-              {s.label}
+              {t(s.label.it, s.label.en)}
             </p>
-            <div className={`h-0.5 rounded-full mt-2 transition-all duration-500 ${done || active ? "bg-red-600" : "bg-zinc-800"}`}>
+            <div className={`h-0.5 rounded-full mt-2 transition-all duration-500 ${done || active ? "bg-red-600" : "bg-zinc-200 dark:bg-zinc-800"}`}>
               <div className={`h-full rounded-full ${done || active ? "bg-red-600 w-full" : "w-0"}`} />
             </div>
           </div>
@@ -221,44 +241,46 @@ const StepProgress: React.FC<StepProgressProps> = ({ step, setStep }) => (
       );
     })}
   </div>
-);
+  );
+};
 
 interface StepHintProps {
   step: number;
 }
 
 const StepHint: React.FC<StepHintProps> = ({ step }) => {
-  const hints: Record<number, { title: string; body: string }> = {
+  const { t } = useLanguage();
+  const hints: Record<number, { title: LocalizedText; body: LocalizedText }> = {
     1: {
-      title: "Perché questi dati?",
-      body: "L'IA usa età, peso e altezza per calcolare il carico, il volume e la densità di allenamento ottimale per te.",
+      title: { it: "Perché questi dati?", en: "Why this data?" },
+      body: { it: "L'IA usa età, peso e altezza per calcolare il carico, il volume e la densità di allenamento ottimale per te.", en: "The AI uses age, weight and height to calculate the optimal load, volume and training density for you." },
     },
     2: {
-      title: "Sii onesto con te stesso",
-      body: "Il livello definisce la difficoltà degli esercizi e la densità del programma. Non farti vedere più bravo di quello che sei.",
+      title: { it: "Sii onesto con te stesso", en: "Be honest with yourself" },
+      body: { it: "Il livello definisce la difficoltà degli esercizi e la densità del programma. Non farti vedere più bravo di quello che sei.", en: "Your level defines exercise difficulty and program density. Do not oversell your skills." },
     },
     3: {
-      title: "Logistica vincente",
-      body: "Scegliere i giorni giusti è la chiave della consistenza. L'IA costruisce il programma attorno alla tua disponibilità.",
+      title: { it: "Logistica vincente", en: "Winning logistics" },
+      body: { it: "Scegliere i giorni giusti è la chiave della consistenza. L'IA costruisce il programma attorno alla tua disponibilità.", en: "Choosing the right days is the key to consistency. The AI builds the program around your availability." },
     },
     4: {
-      title: "Più dettagli = programma migliore",
-      body: "Specificare obiettivi e focus permette all'IA di selezionare gli esercizi più efficaci per raggiungere i tuoi risultati.",
+      title: { it: "Più dettagli = programma migliore", en: "More details = better program" },
+      body: { it: "Specificare obiettivi e focus permette all'IA di selezionare gli esercizi più efficaci per raggiungere i tuoi risultati.", en: "Specifying goals and focus lets the AI pick the most effective exercises for your results." },
     },
     5: {
-      title: "Quasi pronto!",
-      body: "L'IA genererà un programma completo con esercizi, serie, ripetizioni, recupero e note tecniche — tutto su misura per te.",
+      title: { it: "Quasi pronto!", en: "Almost ready!" },
+      body: { it: "L'IA genererà un programma completo con esercizi, serie, ripetizioni, recupero e note tecniche — tutto su misura per te.", en: "The AI will generate a complete program with exercises, sets, reps, rest and technical notes — fully tailored to you." },
     },
   };
   const hint = hints[step];
   if (!hint) return null;
   return (
-    <div className="bg-zinc-950/30 border border-white/5 rounded-2xl p-5">
+    <div className="bg-white dark:bg-zinc-950/30 border border-zinc-200 dark:border-white/5 rounded-2xl p-5">
       <div className="flex items-start gap-3">
         <BrainCircuit className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
         <div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-1">{hint.title}</p>
-          <p className="text-[11px] text-zinc-500 leading-relaxed">{hint.body}</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-1">{t(hint.title.it, hint.title.en)}</p>
+          <p className="text-[11px] text-zinc-500 leading-relaxed">{t(hint.body.it, hint.body.en)}</p>
         </div>
       </div>
     </div>
@@ -283,21 +305,23 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
   handleDelete,
   handleExport,
   bodyFocus,
-}) => (
+}) => {
+  const { t } = useLanguage();
+  return (
   <div className="space-y-4">
-    <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+    <h2 className="text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-3">
       <Layout className="w-6 h-6 text-red-500" />
-      I Tuoi Piani
+      {t("I Tuoi Piani", "Your Plans")}
     </h2>
     <p className="text-[11px] text-zinc-500">
-      I programmi che hai creato con l&apos;AI. Modifica, esporta o eliminali quando vuoi.
+      {t("I programmi che hai creato con l'AI. Modifica, esporta o eliminali quando vuoi.", "The programs you created with AI. Edit, export or delete them anytime.")}
     </p>
 
     {programs.length === 0 ? (
-      <div className="bg-zinc-900/20 border border-dashed border-white/10 rounded-[1.5rem] p-10 text-center">
+      <div className="bg-white dark:bg-zinc-900/20 border border-dashed border-zinc-200 dark:border-white/10 rounded-[1.5rem] p-10 text-center">
         <Layout className="mx-auto text-zinc-800 mb-4" size={40} />
-        <p className="text-zinc-600 text-sm">Nessun programma creato ancora.</p>
-        <p className="text-zinc-700 text-xs mt-1">Compila il wizard e genera il tuo primo piano!</p>
+        <p className="text-zinc-600 text-sm">{t("Nessun programma creato ancora.", "No programs created yet.")}</p>
+        <p className="text-zinc-700 text-xs mt-1">{t("Compila il wizard e genera il tuo primo piano!", "Fill in the wizard and generate your first plan!")}</p>
       </div>
     ) : (
       <div className="space-y-3">
@@ -306,7 +330,7 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
           return (
             <div
               key={i}
-              className="group bg-zinc-900/60 backdrop-blur-sm p-5 rounded-2xl border border-white/10 hover:border-red-500/25 transition-all duration-300 hover:bg-zinc-900/80"
+              className="group bg-white dark:bg-zinc-900/60 backdrop-blur-sm p-5 rounded-2xl border border-zinc-200 dark:border-white/10 hover:border-red-500/25 transition-all duration-300 hover:bg-zinc-100 dark:hover:bg-zinc-900/80"
             >
               {/* Header row */}
               <div className="flex justify-between items-start gap-3">
@@ -321,64 +345,64 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
                       </span>
                     )}
                     {p.intensity && (
-                      <span className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-white/5">
+                      <span className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-white/5">
                         {p.intensity}
                       </span>
                     )}
                   </div>
-                  <p className="text-base font-black text-white truncate">{p.title}</p>
+                  <p className="text-base font-black text-zinc-900 dark:text-white truncate">{p.title}</p>
                   <p className="text-[11px] text-zinc-500 mt-1">
-                    {p.daysPerWeek} giorni/sett · {p.sessionDuration}min ·&nbsp;
-                    {p.goals ? `"${p.goals.length > 60 ? p.goals.slice(0, 60) + "..." : p.goals}"` : "Senza obiettivi"}
+                    {p.daysPerWeek} {t("giorni/sett", "days/week")} · {p.sessionDuration}min ·&nbsp;
+                    {p.goals ? `"${p.goals.length > 60 ? p.goals.slice(0, 60) + "..." : p.goals}"` : t("Senza obiettivi", "No goals")}
                   </p>
                 </div>
                 <div className="flex gap-0.5 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleEdit(i)}
-                    className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
-                    title="Modifica programma"
+                    className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-all"
+                    title={t("Modifica programma", "Edit program")}
                   >
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => handleDelete(i)}
-                    className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-600/10 rounded-xl transition-all"
-                    title="Elimina programma"
+                    className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-red-500 hover:bg-red-600/10 rounded-xl transition-all"
+                    title={t("Elimina programma", "Delete program")}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                   <div className="relative">
                     <button
                       onClick={() => setOpenExportIdx(openExportIdx === i ? null : i)}
-                      className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
-                      title="Esporta"
+                      className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                      title={t("Esporta", "Export")}
                     >
                       <Download className="w-3.5 h-3.5" />
                     </button>
                     {openExportIdx === i && (
                       <>
                         <div className="fixed inset-0 z-40" onClick={() => setOpenExportIdx(null)} />
-                        <div className="absolute right-0 top-full mt-1 z-50 w-44 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden">
+                        <div className="absolute right-0 top-full mt-1 z-50 w-44 bg-zinc-200 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl shadow-2xl overflow-hidden">
                           <button
                             onClick={() => handleExport("txt", p)}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors"
                           >
                             <FileText size={14} className="text-zinc-500" />
-                            Esporta TXT
+                            {t("Esporta TXT", "Export TXT")}
                           </button>
                           <button
                             onClick={() => handleExport("json", p)}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors"
                           >
                             <FileJson size={14} className="text-zinc-500" />
-                            Esporta JSON
+                            {t("Esporta JSON", "Export JSON")}
                           </button>
                           <button
                             onClick={() => handleExport("pdf", p)}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors"
                           >
                             <Printer size={14} className="text-zinc-500" />
-                            Stampa / PDF
+                            {t("Stampa / PDF", "Print / PDF")}
                           </button>
                         </div>
                       </>
@@ -393,11 +417,11 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
                   <Calendar className="w-3 h-3" /> {p.date}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Dumbbell className="w-3 h-3" /> {p.exercises?.length || 0} esercizi
+                  <Dumbbell className="w-3 h-3" /> {p.exercises?.length || 0} {t("esercizi", "exercises")}
                 </span>
                 {p.age && (
                   <span className="flex items-center gap-1">
-                    <User className="w-3 h-3" /> {p.age} anni
+                    <User className="w-3 h-3" /> {p.age} {t("anni", "yrs")}
                   </span>
                 )}
                 {(bodyFocus || p.bodyFocus || []).length > 0 && (
@@ -413,13 +437,13 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
                   {p.exercises.slice(0, 6).map((ex: any, j: number) => (
                     <span
                       key={j}
-                      className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-white/3 text-zinc-600 rounded-full"
+                      className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-zinc-900/5 dark:bg-white/5 text-zinc-600 rounded-full"
                     >
-                      {ex.name || "Esercizio"}
+                      {ex.name || t("Esercizio", "Exercise")}
                     </span>
                   ))}
                   {p.exercises.length > 6 && (
-                    <span className="text-[9px] text-zinc-700">+{p.exercises.length - 6} altri</span>
+                    <span className="text-[9px] text-zinc-700">+{p.exercises.length - 6} {t("altri", "more")}</span>
                   )}
                 </div>
               )}
@@ -429,7 +453,8 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
       </div>
     )}
   </div>
-);
+  );
+};
 
 interface GenerationProgressBarProps {
   isGenerating: boolean;
@@ -437,17 +462,18 @@ interface GenerationProgressBarProps {
 }
 
 const GenerationProgressBar: React.FC<GenerationProgressBarProps> = ({ isGenerating, generationProgress }) => {
+  const { t } = useLanguage();
   if (!isGenerating) return null;
   return (
     <div className="mt-6 space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-black uppercase tracking-wider text-red-500 flex items-center gap-2">
           <div className="w-3 h-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-          Generazione in corso...
+          {t("Generazione in corso...", "Generating...")}
         </span>
         <span className="text-[10px] font-black text-zinc-500">{Math.min(100, Math.round(generationProgress))}%</span>
       </div>
-      <div className="h-2 bg-zinc-900 rounded-full overflow-hidden border border-white/5">
+      <div className="h-2 bg-zinc-200 dark:bg-zinc-900 rounded-full overflow-hidden border border-zinc-200 dark:border-white/5">
         <div
           className="h-full bg-linear-to-r from-red-600 via-orange-500 to-red-600 rounded-full transition-all duration-500 ease-out shadow-[0_0_20px_rgba(220,38,38,0.4)]"
           style={{ width: `${Math.min(100, generationProgress)}%` }}
@@ -461,6 +487,7 @@ const GenerationProgressBar: React.FC<GenerationProgressBarProps> = ({ isGenerat
 
 const Create: React.FC = () => {
   const { user, loading: authLoading, addNotification } = useAuth();
+  const { t, locale } = useLanguage();
   const confettiRef = useRef<HTMLDivElement>(null);
 
   const [programs, setPrograms] = useState<SavedProgram[]>(() => {
@@ -607,7 +634,7 @@ const Create: React.FC = () => {
 
     try {
       if (!age || !weight || !height) {
-        throw new Error("Completa tutti i campi obbligatori (età, peso, altezza).");
+        throw new Error(t("Completa tutti i campi obbligatori (età, peso, altezza).", "Fill in all required fields (age, weight, height)."));
       }
 
       const preferences = {
@@ -647,20 +674,20 @@ const Create: React.FC = () => {
       });
 
       const data = await response.json().catch(() => null);
-      if (!response.ok) throw new Error((data && data.message) || "Errore nella generazione");
-      if (!data) throw new Error("Risposta non valida dal server");
+      if (!response.ok) throw new Error((data && data.message) || t("Errore nella generazione", "Generation error"));
+      if (!data) throw new Error(t("Risposta non valida dal server", "Invalid server response"));
 
       setGenerationProgress(95);
 
       const newProgram: SavedProgram = {
         id: data._id || String(Date.now()),
         userId: userId || undefined,
-        title: data.title || "Programma Personalizzato",
+        title: data.title || t("Programma Personalizzato", "Custom Program"),
         description: data.description || "",
         level: data.level || "Intermediate",
         price: data.price || 0,
         exercises: data.exercises || [],
-        date: new Date().toLocaleDateString("it-IT", {
+        date: new Date().toLocaleDateString(locale === "en" ? "en-US" : "it-IT", {
           day: "2-digit",
           month: "long",
           year: "numeric",
@@ -685,10 +712,10 @@ const Create: React.FC = () => {
         const updated = [...programs];
         updated[editingIndex] = newProgram;
         setPrograms(updated);
-        addNotification("Programma aggiornato con successo!", "success");
+        addNotification(t("Programma aggiornato con successo!", "Program updated successfully!"), "success");
       } else {
         setPrograms([...programs, newProgram]);
-        addNotification("Programma generato con successo!", "success");
+        addNotification(t("Programma generato con successo!", "Program generated successfully!"), "success");
       }
 
       setGenerationProgress(100);
@@ -698,7 +725,7 @@ const Create: React.FC = () => {
         resetForm();
       }, 800);
     } catch (error: any) {
-      addNotification(error.message || "Errore nella generazione del programma");
+      addNotification(error.message || t("Errore nella generazione del programma", "Error generating the program"));
       setGenerationProgress(0);
     } finally {
       setIsGenerating(false);
@@ -736,7 +763,7 @@ const Create: React.FC = () => {
   const handleExport = (format: "txt" | "json" | "pdf", program: SavedProgram) => {
     setOpenExportIdx(null);
     const flatExercises: { name: string; sets: number; reps: string; rest: string; notes?: string }[] = (program.exercises || []).map((ex: any) => ({
-      name: ex.exercise?.name || ex.name || 'Esercizio',
+      name: ex.exercise?.name || ex.name || t('Esercizio', 'Exercise'),
       sets: ex.sets ?? 3,
       reps: ex.reps ?? '10',
       rest: ex.rest ?? '60s',
@@ -775,13 +802,13 @@ const Create: React.FC = () => {
     return (
       <div className="page-shell flex items-center justify-center px-6">
         <div className="text-center max-w-sm">
-          <h2 className="text-2xl font-black text-white mb-3">Accedi per creare</h2>
-          <p className="text-zinc-500 text-sm mb-6">Devi accedere per generare il tuo programma personalizzato.</p>
+          <h2 className="text-2xl font-black text-zinc-900 dark:text-white mb-3">{t("Accedi per creare", "Log in to create")}</h2>
+          <p className="text-zinc-500 text-sm mb-6">{t("Devi accedere per generare il tuo programma personalizzato.", "You need to log in to generate your custom program.")}</p>
           <Link
             to="/login"
             className="inline-block px-8 py-3 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-900/30"
           >
-            Accedi
+            {t("Accedi", "Log in")}
           </Link>
         </div>
       </div>
@@ -800,15 +827,15 @@ const Create: React.FC = () => {
                 <User className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-white">Identità Atletica</h3>
-                <p className="text-xs text-zinc-500 mt-0.5">Definisci il tuo profilo per un programma su misura</p>
+                <h3 className="text-xl font-black text-zinc-900 dark:text-white">{t("Identità Atletica", "Athletic Identity")}</h3>
+                <p className="text-xs text-zinc-500 mt-0.5">{t("Definisci il tuo profilo per un programma su misura", "Define your profile for a tailored program")}</p>
               </div>
             </div>
 
             {/* Gender */}
             <div className="space-y-3">
               <label className="block meta-mono">
-                Sesso <span className="text-zinc-600 font-normal ml-1">(opzionale)</span>
+                {t("Sesso", "Gender")} <span className="text-zinc-600 font-normal ml-1">{t("(opzionale)", "(optional)")}</span>
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {GENDER_OPTIONS.map((g) => (
@@ -819,11 +846,11 @@ const Create: React.FC = () => {
                     className={`p-3.5 rounded-2xl border transition-all text-center ${
                       gender === g.val
                         ? "bg-red-600/10 border-red-600/40 shadow-[0_0_16px_rgba(220,38,38,0.1)]"
-                        : "bg-zinc-950/40 border-white/5 hover:border-white/15"
+                        : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
                     }`}
                   >
-                    <p className={`text-[10px] font-bold text-zinc-300 leading-tight ${gender === g.val ? "text-white" : ""}`}>
-                      {g.label}
+                    <p className={`text-[10px] font-bold text-zinc-700 dark:text-zinc-300 leading-tight ${gender === g.val ? "text-zinc-900 dark:text-white" : ""}`}>
+                      {t(g.label.it, g.label.en)}
                     </p>
                   </button>
                 ))}
@@ -836,48 +863,48 @@ const Create: React.FC = () => {
                 {
                   val: age,
                   set: setAge,
-                  label: "Età",
+                  label: { it: "Età", en: "Age" },
                   icon: Calendar,
-                  unit: "anni",
-                  ph: "Es. 25",
+                  unit: { it: "anni", en: "yrs" },
+                  ph: { it: "Es. 25", en: "E.g. 25" },
                   cls: "bg-linear-to-br from-red-600/5 to-orange-600/5",
                   iconCls: "text-red-500",
                 },
                 {
                   val: weight,
                   set: setWeight,
-                  label: "Peso",
+                  label: { it: "Peso", en: "Weight" },
                   icon: Scale,
-                  unit: "kg",
-                  ph: "Es. 75",
+                  unit: { it: "kg", en: "kg" },
+                  ph: { it: "Es. 75", en: "E.g. 75" },
                   cls: "bg-linear-to-br from-blue-600/5 to-red-600/5",
                   iconCls: "text-blue-400",
                 },
                 {
                   val: height,
                   set: setHeight,
-                  label: "Altezza",
+                  label: { it: "Altezza", en: "Height" },
                   icon: Ruler,
-                  unit: "cm",
-                  ph: "Es. 180",
+                  unit: { it: "cm", en: "cm" },
+                  ph: { it: "Es. 180", en: "E.g. 180" },
                   cls: "bg-linear-to-br from-emerald-600/5 to-blue-600/5",
                   iconCls: "text-emerald-400",
                 },
               ].map((field) => {
                 const FI = field.icon;
                 return (
-                  <div key={field.label} className={`rounded-2xl border border-white/5 ${field.cls} p-4`}>
+                  <div key={field.label.it} className={`rounded-2xl border border-zinc-200 dark:border-white/5 ${field.cls} p-4`}>
                     <div className="flex items-center gap-2 mb-3">
                       <FI className={`w-4 h-4 ${field.iconCls}`} />
-                      <span className="meta-mono">{field.label}</span>
-                      <span className="text-[10px] text-zinc-600 ml-auto">{field.unit}</span>
+                      <span className="meta-mono">{t(field.label.it, field.label.en)}</span>
+                      <span className="text-[10px] text-zinc-600 ml-auto">{t(field.unit.it, field.unit.en)}</span>
                     </div>
                     <input
                       type="number"
                       value={field.val}
                       onChange={(e) => field.set(e.target.value)}
-                      placeholder={field.ph}
-                      className="w-full bg-zinc-950/40 border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-2xl focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500/40 transition-all placeholder:text-zinc-700 placeholder:font-normal placeholder:text-sm"
+                      placeholder={t(field.ph.it, field.ph.en)}
+                      className="w-full bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-3 text-zinc-900 dark:text-white font-bold text-2xl focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500/40 transition-all placeholder:text-zinc-700 placeholder:font-normal placeholder:text-sm"
                     />
                   </div>
                 );
@@ -885,12 +912,13 @@ const Create: React.FC = () => {
             </div>
 
             {(age || weight || height) && (
-              <div className="bg-zinc-900/30 border border-white/5 rounded-2xl p-4 flex items-center gap-3">
+              <div className="bg-white dark:bg-zinc-900/30 border border-zinc-200 dark:border-white/5 rounded-2xl p-4 flex items-center gap-3">
                 <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                <p className="text-xs text-zinc-400">
-                  Usiamo questi dati per calcolare <span className="text-white font-bold">metabolismo</span>,{" "}
-                  <span className="text-white font-bold">carico di lavoro</span> e{" "}
-                  <span className="text-white font-bold">volume ideale</span> del programma.
+                <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                  {t("Usiamo questi dati per calcolare", "We use this data to calculate")}{" "}
+                  <span className="text-zinc-900 dark:text-white font-bold">{t("metabolismo", "metabolism")}</span>,{" "}
+                  <span className="text-zinc-900 dark:text-white font-bold">{t("carico di lavoro", "workload")}</span> {t("e", "and")}{" "}
+                  <span className="text-zinc-900 dark:text-white font-bold">{t("volume ideale", "ideal volume")}</span> {t("del programma.", "of the program.")}
                 </p>
               </div>
             )}
@@ -906,38 +934,50 @@ const Create: React.FC = () => {
                 <Award className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-white">Livello & Esperienza</h3>
-                <p className="text-xs text-zinc-500 mt-0.5">Scegli il tuo livello: l&apos;IA lo rispeterà in ogni dettaglio</p>
+                <h3 className="text-xl font-black text-zinc-900 dark:text-white">{t("Livello & Esperienza", "Level & Experience")}</h3>
+                <p className="text-xs text-zinc-500 mt-0.5">{t("Scegli il tuo livello: l'IA lo rispeterà in ogni dettaglio", "Choose your level: the AI will respect it in every detail")}</p>
               </div>
             </div>
 
             {/* Level cards */}
             <div className="space-y-3">
-              <p className="meta-mono">Livello di Abilità</p>
+              <p className="meta-mono">{t("Livello di Abilità", "Skill Level")}</p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {[
                   {
                     val: "principiante",
                     icon: Sprout,
-                    title: "Principiante",
-                    subt: "0 – 1 anni di esperienza",
-                    points: ["Fondamenti posturali", "Progressioni graduali", "Volume moderato"],
+                    title: { it: "Principiante", en: "Beginner" },
+                    subt: { it: "0 – 1 anni di esperienza", en: "0 – 1 years of experience" },
+                    points: [
+                      { it: "Fondamenti posturali", en: "Postural foundations" },
+                      { it: "Progressioni graduali", en: "Gradual progressions" },
+                      { it: "Volume moderato", en: "Moderate volume" },
+                    ],
                     style: LEVEL_STYLES.principiante,
                   },
                   {
                     val: "intermedio",
                     icon: Zap,
-                    title: "Intermedio",
-                    subt: "1 – 3 anni di esperienza",
-                    points: ["Tecniche complesse", "Periodizzazione", "Volume progressivo"],
+                    title: { it: "Intermedio", en: "Intermediate" },
+                    subt: { it: "1 – 3 anni di esperienza", en: "1 – 3 years of experience" },
+                    points: [
+                      { it: "Tecniche complesse", en: "Complex techniques" },
+                      { it: "Periodizzazione", en: "Periodization" },
+                      { it: "Volume progressivo", en: "Progressive volume" },
+                    ],
                     style: LEVEL_STYLES.intermedio,
                   },
                   {
                     val: "avanzato",
                     icon: Flame,
-                    title: "Avanzato",
-                    subt: "3+ anni di esperienza",
-                    points: ["Skills avanzate", "Massimo volume", "Periodizzazione completa"],
+                    title: { it: "Avanzato", en: "Advanced" },
+                    subt: { it: "3+ anni di esperienza", en: "3+ years of experience" },
+                    points: [
+                      { it: "Skills avanzate", en: "Advanced skills" },
+                      { it: "Massimo volume", en: "Maximum volume" },
+                      { it: "Periodizzazione completa", en: "Full periodization" },
+                    ],
                     style: LEVEL_STYLES.avanzato,
                   },
                 ].map((lvl) => (
@@ -948,7 +988,7 @@ const Create: React.FC = () => {
                     className={`p-5 rounded-3xl border-2 transition-all text-left group relative overflow-hidden ${
                       level === lvl.val
                         ? `${lvl.style.bg} ${lvl.style.border} ${lvl.style.glow} scale-[1.02]`
-                        : "bg-zinc-950/40 border-white/5 hover:border-white/15 hover:bg-zinc-950/60"
+                        : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15 hover:bg-zinc-100 dark:hover:bg-zinc-950/60"
                     }`}
                   >
                     <div
@@ -961,16 +1001,16 @@ const Create: React.FC = () => {
                       className={`mb-3 ${level === lvl.val ? lvl.style.accent : "text-zinc-600"}`}
                       aria-hidden
                     />
-                    <p className={`text-base font-bold mb-0.5 transition-colors ${level === lvl.val ? lvl.style.accent : "text-white"}`}>
-                      {lvl.title}
+                    <p className={`text-base font-bold mb-0.5 transition-colors ${level === lvl.val ? lvl.style.accent : "text-zinc-900 dark:text-white"}`}>
+                      {t(lvl.title.it, lvl.title.en)}
                     </p>
-                    <p className="text-[11px] text-zinc-500 mb-4">{lvl.subt}</p>
+                    <p className="text-[11px] text-zinc-500 mb-4">{t(lvl.subt.it, lvl.subt.en)}</p>
                     <div className="space-y-1.5">
                       {lvl.points.map((pt) => (
-                        <div key={pt} className="flex items-center gap-2">
+                        <div key={pt.it} className="flex items-center gap-2">
                           <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${level === lvl.val ? "bg-red-500" : "bg-zinc-700"}`} />
-                          <p className={`text-[11px] font-medium leading-snug ${level === lvl.val ? "text-zinc-300" : "text-zinc-600"}`}>
-                            {pt}
+                          <p className={`text-[11px] font-medium leading-snug ${level === lvl.val ? "text-zinc-700 dark:text-zinc-300" : "text-zinc-600"}`}>
+                            {t(pt.it, pt.en)}
                           </p>
                         </div>
                       ))}
@@ -990,31 +1030,31 @@ const Create: React.FC = () => {
             {/* Experience pills */}
             <div>
               <label className="block meta-mono mb-4">
-                Anni di Allenamento
+                {t("Anni di Allenamento", "Years of Training")}
               </label>
               <div className="flex gap-2">
                 {EXPERIENCE_OPTIONS.map((exp) => (
                   <button
-                    key={exp.label}
+                    key={exp.val}
                     type="button"
-                    onClick={() => setExperience(exp.label.split(" ")[0])}
+                    onClick={() => setExperience(exp.val)}
                     className={`flex-1 py-4 rounded-2xl border transition-all text-center group ${
-                      experience === exp.label.split(" ")[0]
+                      experience === exp.val
                         ? "bg-red-600/12 border-red-600/40 shadow-[0_0_20px_rgba(220,38,38,0.1)]"
-                        : "bg-zinc-950/40 border-white/5 hover:border-white/15"
+                        : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
                     }`}
                   >
                     <exp.icon
                       size={22}
                       className={`mx-auto mb-1.5 transition-colors ${
                         exp.color
-                      } ${experience === exp.label.split(" ")[0] ? "scale-110" : "opacity-50 group-hover:opacity-80"}`}
+                      } ${experience === exp.val ? "scale-110" : "opacity-50 group-hover:opacity-80"}`}
                       aria-hidden
                     />
-                    <p className={`text-xs font-bold transition-colors ${experience === exp.label.split(" ")[0] ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"}`}>
-                      {exp.label}
+                    <p className={`text-xs font-bold transition-colors ${experience === exp.val ? "text-zinc-900 dark:text-white" : "text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"}`}>
+                      {t(exp.label.it, exp.label.en)}
                     </p>
-                    <p className="text-[10px] text-zinc-600 mt-0.5">{exp.desc}</p>
+                    <p className="text-[10px] text-zinc-600 mt-0.5">{t(exp.desc.it, exp.desc.en)}</p>
                   </button>
                 ))}
               </div>
@@ -1031,8 +1071,8 @@ const Create: React.FC = () => {
                 <Activity className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-white">Configura il Tuo Allenamento</h3>
-                <p className="text-xs text-zinc-500 mt-0.5">Completa i dettagli logistici e scegli come vuoi allenarti</p>
+                <h3 className="text-xl font-black text-zinc-900 dark:text-white">{t("Configura il Tuo Allenamento", "Set Up Your Training")}</h3>
+                <p className="text-xs text-zinc-500 mt-0.5">{t("Completa i dettagli logistici e scegli come vuoi allenarti", "Fill in the logistics details and choose how you want to train")}</p>
               </div>
             </div>
 
@@ -1040,16 +1080,16 @@ const Create: React.FC = () => {
             <div className="space-y-5">
               <div>
                 <label className="block meta-mono mb-5">
-                  Frequenza Settimanale
+                  {t("Frequenza Settimanale", "Weekly Frequency")}
                 </label>
-                <div className="flex items-center gap-6 bg-zinc-950/30 rounded-2xl p-5 border border-white/5">
+                <div className="flex items-center gap-6 bg-white dark:bg-zinc-950/30 rounded-2xl p-5 border border-zinc-200 dark:border-white/5">
                   <input
                     type="range"
                     min="2"
                     max="7"
                     value={daysPerWeek}
                     onChange={(e) => setDaysPerWeek(parseInt(e.target.value))}
-                    className="grow accent-red-600 h-3 bg-zinc-800 rounded-xl cursor-pointer"
+                    className="grow accent-red-600 h-3 bg-zinc-200 dark:bg-zinc-800 rounded-xl cursor-pointer"
                     style={{
                       background: `linear-gradient(to right, #dc2626 0%, #dc2626 ${((daysPerWeek - 2) / 5) * 100}%, #27272a ${((daysPerWeek - 2) / 5) * 100}%, #27272a 100%)`,
                     }}
@@ -1061,7 +1101,7 @@ const Create: React.FC = () => {
                         className={`w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center transition-all duration-300 ${
                           daysPerWeek >= d
                             ? "bg-linear-to-r from-red-500 to-orange-500 text-white shadow-[0_0_12px_rgba(220,38,38,0.6)] scale-110"
-                            : "bg-zinc-800 text-zinc-600"
+                            : "bg-zinc-200 dark:bg-zinc-800 text-zinc-600"
                         }`}
                       >
                         {d}
@@ -1073,14 +1113,14 @@ const Create: React.FC = () => {
                   <span className="text-4xl font-black bg-linear-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
                     {daysPerWeek}
                   </span>
-                  <span className="text-zinc-600 text-sm font-medium ml-1">giorni / settimana</span>
+                  <span className="text-zinc-600 text-sm font-medium ml-1">{t("giorni / settimana", "days / week")}</span>
                 </p>
               </div>
 
               {/* Session duration */}
               <div>
                 <label className="block meta-mono mb-4">
-                  Durata Sessione Stimata
+                  {t("Durata Sessione Stimata", "Estimated Session Length")}
                 </label>
                 <div className="flex gap-2">
                   {DURATION_OPTIONS.map((d) => (
@@ -1091,13 +1131,13 @@ const Create: React.FC = () => {
                       className={`flex-1 py-3.5 rounded-2xl border transition-all text-center ${
                         sessionDuration === d.val
                           ? "bg-red-600/12 border-red-600/40 shadow-[0_0_16px_rgba(220,38,38,0.1)]"
-                          : "bg-zinc-950/40 border-white/5 hover:border-white/15"
+                          : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
                       }`}
                     >
-                      <p className={`text-base font-black transition-colors ${sessionDuration === d.val ? "text-white" : "text-zinc-500"}`}>
+                      <p className={`text-base font-black transition-colors ${sessionDuration === d.val ? "text-zinc-900 dark:text-white" : "text-zinc-500"}`}>
                         {d.label}
                       </p>
-                      <p className="text-[10px] text-zinc-600 mt-0.5">{d.sub}</p>
+                      <p className="text-[10px] text-zinc-600 mt-0.5">{t(d.sub.it, d.sub.en)}</p>
                     </button>
                   ))}
                 </div>
@@ -1107,33 +1147,33 @@ const Create: React.FC = () => {
             {/* Training Type */}
             <div>
               <label className="block meta-mono mb-4">
-                Tipo di Allenamento
+                {t("Tipo di Allenamento", "Training Type")}
               </label>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                {TRAINING_TYPES.map((t) => (
+                {TRAINING_TYPES.map((tr) => (
                   <button
-                    key={t.val}
+                    key={tr.val}
                     type="button"
-                    onClick={() => setTrainingType(t.val)}
+                    onClick={() => setTrainingType(tr.val)}
                     className={`p-3 rounded-2xl border-2 transition-all text-center group ${
-                      trainingType === t.val
+                      trainingType === tr.val
                         ? "bg-red-600/10 border-red-600/40 shadow-[0_0_20px_rgba(220,38,38,0.12)]"
-                        : "bg-zinc-950/40 border-white/5 hover:border-white/15"
+                        : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
                     }`}
                   >
-                    <t.icon
+                    <tr.icon
                       size={20}
                       className={`mx-auto mb-1 transition-colors ${
-                        trainingType === t.val
+                        trainingType === tr.val
                           ? "text-red-500"
-                          : "text-zinc-500 group-hover:text-zinc-300"
+                          : "text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"
                       }`}
                       aria-hidden
                     />
-                    <p className={`text-[11px] font-bold leading-tight ${trainingType === t.val ? "text-white" : "text-zinc-400"}`}>
-                      {t.label}
+                    <p className={`text-[11px] font-bold leading-tight ${trainingType === tr.val ? "text-zinc-900 dark:text-white" : "text-zinc-600 dark:text-zinc-400"}`}>
+                      {t(tr.label.it, tr.label.en)}
                     </p>
-                    <p className="text-[9px] text-zinc-600 mt-1 leading-snug">{t.desc}</p>
+                    <p className="text-[9px] text-zinc-600 mt-1 leading-snug">{t(tr.desc.it, tr.desc.en)}</p>
                   </button>
                 ))}
               </div>
@@ -1142,19 +1182,10 @@ const Create: React.FC = () => {
             {/* Equipment */}
             <div>
               <label className="block meta-mono mb-4">
-                Attrezzatura Disponibile
+                {t("Attrezzatura Disponibile", "Available Equipment")}
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                  { val: "nessuna", icon: User, label: "Solo Corpo Libero", sub: "Nessun attrezzo" },
-                  { val: "sbarra", icon: Building2, label: "Sbarra Trazioni", sub: "Pull-up bar" },
-                  { val: "parallele", icon: MoveLeft, label: "Parallette", sub: "Dip bars / P-bars" },
-                  { val: "anelli", icon: Circle, label: "Anelli", sub: "Gymnastics Rings" },
-                  { val: "bande", icon: RefreshCw, label: "Bande Elastiche", sub: "Resistance Bands" },
-                  { val: "zavorra", icon: Dumbbell, label: "Zavorra", sub: "Weight Vest / Cintura" },
-                  { val: "base", icon: Building2, label: "Set Base", sub: "Sbarra + Parallele" },
-                  { val: "completo", icon: Layers, label: "Completo", sub: "Tutto disponibile" },
-                ].map((eq) => (
+                {EQUIPMENT_OPTIONS.map((eq) => (
                   <button
                     key={eq.val}
                     type="button"
@@ -1162,7 +1193,7 @@ const Create: React.FC = () => {
                     className={`p-3 rounded-2xl border transition-all text-center group ${
                       equipment === eq.val
                         ? "bg-red-600/10 border-red-600/40 shadow-[0_0_16px_rgba(220,38,38,0.1)]"
-                        : "bg-zinc-950/40 border-white/5 hover:border-white/15"
+                        : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
                     }`}
                   >
                     <eq.icon
@@ -1172,8 +1203,8 @@ const Create: React.FC = () => {
                       }`}
                       aria-hidden
                     />
-                    <p className={`text-[10px] font-bold leading-tight ${equipment === eq.val ? "text-white" : "text-zinc-400"}`}>{eq.label}</p>
-                    <p className="text-[9px] text-zinc-600 mt-0.5">{eq.sub}</p>
+                    <p className={`text-[10px] font-bold leading-tight ${equipment === eq.val ? "text-zinc-900 dark:text-white" : "text-zinc-600 dark:text-zinc-400"}`}>{t(eq.label.it, eq.label.en)}</p>
+                    <p className="text-[9px] text-zinc-600 mt-0.5">{t(eq.sub.it, eq.sub.en)}</p>
                   </button>
                 ))}
               </div>
@@ -1182,7 +1213,7 @@ const Create: React.FC = () => {
             {/* Intensity */}
             <div>
               <label className="block meta-mono mb-4">
-                Intensità di Allenamento
+                {t("Intensità di Allenamento", "Training Intensity")}
               </label>
               <div className="grid grid-cols-3 gap-3">
                 {INTENSITY_OPTIONS.map((opt) => (
@@ -1193,16 +1224,16 @@ const Create: React.FC = () => {
                     className={`p-4 rounded-2xl border transition-all text-left group ${
                       intensity === opt.value
                         ? "bg-red-600/10 border-red-600/40 shadow-[0_0_20px_rgba(220,38,38,0.1)]"
-                        : "bg-zinc-950/40 border-white/5 hover:border-white/15"
+                        : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
                     }`}
                   >
                     <div className="flex items-center gap-3 mb-2">
                       <Zap className={`w-4 h-4 ${intensity === opt.value ? "text-red-500" : "text-zinc-600"}`} />
-                      <p className={`text-sm font-black ${intensity === opt.value ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"}`}>
-                        {opt.label}
+                      <p className={`text-sm font-black ${intensity === opt.value ? "text-zinc-900 dark:text-white" : "text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"}`}>
+                        {t(opt.label.it, opt.label.en)}
                       </p>
                     </div>
-                    <p className="text-[10px] text-zinc-600 leading-snug">{opt.desc}</p>
+                    <p className="text-[10px] text-zinc-600 leading-snug">{t(opt.desc.it, opt.desc.en)}</p>
                   </button>
                 ))}
               </div>
@@ -1219,15 +1250,15 @@ const Create: React.FC = () => {
                 <Target className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-white">Obiettivi & Focus</h3>
-                <p className="text-xs text-zinc-500 mt-0.5">Specifica cosa vuoi raggiungere e dove concentrarti</p>
+                <h3 className="text-xl font-black text-zinc-900 dark:text-white">{t("Obiettivi & Focus", "Goals & Focus")}</h3>
+                <p className="text-xs text-zinc-500 mt-0.5">{t("Specifica cosa vuoi raggiungere e dove concentrarti", "Specify what you want to achieve and where to focus")}</p>
               </div>
             </div>
 
             {/* Focus principale */}
             <div>
               <label className="block meta-mono mb-5">
-                Focus Principale
+                {t("Focus Principale", "Main Focus")}
               </label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {FOCUS_OPTIONS.map((opt) => (
@@ -1236,7 +1267,7 @@ const Create: React.FC = () => {
                     type="button"
                     onClick={() => setFocus(opt.val)}
                     className={`p-4 rounded-2xl border-2 transition-all text-center relative overflow-hidden group ${
-                      focus === opt.val ? "border-red-600/50 shadow-lg shadow-red-900/10" : "bg-zinc-950/40 border-white/5 hover:border-white/15"
+                      focus === opt.val ? "border-red-600/50 shadow-lg shadow-red-900/10" : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
                     }`}
                   >
                     <div className={`absolute inset-0 bg-linear-to-br ${opt.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
@@ -1246,14 +1277,14 @@ const Create: React.FC = () => {
                         className={`mb-1.5 transition-colors ${
                           focus === opt.val
                             ? "text-red-500"
-                            : "text-zinc-500 group-hover:text-zinc-300"
+                            : "text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"
                         }`}
                         aria-hidden
                       />
-                      <p className={`text-xs font-bold ${focus === opt.val ? "text-white" : "text-zinc-400 group-hover:text-zinc-200"}`}>
-                        {opt.label}
+                      <p className={`text-xs font-bold ${focus === opt.val ? "text-zinc-900 dark:text-white" : "text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200"}`}>
+                        {t(opt.label.it, opt.label.en)}
                       </p>
-                      <p className="text-[10px] text-zinc-600 mt-0.5 leading-snug">{opt.desc}</p>
+                      <p className="text-[10px] text-zinc-600 mt-0.5 leading-snug">{t(opt.desc.it, opt.desc.en)}</p>
                     </div>
                     {focus === opt.val && (
                       <div className="absolute top-2 right-2 z-10">
@@ -1270,39 +1301,40 @@ const Create: React.FC = () => {
             {/* Body parts focus */}
             <div>
               <label className="block meta-mono mb-2">
-                Aree del Corpo da Lavorare{" "}
-                <span className="text-zinc-600 font-normal normal-case ml-1">(opzionale)</span>
+                {t("Aree del Corpo da Lavorare", "Body Areas to Train")}{" "}
+                <span className="text-zinc-600 font-normal normal-case ml-1">{t("(opzionale)", "(optional)")}</span>
               </label>
               <p className="text-[11px] text-zinc-600 mb-4">
-                Seleziona le aree su cui vuoi concentrarti di più.{" "}
+                {t("Seleziona le aree su cui vuoi concentrarti di più.", "Select the areas you want to focus on most.")}{" "}
                 {bodyFocus.length > 0 ? (
-                  <span className="text-red-400 font-bold"> {bodyFocus.length} selezionate</span>
+                  <span className="text-red-400 font-bold"> {bodyFocus.length} {t("selezionate", "selected")}</span>
                 ) : null}
               </p>
               <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
                 {BODY_FOCUS_OPTIONS.map((bf) => {
-                  const active = bodyFocus.includes(bf.label);
+                  const label = t(bf.label.it, bf.label.en);
+                  const active = bodyFocus.includes(label);
                   return (
                     <button
-                      key={bf.label}
+                      key={bf.label.it}
                       type="button"
-                      onClick={() => toggleBodyFocus(bf.label)}
+                      onClick={() => toggleBodyFocus(label)}
                       className={`p-3 rounded-xl border transition-all text-center ${
                         active
-                          ? "bg-red-600/12 border-red-600/40 text-white shadow-[0_0_12px_rgba(220,38,38,0.1)]"
-                          : "bg-zinc-950/40 border-white/5 text-zinc-500 hover:text-zinc-300 hover:border-white/10"
+                          ? "bg-red-600/12 border-red-600/40 text-zinc-900 dark:text-white shadow-[0_0_12px_rgba(220,38,38,0.1)]"
+                          : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-white/10"
                       }`}
                     >
                       <bf.icon
                         size={16}
                         className={`mx-auto transition-colors ${
-                          bodyFocus.includes(bf.label)
+                          active
                             ? "text-red-500"
-                            : "text-zinc-500 group-hover:text-zinc-300"
+                            : "text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"
                         }`}
                         aria-hidden
                       />
-                      <p className="text-[10px] font-bold mt-1">{bf.label}</p>
+                      <p className="text-[10px] font-bold mt-1">{label}</p>
                     </button>
                   );
                 })}
@@ -1312,18 +1344,18 @@ const Create: React.FC = () => {
             {/* Goals */}
             <div>
               <label className="block meta-mono mb-2">
-                I Tuoi Obiettivi Specifici
+                {t("I Tuoi Obiettivi Specifici", "Your Specific Goals")}
               </label>
               <div className="relative">
                 <textarea
                   value={goals}
                   onChange={(e) => setGoals(e.target.value)}
                   rows={4}
-                  placeholder="Es. Sbloccare la Planche, aumentare le trazioni senza aiuto, migliorare la resistenza per un trail di 10km..."
-                  className="w-full bg-zinc-950/60 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500/30 transition-all placeholder:text-zinc-700 resize-none"
+                  placeholder={t("Es. Sbloccare la Planche, aumentare le trazioni senza aiuto, migliorare la resistenza per un trail di 10km...", "E.g. Unlock the Planche, increase unassisted pull-ups, improve endurance for a 10km trail...")}
+                  className="w-full bg-white dark:bg-zinc-950/60 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-zinc-900 dark:text-white text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500/30 transition-all placeholder:text-zinc-700 resize-none"
                 />
                 <div className="absolute bottom-3 right-3 text-[10px] text-zinc-700">
-                  {goals.length > 0 ? `${goals.length} caratteri` : ""}
+                  {goals.length > 0 ? `${goals.length} ${t("caratteri", "characters")}` : ""}
                 </div>
               </div>
             </div>
@@ -1331,16 +1363,16 @@ const Create: React.FC = () => {
             {/* Injury */}
             <div>
               <label className="block meta-mono mb-2">
-                Condizioni Mediche o Infortuni{" "}
-                <span className="text-zinc-600 font-normal normal-case ml-1">(opzionale)</span>
+                {t("Condizioni Mediche o Infortuni", "Medical Conditions or Injuries")}{" "}
+                <span className="text-zinc-600 font-normal normal-case ml-1">{t("(opzionale)", "(optional)")}</span>
               </label>
               <div className="relative">
                 <textarea
                   value={injury}
                   onChange={(e) => setInjury(e.target.value)}
                   rows={3}
-                  placeholder="Descrivi eventuali infortuni, limitazioni fisiche, dolori articolari o patologie che dobbiamo considerare..."
-                  className="w-full bg-zinc-950/60 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/30 transition-all placeholder:text-zinc-700 resize-none"
+                  placeholder={t("Descrivi eventuali infortuni, limitazioni fisiche, dolori articolari o patologie che dobbiamo considerare...", "Describe any injuries, physical limitations, joint pain or conditions we should consider...")}
+                  className="w-full bg-white dark:bg-zinc-950/60 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-zinc-900 dark:text-white text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/30 transition-all placeholder:text-zinc-700 resize-none"
                 />
                 {injury && (
                   <div className="absolute top-3 right-3 text-amber-500">
@@ -1350,7 +1382,7 @@ const Create: React.FC = () => {
               </div>
               <p className="text-[10px] text-zinc-600 mt-2 flex items-center gap-1.5">
                 <Shield className="w-3 h-3" />
-                I tuoi dati sono riservati e usati solo per personalizzare il programma.
+                {t("I tuoi dati sono riservati e usati solo per personalizzare il programma.", "Your data is private and only used to personalize the program.")}
               </p>
             </div>
           </div>
@@ -1365,13 +1397,13 @@ const Create: React.FC = () => {
                 <Layout className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-white">Riepilogo Finale</h3>
-                <p className="text-xs text-zinc-500 mt-0.5">Verifica i dati prima di generare il tuo programma</p>
+                <h3 className="text-xl font-black text-zinc-900 dark:text-white">{t("Riepilogo Finale", "Final Summary")}</h3>
+                <p className="text-xs text-zinc-500 mt-0.5">{t("Verifica i dati prima di generare il tuo programma", "Review your data before generating your program")}</p>
               </div>
             </div>
 
             {/* Grand Summary Card */}
-            <div className="bg-linear-to-br from-zinc-900 via-zinc-950 to-black border border-white/10 rounded-2xl p-6 sm:p-8 space-y-5 shadow-2xl relative overflow-hidden">
+            <div className="bg-linear-to-br from-zinc-200 via-white to-zinc-100 dark:from-zinc-900 dark:via-zinc-950 dark:to-black border border-zinc-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 space-y-5 shadow-2xl relative overflow-hidden">
               {/* Subtle glow border */}
               <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-red-600/5 via-transparent to-orange-600/5 pointer-events-none" />
 
@@ -1381,39 +1413,39 @@ const Create: React.FC = () => {
                   {level.charAt(0).toUpperCase() + level.slice(1)} — {focus}
                 </span>
                 <span className="text-[10px] font-bold text-zinc-600">
-                  {sessionDuration}min / sessione · {daysPerWeek}x settimana
+                  {sessionDuration}min / {t("sessione", "session")} · {daysPerWeek}x {t("settimana", "week")}
                 </span>
               </div>
 
-              <div className="h-px bg-linear-to-r from-red-600/30 via-zinc-800 to-transparent relative z-10" />
+              <div className="h-px bg-linear-to-r from-red-600/30 via-zinc-200 dark:via-zinc-800 to-transparent relative z-10" />
 
               {/* Profile row */}
               <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: "Età", value: `${age} anni`, col: "text-red-400" },
-                  { label: "Peso", value: `${weight} kg`, col: "text-blue-400" },
-                  { label: "Altezza", value: `${height} cm`, col: "text-emerald-400" },
-                  { label: "Esperienza", value: `${experience} anni`, col: "text-amber-400" },
+                  { label: { it: "Età", en: "Age" }, value: `${age} ${t("anni", "yrs")}`, col: "text-red-400" },
+                  { label: { it: "Peso", en: "Weight" }, value: `${weight} kg`, col: "text-blue-400" },
+                  { label: { it: "Altezza", en: "Height" }, value: `${height} cm`, col: "text-emerald-400" },
+                  { label: { it: "Esperienza", en: "Experience" }, value: `${experience} ${t("anni", "yrs")}`, col: "text-amber-400" },
                 ].map((stat) => (
-                  <div key={stat.label} className="bg-zinc-950/60 rounded-xl p-3.5 border border-white/5">
-                    <p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 mb-1">{stat.label}</p>
+                  <div key={stat.label.it} className="bg-white dark:bg-zinc-950/60 rounded-xl p-3.5 border border-zinc-200 dark:border-white/5">
+                    <p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 mb-1">{t(stat.label.it, stat.label.en)}</p>
                     <p className={`text-base font-black ${stat.col}`}>{stat.value}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="h-px bg-white/5 relative z-10" />
+              <div className="h-px bg-zinc-900/5 dark:bg-white/5 relative z-10" />
 
               {/* Detail rows */}
               {[
                 {
-                  label: "Attrezzatura",
+                  label: { it: "Attrezzatura", en: "Equipment" },
                   value: equipment.charAt(0).toUpperCase() + equipment.slice(1),
                   icon: Dumbbell,
                   iconCol: "text-orange-400",
                 },
                 {
-                  label: "Intensità",
+                  label: { it: "Intensità", en: "Intensity" },
                   value: intensity.charAt(0).toUpperCase() + intensity.slice(1),
                   icon: Zap,
                   iconCol: "text-red-400",
@@ -1421,7 +1453,7 @@ const Create: React.FC = () => {
                 ...(bodyFocus.length > 0
                   ? [
                       {
-                        label: "Aree Focus",
+                        label: { it: "Aree Focus", en: "Focus Areas" },
                         value: bodyFocus.join(", "),
                         icon: Target,
                         iconCol: "text-emerald-400",
@@ -1429,22 +1461,22 @@ const Create: React.FC = () => {
                     ]
                   : []),
               ].map((row) => (
-                <div key={row.label} className="relative z-10 flex items-center justify-between py-1">
+                <div key={row.label.it} className="relative z-10 flex items-center justify-between py-1">
                   <span className="text-[11px] font-black uppercase tracking-wider text-zinc-500 flex items-center gap-2">
                     <row.icon className={`w-3.5 h-3.5 ${row.iconCol}`} />
-                    {row.label}
+                    {t(row.label.it, row.label.en)}
                   </span>
-                  <span className="text-sm font-bold text-white">{row.value}</span>
+                  <span className="text-sm font-bold text-zinc-900 dark:text-white">{row.value}</span>
                 </div>
               ))}
 
               {goals && (
                 <>
-                  <div className="h-px bg-white/5 relative z-10" />
+                  <div className="h-px bg-zinc-900/5 dark:bg-white/5 relative z-10" />
                   <div className="relative z-10">
-                    <p className="text-[10px] font-black uppercase tracking-wider text-zinc-500 mb-2">Obiettivi</p>
-                    <div className="bg-zinc-950/60 rounded-xl p-4 border border-white/5 border-l-2 border-l-red-500/60">
-                      <p className="text-sm text-zinc-300 leading-relaxed">&ldquo;{goals}&rdquo;</p>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-zinc-500 mb-2">{t("Obiettivi", "Goals")}</p>
+                    <div className="bg-white dark:bg-zinc-950/60 rounded-xl p-4 border border-zinc-200 dark:border-white/5 border-l-2 border-l-red-500/60">
+                      <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">&ldquo;{goals}&rdquo;</p>
                     </div>
                   </div>
                 </>
@@ -1452,11 +1484,11 @@ const Create: React.FC = () => {
 
               {injury && (
                 <>
-                  <div className="h-px bg-white/5 relative z-10" />
+                  <div className="h-px bg-zinc-900/5 dark:bg-white/5 relative z-10" />
                   <div className="relative z-10">
                     <p className="text-[10px] font-black uppercase tracking-wider text-zinc-500 mb-2 flex items-center gap-2">
                       <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                      Note su Infortuni / Condizioni
+                      {t("Note su Infortuni / Condizioni", "Injury / Condition Notes")}
                     </p>
                     <div className="bg-amber-950/20 rounded-xl p-4 border border-amber-500/10 border-l-2 border-l-amber-500/60">
                       <p className="text-sm text-amber-200/80 leading-relaxed">&ldquo;{injury}&rdquo;</p>
@@ -1471,9 +1503,9 @@ const Create: React.FC = () => {
               <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl p-4 flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-amber-500 mb-0.5">Nessuna nota su infortuni</p>
+                  <p className="text-xs font-bold text-amber-500 mb-0.5">{t("Nessuna nota su infortuni", "No injury notes")}</p>
                   <p className="text-[11px] text-zinc-500 leading-snug">
-                    Il programma sarà progettato senza adattamenti per infortuni specifici.
+                    {t("Il programma sarà progettato senza adattamenti per infortuni specifici.", "The program will be designed without adaptations for specific injuries.")}
                   </p>
                 </div>
               </div>
@@ -1501,9 +1533,9 @@ const Create: React.FC = () => {
   return (
     <>
       <SEO
-        title="Crea Programma"
-        description="Crea il tuo programma di calisthenics personalizzato con Maxthenics."
-        keywords="creare programma calisthenics, personalizza workout, allenamento personalizzato"
+        title={t("Crea Programma", "Create Program")}
+        description={t("Crea il tuo programma di calisthenics personalizzato con Maxthenics.", "Create your custom calisthenics program with Maxthenics.")}
+        keywords={t("creare programma calisthenics, personalizza workout, allenamento personalizzato", "create calisthenics program, customize workout, personalized training")}
       />
       <div className="page-shell relative overflow-hidden px-6 lg:px-8">
         {/* Background blobs */}
@@ -1517,17 +1549,16 @@ const Create: React.FC = () => {
           <div className="text-center mb-12 animate-fadeIn">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-[0.2em] mb-5">
               <Sparkles className="w-3 h-3" />
-              Allenamento AI-Powered
+              {t("Allenamento AI-Powered", "AI-Powered Training")}
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 text-white tracking-tight leading-[1.1]">
-              {editingIndex !== null ? "Ricalibra" : "Costruisci"} il tuo{" "}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 text-zinc-900 dark:text-white tracking-tight leading-[1.1]">
+              {editingIndex !== null ? t("Ricalibra", "Recalibrate") : t("Costruisci", "Build")} {t("il tuo", "your")}{" "}
               <span className="bg-linear-to-r from-red-500 via-orange-500 to-red-500 bg-clip-text text-transparent bg-[length:200%_100%] animate-gradient">
-                Programma
+                {t("Programma", "Program")}
               </span>
             </h1>
             <p className="text-zinc-500 max-w-lg mx-auto text-sm leading-relaxed">
-              In 5 passaggi creiamo un piano di allenamento su misura per le tue caratteristiche,
-              i tuoi obiettivi e la tua disponibilità. Più dettagli fornisci, più efficace sarà il programma.
+              {t("In 5 passaggi creiamo un piano di allenamento su misura per le tue caratteristiche, i tuoi obiettivi e la tua disponibilità. Più dettagli fornisci, più efficace sarà il programma.", "In 5 steps we build a training plan tailored to your profile, goals and availability. The more details you provide, the more effective the program.")}
             </p>
 
             {/* Steps bar */}
@@ -1536,15 +1567,15 @@ const Create: React.FC = () => {
                 <React.Fragment key={s}>
                   <div
                     className={`h-2 rounded-full transition-all duration-500 ${
-                      step >= s ? "bg-red-500 w-8 shadow-[0_0_8px_rgba(239,68,68,0.5)]" : "bg-zinc-800 w-3"
+                      step >= s ? "bg-red-500 w-8 shadow-[0_0_8px_rgba(239,68,68,0.5)]" : "bg-zinc-200 dark:bg-zinc-800 w-3"
                     }`}
                   />
-                  {s < 5 && <div className={`h-px w-4 transition-colors ${step > s ? "bg-red-500" : "bg-zinc-800"}`} />}
+                  {s < 5 && <div className={`h-px w-4 transition-colors ${step > s ? "bg-red-500" : "bg-zinc-200 dark:bg-zinc-800"}`} />}
                 </React.Fragment>
               ))}
             </div>
             <p className="text-[10px] text-zinc-600 mt-2 font-black uppercase tracking-[0.2em]">
-              Passo {step} di {totalSteps}
+              {t("Passo", "Step")} {step} {t("di", "of")} {totalSteps}
             </p>
           </div>
 
@@ -1552,7 +1583,7 @@ const Create: React.FC = () => {
           <div className="grid lg:grid-cols-12 gap-8 items-start">
             {/* ── LEFT: Wizard ────────────────────────────────── */}
             <div className="lg:col-span-7 xl:col-span-8">
-              <div className="bg-zinc-900/30 backdrop-blur-2xl p-6 sm:p-8 md:p-10 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden">
+              <div className="bg-white dark:bg-zinc-900/30 backdrop-blur-2xl p-6 sm:p-8 md:p-10 rounded-2xl border border-zinc-200 dark:border-white/10 shadow-2xl relative overflow-hidden">
                 {/* Top glow bar */}
                 <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-red-500/60 to-transparent" />
 
@@ -1568,10 +1599,10 @@ const Create: React.FC = () => {
                       <button
                         type="button"
                         onClick={prevStep}
-                        className="flex-1 bg-zinc-800/60 hover:bg-zinc-700/80 text-white py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 border border-white/5"
+                        className="flex-1 bg-zinc-200 dark:bg-zinc-800/60 hover:bg-zinc-300 dark:hover:bg-zinc-700/80 text-zinc-900 dark:text-white py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 border border-zinc-200 dark:border-white/5"
                       >
                         <ChevronLeft className="w-5 h-5" />
-                        Indietro
+                        {t("Indietro", "Back")}
                       </button>
                     )}
                     {step < totalSteps ? (
@@ -1583,7 +1614,7 @@ const Create: React.FC = () => {
                           step === totalSteps - 1 ? "from-red-600 via-orange-600 to-red-600 bg-[length:200%_100%] animate-gradient" : ""
                         }`}
                       >
-                        Continua
+                        {t("Continua", "Continue")}
                         <ChevronRight className="w-5 h-5" />
                       </button>
                     ) : (
@@ -1595,12 +1626,12 @@ const Create: React.FC = () => {
                         {isGenerating ? (
                           <>
                             <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            Generazione in corso...
+                            {t("Generazione in corso...", "Generating...")}
                           </>
                         ) : (
                           <>
                             <Sparkles className="w-6 h-6" />
-                            {editingIndex !== null ? "Aggiorna Programma" : "Genera Programma"}
+                            {editingIndex !== null ? t("Aggiorna Programma", "Update Program") : t("Genera Programma", "Generate Program")}
                           </>
                         )}
                       </button>

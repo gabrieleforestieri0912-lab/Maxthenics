@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import SEO from "./SEO";
+import { useLanguage } from "../context/LanguageContext";
 
 interface AuthShellProps {
   seoTitle: string;
@@ -19,9 +20,9 @@ interface AuthShellProps {
 }
 
 const FIELD_CLASS =
-  "w-full rounded-lg border border-white/10 bg-zinc-950 px-3 py-2.5 text-sm text-white transition-colors placeholder:text-zinc-700 focus:border-red-500/50 focus:outline-none focus:ring-2 focus:ring-red-500/30";
+  "w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-950 px-3 py-2.5 text-sm text-zinc-900 dark:text-white transition-colors placeholder:text-zinc-400 dark:placeholder:text-zinc-700 focus:border-red-500/50 focus:outline-none focus:ring-2 focus:ring-red-500/30";
 
-const LABEL_CLASS = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-zinc-400";
+const LABEL_CLASS = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400";
 
 export function Field({
   label,
@@ -64,6 +65,7 @@ export function PasswordInput({
   onToggle: () => void;
   autoComplete?: string;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="relative">
       <input
@@ -80,10 +82,10 @@ export function PasswordInput({
       <button
         type="button"
         onClick={onToggle}
-        aria-label={visible ? "Nascondi password" : "Mostra password"}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+        aria-label={visible ? t("Nascondi password", "Hide password") : t("Mostra password", "Show password")}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
       >
-        <span className="sr-only">{visible ? "Nascondi" : "Mostra"}</span>
+        <span className="sr-only">{visible ? t("Nascondi", "Hide") : t("Mostra", "Show")}</span>
         <svg
           width="16"
           height="16"
@@ -113,14 +115,16 @@ export function PasswordInput({
   );
 }
 
-export function AuthDivider({ label = "oppure" }: { label?: string }) {
+export function AuthDivider({ label }: { label?: string }) {
+  const { t } = useLanguage();
+  const text = label ?? t("oppure", "or");
   return (
     <div className="relative my-5">
       <div className="absolute inset-0 flex items-center">
-        <div className="w-full border-t border-white/10" />
+        <div className="w-full border-t border-zinc-200 dark:border-white/10" />
       </div>
       <div className="relative flex justify-center">
-        <span className="bg-zinc-900/60 px-3 meta-mono">{label}</span>
+        <span className="bg-white dark:bg-zinc-900/60 px-3 meta-mono">{text}</span>
       </div>
     </div>
   );
@@ -135,10 +139,11 @@ export function GoogleButton({
   onClick: () => void;
   label: string;
 }) {
+  const { t } = useLanguage();
   return (
-    <button type="button" onClick={onClick} disabled={loading} className="btn-secondary w-full bg-white hover:bg-zinc-200 text-zinc-950 border-transparent">
+    <button type="button" onClick={onClick} disabled={loading} className="btn-secondary w-full bg-white hover:bg-zinc-200 text-zinc-950 border-transparent dark:bg-white dark:hover:bg-zinc-200">
       <GoogleMark />
-      {loading ? "Reindirizzamento…" : label}
+      {loading ? t("Reindirizzamento…", "Redirecting…") : label}
     </button>
   );
 }
@@ -178,6 +183,7 @@ export default function AuthShell({
   footerActionLabel,
   footerActionTo,
 }: AuthShellProps) {
+  const { t } = useLanguage();
   return (
     <>
       <SEO title={seoTitle} description={seoDescription} keywords={seoKeywords} />
@@ -185,13 +191,13 @@ export default function AuthShell({
       <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-20 sm:px-6">
         <Link
           to="/"
-          className="absolute top-6 left-6 sm:top-8 sm:left-8 inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-white transition-colors group"
+          className="absolute top-6 left-6 sm:top-8 sm:left-8 inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors group"
         >
           <ArrowLeft
             className="w-4 h-4 group-hover:-translate-x-1 transition-transform"
             aria-hidden
           />
-          Torna alla Home
+          {t("Torna alla Home", "Back home")}
         </Link>
 
         <div
@@ -205,17 +211,17 @@ export default function AuthShell({
 
         <div className="w-full max-w-sm mx-auto">
           <header className="text-center mb-8 animate-fadeIn">
-            <h1 className="text-3xl font-bold tracking-tight text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
               {titleLead}{" "}
               <span className="text-red-500">{titleAccent}</span>
             </h1>
             <p className="body-copy text-sm mt-2">{description}</p>
           </header>
 
-          <div className="card bg-zinc-900/60 backdrop-blur-xl p-6 shadow-xl">{children}</div>
+          <div className="card bg-white dark:bg-zinc-900/60 backdrop-blur-xl p-6 shadow-xl">{children}</div>
 
           <div className="mt-6 text-center">
-            <p className="text-zinc-400 text-xs">
+            <p className="text-zinc-500 dark:text-zinc-400 text-xs">
               {footerLead}{" "}
               <Link to={footerActionTo} className="text-red-500 font-bold hover:text-red-400 transition-colors">
                 {footerActionLabel}

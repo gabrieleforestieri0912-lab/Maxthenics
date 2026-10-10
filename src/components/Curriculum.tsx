@@ -91,7 +91,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
             `${curriculum.totalLessons} lessons`
           )}
         </span>
-        <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-[11px] font-black uppercase tracking-widest">
+        <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-zinc-900/5 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-300 text-[11px] font-black uppercase tracking-widest">
           {t(
             `Circa ${formatMinutes(curriculum.totalMinutes, locale)} di contenuti`,
             `About ${formatMinutes(curriculum.totalMinutes, locale)} of content`
@@ -114,17 +114,17 @@ const Curriculum: React.FC<CurriculumProps> = ({
         return (
           <div
             key={section.id}
-            className="bg-zinc-900/30 border border-white/10 rounded-2xl overflow-hidden"
+            className="bg-white dark:bg-zinc-900/30 border border-zinc-200 dark:border-white/10 rounded-2xl overflow-hidden"
           >
             <button
               onClick={() => setOpenSection(isOpen ? null : section.id)}
-              className="w-full p-4 sm:p-5 flex items-center gap-4 text-left hover:bg-white/[0.03] transition-colors"
+              className="w-full p-4 sm:p-5 flex items-center gap-4 text-left hover:bg-zinc-900/[0.03] dark:hover:bg-white/[0.03] transition-colors"
             >
               <span className="text-[11px] font-black text-red-500 tracking-widest shrink-0">
                 {String(si + 1).padStart(2, "0")}
               </span>
               <span className="grow min-w-0">
-                <span className="block font-black text-white text-sm sm:text-base uppercase tracking-tight truncate">
+                <span className="block font-black text-zinc-900 dark:text-white text-sm sm:text-base uppercase tracking-tight truncate">
                   {locale === "en" ? section.titleEn : section.title}
                 </span>
                 <span className="block text-[11px] text-zinc-500 font-medium mt-0.5">
@@ -163,10 +163,10 @@ const Curriculum: React.FC<CurriculumProps> = ({
                           key={lesson.id}
                           className={`rounded-xl border transition-colors ${
                             locked
-                              ? "border-white/5 bg-zinc-950/40"
+                              ? "border-zinc-200 dark:border-white/5 bg-zinc-100 dark:bg-zinc-950/40"
                               : done
                                 ? "border-green-500/20 bg-green-500/[0.03]"
-                                : "border-white/5 bg-zinc-950/60 hover:border-white/15"
+                                : "border-zinc-200 dark:border-white/5 bg-white dark:bg-zinc-950/60 hover:border-zinc-400 dark:hover:border-white/15"
                           }`}
                         >
                           <button
@@ -179,7 +179,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                             <span
                               className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                                 locked
-                                  ? "bg-zinc-800 text-zinc-600"
+                                  ? "bg-zinc-200 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-600"
                                   : done
                                     ? "bg-green-500/15 text-green-400"
                                     : "bg-red-600/15 text-red-400"
@@ -197,7 +197,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                               <span
                                 className={`block text-[10px] font-black uppercase tracking-widest ${
                                   locked
-                                    ? "text-zinc-600"
+                                    ? "text-zinc-400 dark:text-zinc-600"
                                     : "text-zinc-500"
                                 }`}
                               >
@@ -210,7 +210,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                               </span>
                               <span
                                 className={`block text-sm font-bold truncate ${
-                                  locked ? "text-zinc-600" : done ? "text-zinc-400 line-through" : "text-zinc-100"
+                                  locked ? "text-zinc-400 dark:text-zinc-600" : done ? "text-zinc-500 dark:text-zinc-400 line-through" : "text-zinc-800 dark:text-zinc-100"
                                 }`}
                               >
                                 {locale === "en"
@@ -243,7 +243,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                                 className={`shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center transition-all ${
                                   done
                                     ? "bg-green-500 border-green-500 text-white"
-                                    : "border-white/15 text-zinc-600 hover:border-green-500/50 hover:text-green-400"
+                                    : "border-zinc-300 dark:border-white/15 text-zinc-400 dark:text-zinc-600 hover:border-green-500/50 hover:text-green-400"
                                 }`}
                               >
                                 <Check size={14} strokeWidth={3} />
@@ -269,7 +269,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                                 className="overflow-hidden"
                               >
                                 <div className="px-3 pb-3 pt-1 ml-11">
-                                  <p className="text-xs text-zinc-400 leading-relaxed mb-3">
+                                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-3">
                                     {locale === "en"
                                       ? lesson.descriptionEn
                                       : lesson.description}
@@ -295,7 +295,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                                           onClick={() =>
                                             onOpenExercise(lesson.exerciseId)
                                           }
-                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white text-[11px] font-black uppercase tracking-widest transition-colors"
+                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-700 dark:bg-white/10 dark:hover:bg-white/15 text-white text-[11px] font-black uppercase tracking-widest transition-colors"
                                         >
                                           <Play size={12} />
                                           {t(

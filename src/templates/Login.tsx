@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { getSupabaseBrowser } from "../lib/supabase-browser";
 import AuthShell, {
   AuthDivider,
@@ -12,9 +13,10 @@ import AuthShell, {
 } from "../components/AuthShell";
 
 const INPUT_CLASS =
-  "w-full rounded-lg border border-white/10 bg-zinc-950 px-3 py-2.5 text-sm text-white transition-colors placeholder:text-zinc-700 focus:border-red-500/50 focus:outline-none focus:ring-2 focus:ring-red-500/30";
+  "w-full rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-zinc-950 px-3 py-2.5 text-sm text-zinc-900 dark:text-white transition-colors placeholder:text-zinc-700 focus:border-red-500/50 focus:outline-none focus:ring-2 focus:ring-red-500/30";
 
 const Login: React.FC = () => {
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -38,16 +40,26 @@ const Login: React.FC = () => {
         },
       });
       if (error) {
-        addNotification(error.message || "Accesso Google non riuscito. Riprova.", "error");
+        addNotification(
+          error.message ||
+            t("Accesso Google non riuscito. Riprova.", "Google sign-in failed. Please try again."),
+          "error"
+        );
         return;
       }
       if (data?.url) {
         window.location.href = data.url;
       } else {
-        addNotification("Accesso Google non riuscito. Riprova.", "error");
+        addNotification(
+          t("Accesso Google non riuscito. Riprova.", "Google sign-in failed. Please try again."),
+          "error"
+        );
       }
     } catch {
-      addNotification("Accesso Google non riuscito. Riprova.", "error");
+      addNotification(
+        t("Accesso Google non riuscito. Riprova.", "Google sign-in failed. Please try again."),
+        "error"
+      );
     } finally {
       setGoogleLoading(false);
     }
@@ -63,23 +75,32 @@ const Login: React.FC = () => {
 
   return (
     <AuthShell
-      seoTitle="Accedi"
-      seoDescription="Accedi al tuo account Maxthenics per riprendere i tuoi programmi di calisthenics e il tuo piano di allenamento."
-      seoKeywords="login calisthenics, accedi maxthenics"
-      titleLead="Bentornato su"
-      description="Inserisci le tue credenziali per accedere al tuo profilo."
-      footerLead="Non hai ancora un account?"
-      footerActionLabel="Registrati ora"
+      seoTitle={t("Accedi", "Sign in")}
+      seoDescription={t(
+        "Accedi al tuo account Maxthenics per riprendere i tuoi programmi di calisthenics e il tuo piano di allenamento.",
+        "Sign in to your Maxthenics account to resume your calisthenics programs and training plan."
+      )}
+      seoKeywords={t(
+        "login calisthenics, accedi maxthenics",
+        "calisthenics login, maxthenics sign in"
+      )}
+      titleLead={t("Bentornato su", "Welcome back to")}
+      description={t(
+        "Inserisci le tue credenziali per accedere al tuo profilo.",
+        "Enter your credentials to access your profile."
+      )}
+      footerLead={t("Non hai ancora un account?", "Don't have an account yet?")}
+      footerActionLabel={t("Registrati ora", "Sign up now")}
       footerActionTo="/register"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Field label="Email" htmlFor="email">
+        <Field label={t("Email", "Email")} htmlFor="email">
           <input
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="tu@esempio.com"
+            placeholder={t("tu@esempio.com", "you@example.com")}
             autoComplete="email"
             className={INPUT_CLASS}
             required
@@ -87,11 +108,11 @@ const Login: React.FC = () => {
         </Field>
 
         <Field
-          label="Password"
+          label={t("Password", "Password")}
           htmlFor="password"
           action={
             <Link to="/feedback" className="text-xs text-red-500 hover:text-red-400 transition-colors">
-              Dimenticata?
+              {t("Dimenticata?", "Forgot?")}
             </Link>
           }
         >
@@ -107,13 +128,17 @@ const Login: React.FC = () => {
         </Field>
 
         <button type="submit" className="btn-primary w-full py-3">
-          Accedi
+          {t("Accedi", "Sign in")}
         </button>
       </form>
 
       <AuthDivider />
 
-      <GoogleButton loading={googleLoading} onClick={handleGoogleLogin} label="Accedi con Google" />
+      <GoogleButton
+        loading={googleLoading}
+        onClick={handleGoogleLogin}
+        label={t("Accedi con Google", "Sign in with Google")}
+      />
     </AuthShell>
   );
 };
