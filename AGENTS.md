@@ -6,6 +6,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # Git
 
+Dopo ogni modifica ai file del progetto, creare un commit e pubblicarlo subito su GitHub con `git push` sulla remote di tracking corrente.
 Dopo ogni commit, eseguire sempre `git push` sulla remote di tracking corrente.
 
 # Stile
