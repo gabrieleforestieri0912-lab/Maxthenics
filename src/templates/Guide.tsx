@@ -23,53 +23,149 @@ import SEO from "../components/SEO";
 interface Subsection {
   id: string;
   title: string;
+  accent: Accent;
 }
 
 interface GuideSection {
   id: string;
   title: string;
   icon: React.ReactNode;
+  accent: Accent;
   subsections: Subsection[];
 }
+
+/** Per-section accent colors, restored from the original guide palette. */
+type Accent = "red" | "amber" | "cyan" | "rose" | "violet" | "emerald" | "orange";
+
+const ACCENTS: Record<
+  Accent,
+  {
+    eyebrow: string;
+    icon: string;
+    iconBox: string;
+    hoverBorder: string;
+    highlight: string;
+    dot: string;
+    activeItem: string;
+  }
+> = {
+  red: {
+    eyebrow: "text-red-600",
+    icon: "text-red-500",
+    iconBox: "bg-red-500/10 border-red-500/20",
+    hoverBorder: "hover:border-red-500/30",
+    highlight: "border-red-500/20 bg-red-600/[0.06]",
+    dot: "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]",
+    activeItem: "bg-red-500/10 text-red-400 border-red-500/20",
+  },
+  amber: {
+    eyebrow: "text-amber-500",
+    icon: "text-amber-400",
+    iconBox: "bg-amber-500/10 border-amber-500/20",
+    hoverBorder: "hover:border-amber-500/30",
+    highlight: "border-amber-500/20 bg-amber-600/[0.06]",
+    dot: "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]",
+    activeItem: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  },
+  cyan: {
+    eyebrow: "text-cyan-500",
+    icon: "text-cyan-400",
+    iconBox: "bg-cyan-500/10 border-cyan-500/20",
+    hoverBorder: "hover:border-cyan-500/30",
+    highlight: "border-cyan-500/20 bg-cyan-600/[0.06]",
+    dot: "bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]",
+    activeItem: "bg-cyan-500/10 text-cyan-300 border-cyan-500/20",
+  },
+  rose: {
+    eyebrow: "text-rose-500",
+    icon: "text-rose-400",
+    iconBox: "bg-rose-500/10 border-rose-500/20",
+    hoverBorder: "hover:border-rose-500/30",
+    highlight: "border-rose-500/20 bg-rose-600/[0.06]",
+    dot: "bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.8)]",
+    activeItem: "bg-rose-500/10 text-rose-300 border-rose-500/20",
+  },
+  violet: {
+    eyebrow: "text-violet-500",
+    icon: "text-violet-400",
+    iconBox: "bg-violet-500/10 border-violet-500/20",
+    hoverBorder: "hover:border-violet-500/30",
+    highlight: "border-violet-500/20 bg-violet-600/[0.06]",
+    dot: "bg-violet-400 shadow-[0_0_8px_rgba(167,139,250,0.8)]",
+    activeItem: "bg-violet-500/10 text-violet-300 border-violet-500/20",
+  },
+  emerald: {
+    eyebrow: "text-emerald-500",
+    icon: "text-emerald-400",
+    iconBox: "bg-emerald-500/10 border-emerald-500/20",
+    hoverBorder: "hover:border-emerald-500/30",
+    highlight: "border-emerald-500/20 bg-emerald-600/[0.06]",
+    dot: "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]",
+    activeItem: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
+  },
+  orange: {
+    eyebrow: "text-orange-500",
+    icon: "text-orange-400",
+    iconBox: "bg-orange-500/10 border-orange-500/20",
+    hoverBorder: "hover:border-orange-500/30",
+    highlight: "border-orange-500/20 bg-orange-600/[0.06]",
+    dot: "bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.8)]",
+    activeItem: "bg-orange-500/10 text-orange-300 border-orange-500/20",
+  },
+};
 
 const guideSections: GuideSection[] = [
   {
     id: "intro",
     title: "Introduzione",
     icon: <BookOpen className="w-4 h-4" />,
-    subsections: [{ id: "introduction", title: "Benvenuto" }],
+    accent: "red",
+    subsections: [{ id: "introduction", title: "Benvenuto", accent: "red" }],
   },
   {
     id: "concetti-base",
     title: "Concetti Base",
     icon: <Target className="w-4 h-4" />,
-    subsections: [{ id: "concetti-base", title: "Panoramica" }],
+    accent: "red",
+    subsections: [
+      { id: "concetti-base", title: "Panoramica", accent: "red" },
+      { id: "intensita-volume", title: "Intensità e volume", accent: "amber" },
+    ],
   },
   {
     id: "scienza",
     title: "Scienza",
     icon: <Brain className="w-4 h-4" />,
-    subsections: [{ id: "formula-forza", title: "Formula della Forza" }],
+    accent: "cyan",
+    subsections: [
+      { id: "formula-forza", title: "Formula della forza", accent: "cyan" },
+      { id: "percorsi-ipertrofia", title: "Ipertrofia", accent: "rose" },
+    ],
   },
   {
     id: "programmazione",
     title: "Programmazione",
     icon: <Target className="w-4 h-4" />,
-    subsections: [{ id: "programmazione-allenamento", title: "Programmazione" }],
+    accent: "violet",
+    subsections: [
+      { id: "programmazione-allenamento", title: "Programmazione", accent: "violet" },
+    ],
   },
   {
     id: "alimentazione",
     title: "Alimentazione",
     icon: <Apple className="w-4 h-4" />,
-    subsections: [{ id: "macronutrienti", title: "Macronutrienti" }],
+    accent: "emerald",
+    subsections: [{ id: "macronutrienti", title: "Macronutrienti", accent: "emerald" }],
   },
   {
     id: "recupero",
     title: "Recupero",
     icon: <Timer className="w-4 h-4" />,
+    accent: "orange",
     subsections: [
-      { id: "strategie-recupero", title: "Strategie di Recupero" },
-      { id: "deload", title: "Importanza dello Scarico" },
+      { id: "strategie-recupero", title: "Strategie di recupero", accent: "amber" },
+      { id: "deload", title: "Importanza dello scarico", accent: "orange" },
     ],
   },
 ];
@@ -80,19 +176,23 @@ function GuideBlock({
   index,
   eyebrow,
   title,
+  accent = "red",
   children,
 }: {
   id: string;
   index?: string;
   eyebrow: string;
   title: string;
+  accent?: Accent;
   children: React.ReactNode;
 }) {
+  const a = ACCENTS[accent];
   return (
     <section id={id} className="scroll-mt-28 pt-20 first:pt-0">
       <SectionHeading
         index={index}
         eyebrow={eyebrow}
+        eyebrowClassName={`text-xs font-bold uppercase tracking-widest ${a.eyebrow}`}
         title={title}
         className="mb-10"
       />
@@ -104,15 +204,20 @@ function GuideBlock({
 function ConceptCard({
   icon,
   title,
+  accent = "red",
   children,
 }: {
   icon: React.ReactNode;
   title: string;
+  accent?: Accent;
   children: React.ReactNode;
 }) {
+  const a = ACCENTS[accent];
   return (
-    <div className="card card-hover p-7">
-      <div className="w-11 h-11 rounded-lg bg-zinc-950 border border-white/10 flex items-center justify-center text-red-500 mb-5">
+    <div className={`card card-hover p-7 ${a.hoverBorder}`}>
+      <div
+        className={`w-11 h-11 rounded-lg border flex items-center justify-center mb-5 ${a.iconBox} ${a.icon}`}
+      >
         {icon}
       </div>
       <h3 className="text-base font-bold tracking-tight text-white mb-3">{title}</h3>
@@ -125,9 +230,16 @@ function ProseCard({ children }: { children: React.ReactNode }) {
   return <div className="card p-7 md:p-9">{children}</div>;
 }
 
-function Highlight({ children }: { children: React.ReactNode }) {
+function Highlight({
+  accent = "red",
+  children,
+}: {
+  accent?: Accent;
+  children: React.ReactNode;
+}) {
+  const a = ACCENTS[accent];
   return (
-    <div className="card border-red-500/20 bg-red-600/[0.06] p-7 md:p-9">
+    <div className={`card p-7 md:p-9 ${a.highlight}`}>
       <p className="text-lg md:text-xl font-bold text-white leading-snug">{children}</p>
     </div>
   );
@@ -136,15 +248,18 @@ function Highlight({ children }: { children: React.ReactNode }) {
 function MacroCard({
   icon,
   title,
+  accent = "emerald",
   children,
 }: {
   icon: React.ReactNode;
   title: string;
+  accent?: Accent;
   children: React.ReactNode;
 }) {
+  const a = ACCENTS[accent];
   return (
-    <div className="card p-7">
-      <div className="mb-5 text-emerald-500">{icon}</div>
+    <div className={`card card-hover p-7 ${a.hoverBorder}`}>
+      <div className={`mb-5 ${a.icon}`}>{icon}</div>
       <h4 className="text-base font-bold tracking-tight text-white mb-3">{title}</h4>
       <p className="prose-block">{children}</p>
     </div>
@@ -186,12 +301,13 @@ const Guide: React.FC = () => {
 
       <div className="page-shell flex">
         <aside
-          className={`fixed left-0 top-16 h-[calc(100vh-64px)] bg-zinc-950/95 backdrop-blur-xl border-r border-white/10 z-40 transition-all duration-300 ${
-            isSidebarOpen ? "w-72" : "w-0 overflow-hidden"
+          aria-label="Indice della guida"
+          className={`fixed left-4 top-24 z-40 w-72 card shadow-2xl shadow-black/50 max-h-[calc(100vh-8rem)] ${
+            isSidebarOpen ? "flex" : "hidden"
           }`}
         >
-          <div className="h-full flex flex-col">
-            <div className="flex items-center justify-between px-5 h-16 border-b border-white/10">
+          <div className="flex flex-col min-h-0 w-full">
+            <div className="flex items-center justify-between px-5 h-16 border-b border-white/10 shrink-0">
               <span className="meta-mono text-red-500">Guida</span>
               <button
                 onClick={() => setIsSidebarOpen(false)}
@@ -202,33 +318,63 @@ const Guide: React.FC = () => {
               </button>
             </div>
 
-            <nav className="flex-1 overflow-y-auto py-6 px-4 scrollbar-hide">
-              <ul className="space-y-1">
+            <nav className="flex-1 overflow-y-auto py-5 px-4 scrollbar-hide min-h-0">
+              <ul className="space-y-4">
                 {guideSections.map((section) => {
-                  const isActive = activeSection === section.subsections[0].id;
+                  const sectionActive = section.subsections.some(
+                    (sub) => sub.id === activeSection
+                  );
+                  const sa = ACCENTS[section.accent];
                   return (
                     <li key={section.id}>
                       <button
                         onClick={() => scrollToSection(section.subsections[0].id)}
-                        aria-current={isActive ? "true" : undefined}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm font-bold transition-colors ${
-                          isActive
-                            ? "bg-red-500/10 text-red-500 border border-red-500/20"
-                            : "text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent"
+                        aria-current={sectionActive ? "true" : undefined}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm font-bold transition-colors border ${
+                          sectionActive
+                            ? sa.activeItem
+                            : "text-zinc-400 hover:text-white hover:bg-white/5 border-transparent"
                         }`}
                       >
-                        <span className={isActive ? "text-red-500" : "text-zinc-600"}>
+                        <span className={sectionActive ? sa.icon : "text-zinc-600"}>
                           {section.icon}
                         </span>
                         <span className="truncate">{section.title}</span>
                       </button>
+                      <ul className="ml-4 mt-1 space-y-0.5 border-l border-white/10 pl-3">
+                        {section.subsections.map((sub) => {
+                          const subActive = activeSection === sub.id;
+                          const dot = ACCENTS[sub.accent].dot;
+                          return (
+                            <li key={sub.id} className="relative">
+                              <span
+                                aria-hidden
+                                className={`absolute -left-4 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full transition-colors ${
+                                  subActive ? dot : "bg-zinc-700"
+                                }`}
+                              />
+                              <button
+                                onClick={() => scrollToSection(sub.id)}
+                                aria-current={subActive ? "true" : undefined}
+                                className={`w-full rounded-md px-1 py-1 text-left text-xs transition-colors ${
+                                  subActive
+                                    ? "font-bold text-white"
+                                    : "font-medium text-zinc-500 hover:text-zinc-200"
+                                }`}
+                              >
+                                <span className="truncate block">{sub.title}</span>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
                     </li>
                   );
                 })}
               </ul>
             </nav>
 
-            <div className="p-4 border-t border-white/10">
+            <div className="p-4 border-t border-white/10 shrink-0">
               <Button to="/programs" size="sm" className="w-full">
                 Vedi i programmi
                 <ChevronRight className="w-4 h-4" aria-hidden />
@@ -241,14 +387,14 @@ const Guide: React.FC = () => {
           <button
             onClick={() => setIsSidebarOpen(true)}
             aria-label="Apri indice"
-            className="fixed top-20 left-4 z-40 p-2.5 rounded-lg bg-zinc-900/90 backdrop-blur-sm border border-white/10 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+            className="fixed top-24 left-4 z-40 p-2.5 rounded-xl bg-zinc-900/90 backdrop-blur-sm border border-white/10 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors shadow-xl"
           >
             <ChevronRight className="w-5 h-5" aria-hidden />
           </button>
         )}
 
         <main
-          className={`flex-1 transition-all duration-300 ${isSidebarOpen ? "md:ml-72" : ""}`}
+          className={`flex-1 transition-all duration-300 ${isSidebarOpen ? "md:ml-80" : ""}`}
         >
           <div className="max-w-5xl mx-auto px-6 lg:px-8 pt-32 pb-32">
             <motion.header
@@ -303,7 +449,7 @@ const Guide: React.FC = () => {
               </div>
             </GuideBlock>
 
-            <GuideBlock id="intensita-volume" eyebrow="03 — Intensity" title="Intensità e Volume">
+            <GuideBlock id="intensita-volume" eyebrow="03 — Intensity" title="Intensità e Volume" accent="amber">
               <ProseCard>
                 <h3 className="text-base font-bold tracking-tight text-white mb-4">
                   Intensità
@@ -378,12 +524,12 @@ const Guide: React.FC = () => {
               </ProseCard>
             </GuideBlock>
 
-            <GuideBlock id="formula-forza" eyebrow="04 — Science" title="Principi di Forza">
+            <GuideBlock id="formula-forza" eyebrow="04 — Science" title="Principi di Forza" accent="cyan">
               <ProseCard>
                 <h3 className="text-base font-bold tracking-tight text-white mb-4">Formula</h3>
                 <p className="text-xl md:text-2xl font-bold text-white mb-6 leading-snug">
                   FORZA ={" "}
-                  <span className="text-red-500">ADATTAMENTI NEURALI</span> × AREA DELLA
+                  <span className="text-cyan-500">ADATTAMENTI NEURALI</span> × AREA DELLA
                   SEZIONE TRASVERSALE (CSA)
                 </p>
 
@@ -428,7 +574,7 @@ const Guide: React.FC = () => {
               </ProseCard>
             </GuideBlock>
 
-            <GuideBlock id="percorsi-ipertrofia" eyebrow="05 — Hypertrophy" title="Percorsi dell'ipertrofia">
+            <GuideBlock id="percorsi-ipertrofia" eyebrow="05 — Hypertrophy" title="Percorsi dell'ipertrofia" accent="rose">
               <ProseCard>
                 <h3 className="text-base font-bold tracking-tight text-white mb-4">
                   Tensione meccanica
@@ -474,6 +620,7 @@ const Guide: React.FC = () => {
               id="programmazione-allenamento"
               eyebrow="06 — Programming"
               title="Programmazione dell'allenamento"
+              accent="violet"
             >
               <ProseCard>
                 <h3 className="text-base font-bold tracking-tight text-white mb-4">
@@ -555,7 +702,7 @@ const Guide: React.FC = () => {
               </ProseCard>
             </GuideBlock>
 
-            <GuideBlock id="strategie-recupero" eyebrow="07 — Recovery" title="Strategie di recupero">
+            <GuideBlock id="strategie-recupero" eyebrow="07 — Recovery" title="Strategie di recupero" accent="amber">
               <ProseCard>
                 <h3 className="text-base font-bold tracking-tight text-white mb-4">Recupero</h3>
                 <p className="prose-block mb-4">
@@ -607,7 +754,7 @@ const Guide: React.FC = () => {
               </ProseCard>
             </GuideBlock>
 
-            <GuideBlock id="macronutrienti" eyebrow="08 — Nutrition" title="Alimentazione">
+            <GuideBlock id="macronutrienti" eyebrow="08 — Nutrition" title="Alimentazione" accent="emerald">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <MacroCard icon={<Beef size={22} />} title="Proteine">
                   Essenziali per la costruzione muscolare. Target: 2g per kg di peso.
@@ -731,7 +878,7 @@ const Guide: React.FC = () => {
               </div>
             </GuideBlock>
 
-            <GuideBlock id="deload" eyebrow="09 — Recovery" title="L'importanza dello scarico">
+            <GuideBlock id="deload" eyebrow="09 — Recovery" title="L'importanza dello scarico" accent="orange">
               <ProseCard>
                 <p className="prose-block mb-4">
                   Lo scarico consiste in un breve periodo in cui si{" "}

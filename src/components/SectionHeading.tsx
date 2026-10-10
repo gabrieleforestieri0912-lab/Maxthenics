@@ -11,6 +11,8 @@ interface SectionHeadingProps {
   aside?: React.ReactNode;
   align?: "left" | "center";
   className?: string;
+  /** Override the eyebrow color, e.g. per-section accents */
+  eyebrowClassName?: string;
   id?: string;
 }
 
@@ -22,6 +24,7 @@ export default function SectionHeading({
   aside,
   align = "left",
   className = "",
+  eyebrowClassName = "eyebrow",
   id,
 }: SectionHeadingProps) {
   const centered = align === "center";
@@ -34,7 +37,7 @@ export default function SectionHeading({
       {(eyebrow || index) && (
         <div className={`flex items-center gap-3 ${centered ? "justify-center" : ""}`}>
           {index && <span className="meta-mono">{index}</span>}
-          {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+          {eyebrow && <p className={eyebrowClassName}>{eyebrow}</p>}
         </div>
       )}
 
