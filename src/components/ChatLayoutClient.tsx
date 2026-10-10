@@ -7,8 +7,8 @@ import ChatWidget from './ChatWidget';
 function ChatLayoutInner() {
   const location = useLocation();
 
-  // Niente minichat sulla landing
-  if (location.pathname === '/') return null;
+  // Niente minichat sulla landing e nel carrello
+  if (location.pathname === '/' || location.pathname === '/cart') return null;
 
   return (
     <>

@@ -252,13 +252,14 @@ const CalisthenicsRoom: React.FC = () => {
 
         {/* ── HERO ── */}
         <section className="section-padding relative flex items-center justify-center overflow-hidden pt-28">
-          <div className="absolute inset-0 z-0" aria-hidden>
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.18)_0%,transparent_60%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(249,115,22,0.1)_0%,transparent_50%)]" />
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-600/20 rounded-full blur-[150px]" />
-            <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[150px]" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[200px]" />
-          </div>
+          <div
+            className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-600/10 rounded-full blur-[120px] pointer-events-none"
+            aria-hidden
+          />
+          <div
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-600/5 rounded-full blur-[120px] pointer-events-none"
+            aria-hidden
+          />
 
           <div className="container-max relative z-10 text-center">
             <motion.div
@@ -430,10 +431,7 @@ const CalisthenicsRoom: React.FC = () => {
         </section>
 
         {/* ── THREE PILLARS ── */}
-        <section className="section-padding bg-zinc-900/20 border-y hairline relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.08)_0%,transparent_60%)]" aria-hidden />
-          <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-red-500/30 to-transparent" aria-hidden />
-          <div className="absolute bottom-0 left-0 w-full h-px bg-linear-to-r from-transparent via-orange-500/30 to-transparent" aria-hidden />
+        <section className="section-padding relative overflow-hidden">
           <div className="container-max relative z-10">
             <div className="grid md:grid-cols-3 gap-6">
               {[
@@ -515,7 +513,7 @@ const CalisthenicsRoom: React.FC = () => {
 
               {/* Bonuses */}
               <div className="relative">
-                <div className="bg-linear-to-br from-zinc-900/40 to-zinc-950/40 border border-white/10 rounded-2xl p-8 md:p-12 overflow-hidden">
+                <div className="card p-8 md:p-12 overflow-hidden">
                   <div className="absolute -top-20 -right-20 opacity-5">
                     <Crown size={200} />
                   </div>
