@@ -23,7 +23,6 @@ import {
   Zap,
 } from "lucide-react";
 import Curriculum from "../components/Curriculum";
-import LanguageToggle from "../components/LanguageToggle";
 import MetaPill from "../components/MetaPill";
 import SectionHeading from "../components/SectionHeading";
 import ShareButton from "../components/ShareButton";
@@ -197,7 +196,6 @@ const ProgramDetails: React.FC = () => {
               title={program.localizedTitle}
               text={program.localizedDescription}
             />
-            <LanguageToggle compact />
           </div>
         </div>
 

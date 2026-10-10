@@ -7,9 +7,7 @@ import { getCurriculum } from '../data/curriculum';
 import { localizeList, localizeNote } from '../data/exerciseI18n';
 import { getLessonProgress, toggleLessonProgress } from '../lib/lessonProgress';
 import Curriculum from '../components/Curriculum';
-import ShareButton from '../components/ShareButton';
 import { useLanguage } from '../context/LanguageContext';
-import LanguageToggle from '../components/LanguageToggle';
 import { exerciseDatabase, Exercise } from '../data/exercises';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ChevronDown, ChevronRight, Target, Dumbbell, BookOpen, Flame, Zap, Check, GraduationCap } from 'lucide-react';
@@ -896,14 +894,6 @@ const ProgramContent: React.FC = () => {
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" aria-hidden />
               {t('Torna ai Programmi', 'Back to Programs')}
             </Link>
-            <div className="flex items-center gap-2">
-              <ShareButton
-                compact
-                url={typeof window !== 'undefined' ? `${window.location.origin}/program/${program.id}` : undefined}
-                title={program.title}
-              />
-              <LanguageToggle compact />
-            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">

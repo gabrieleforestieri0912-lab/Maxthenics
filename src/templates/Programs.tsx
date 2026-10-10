@@ -9,10 +9,8 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import { localizeProgram, programData, type ProgramDataItem } from "../data/programs";
-import LanguageToggle from "../components/LanguageToggle";
 import PageHeader from "../components/PageHeader";
 import SectionHeading from "../components/SectionHeading";
-import ShareButton from "../components/ShareButton";
 import SEO from "../components/SEO";
 
 interface ProgramGroup {
@@ -115,22 +113,6 @@ const ProgramCard: React.FC<{
       ) : (
         <span className="eyebrow-pill absolute top-4 right-4 z-30">Premium</span>
       )}
-
-      <div
-        className="absolute top-4 left-4 z-30 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <ShareButton
-          compact
-          url={
-            typeof window !== "undefined"
-              ? `${window.location.origin}/program/${program.id}`
-              : undefined
-          }
-          title={display.localizedTitle}
-          text={display.localizedDescription}
-        />
-      </div>
 
       <div
         className="relative h-44 overflow-hidden"
@@ -257,9 +239,7 @@ function Programs() {
             "Dal principiante all'elite, ogni programma è progettato con metodologie biomeccaniche avanzate per trasformare il tuo corpo attraverso la forza a corpo libero.",
             "From beginner to elite, every program is built on advanced biomechanical methods to transform your body through bodyweight strength."
           )}
-        >
-          <LanguageToggle />
-        </PageHeader>
+        />
 
         <div className="mt-20 space-y-24">
           {PROGRAM_GROUPS.map((group) => {
