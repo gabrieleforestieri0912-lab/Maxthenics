@@ -27,6 +27,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useChatContext, IMessage as ChatMessage } from "../context/ChatContext";
+import { useLanguage } from "../context/LanguageContext";
 import SEO from "../components/SEO";
 import ChatInput from "../components/ChatInput";
 import Image from 'next/image';
@@ -69,13 +70,14 @@ interface RenderContentProps {
 
 const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
   const [copiedCodeBlock, setCopiedCodeBlock] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   const formatText = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, i) => {
       if (part.startsWith("**") && part.endsWith("**")) {
         return (
-          <strong key={i} className="font-bold text-white">
+          <strong key={i} className="font-bold text-zinc-900 dark:text-white">
             {part.slice(2, -2)}
           </strong>
         );
@@ -126,7 +128,7 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
     if (bulletMatch) {
       const content = bulletMatch[2];
       return (
-        <li key={i} className="ml-4 list-disc text-zinc-300 mt-1 first:mt-0">
+        <li key={i} className="ml-4 list-disc text-zinc-700 dark:text-zinc-300 mt-1 first:mt-0">
           {formatText(content)}
         </li>
       );
@@ -134,7 +136,7 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
 
     if (/^\d+\.\s/.test(trimmed)) {
       return (
-        <li key={i} className="ml-4 list-decimal text-zinc-300 mt-1 first:mt-0">
+        <li key={i} className="ml-4 list-decimal text-zinc-700 dark:text-zinc-300 mt-1 first:mt-0">
           {formatText(trimmed.replace(/^\d+\.\s/, ""))}
         </li>
       );
@@ -142,7 +144,7 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
 
     if (/^###\s/.test(trimmed)) {
       return (
-        <h3 key={i} className="text-sm font-bold text-white tracking-tight mt-4 mb-2">
+        <h3 key={i} className="text-sm font-bold text-zinc-900 dark:text-white tracking-tight mt-4 mb-2">
           {formatText(trimmed.replace(/^###\s/, ""))}
         </h3>
       );
@@ -150,7 +152,7 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
 
     if (/^##\s/.test(trimmed)) {
       return (
-        <h2 key={i} className="text-base font-bold text-white tracking-tight mt-5 mb-2">
+        <h2 key={i} className="text-base font-bold text-zinc-900 dark:text-white tracking-tight mt-5 mb-2">
           {formatText(trimmed.replace(/^##\s/, ""))}
         </h2>
       );
@@ -158,14 +160,14 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
 
     if (/^#\s/.test(trimmed)) {
       return (
-        <h1 key={i} className="text-lg font-bold text-white tracking-tight mt-6 mb-2">
+        <h1 key={i} className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight mt-6 mb-2">
           {formatText(trimmed.replace(/^#\s/, ""))}
         </h1>
       );
     }
 
     return (
-      <div key={i} className={trimmed === "" ? "h-2" : "mt-1.5 first:mt-0 text-zinc-300"}>
+      <div key={i} className={trimmed === "" ? "h-2" : "mt-1.5 first:mt-0 text-zinc-700 dark:text-zinc-300"}>
         {formatText(line)}
       </div>
     );
@@ -222,9 +224,9 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
                   className="flex items-center gap-1.5 px-2 py-1 rounded-lg meta-mono hover:text-white hover:bg-white/5 transition-colors"
                 >
                   {copiedCodeBlock === block.content ? (
-                    <><Check size={12} className="text-green-400" /> Copiato</>
+                    <><Check size={12} className="text-green-400" /> {t("Copiato", "Copied")}</>
                   ) : (
-                    <><Copy size={12} /> Copia</>
+                    <><Copy size={12} /> {t("Copia", "Copy")}</>
                   )}
                 </button>
               </div>
@@ -242,14 +244,10 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
 
 type IMessage = ChatMessage;
 
-const suggestedFollowUps = [
-  "Approfondisci questo argomento",
-  "Fammi un esempio pratico",
-  "Quali sono i pro e i contro?",
-  "Mostrami i dati scientifici",
-];
-
-function groupMessagesByDate(messages: IMessage[]) {
+function groupMessagesByDate(
+  messages: IMessage[],
+  labels: { today: string; yesterday: string; locale: string }
+) {
   const groups: { date: string; label: string; messages: IMessage[] }[] = [];
   const today = new Date();
   const yesterday = new Date(today);
@@ -259,11 +257,11 @@ function groupMessagesByDate(messages: IMessage[]) {
     const msgDate = msg.createdAt ? new Date(msg.createdAt) : new Date();
     let label: string;
     if (msgDate.toDateString() === today.toDateString()) {
-      label = 'Oggi';
+      label = labels.today;
     } else if (msgDate.toDateString() === yesterday.toDateString()) {
-      label = 'Ieri';
+      label = labels.yesterday;
     } else {
-      label = msgDate.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+      label = msgDate.toLocaleDateString(labels.locale, { weekday: 'long', day: 'numeric', month: 'long' });
     }
     const dateKey = msgDate.toDateString();
     const existing = groups.find(g => g.date === dateKey);
@@ -278,6 +276,7 @@ function groupMessagesByDate(messages: IMessage[]) {
 
 const Chat: React.FC = () => {
   const { user, logout, addNotification } = useAuth();
+  const { locale, t } = useLanguage();
   const {
     messages, setMessages, activeChatId, isLoading, isStreaming,
     sendMessage, stopGeneration, editMessage, regenerate,
@@ -376,7 +375,7 @@ const Chat: React.FC = () => {
 
     if (!user) {
       if (guestMessageCount >= 5) {
-        addNotification('Hai raggiunto il limite di 5 messaggi. Registrati per continuare a chattare!', 'error');
+        addNotification(t('Hai raggiunto il limite di 5 messaggi. Registrati per continuare a chattare!', 'You reached the 5-message limit. Sign up to keep chatting!'), 'error');
         return;
       }
       setGuestMessageCount(prev => {
@@ -423,7 +422,7 @@ const Chat: React.FC = () => {
     if (deleteConfirmId) {
       await deleteChat(deleteConfirmId);
       setDeleteConfirmId(null);
-      addNotification("Chat eliminata correttamente", "success");
+      addNotification(t("Chat eliminata correttamente", "Chat deleted successfully"), "success");
     }
   };
 
@@ -573,7 +572,7 @@ const Chat: React.FC = () => {
   // Export handlers
   const handleExportText = async () => {
     await copyChatToClipboard();
-    addNotification("Chat copiata negli appunti", "success");
+    addNotification(t("Chat copiata negli appunti", "Chat copied to clipboard"), "success");
     setExportMenuOpen(false);
   };
 
@@ -587,13 +586,28 @@ const Chat: React.FC = () => {
     a.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}.md`;
     a.click();
     URL.revokeObjectURL(url);
-    addNotification("Chat scaricata come Markdown", "success");
+    addNotification(t("Chat scaricata come Markdown", "Chat downloaded as Markdown"), "success");
     setExportMenuOpen(false);
   };
 
   const hasMessages = messages.length > 0;
 
-  const groupedMessages = useMemo(() => groupMessagesByDate(messages), [messages]);
+  const suggestedFollowUps = [
+    t("Approfondisci questo argomento", "Explore this topic further"),
+    t("Fammi un esempio pratico", "Give me a practical example"),
+    t("Quali sono i pro e i contro?", "What are the pros and cons?"),
+    t("Mostrami i dati scientifici", "Show me the scientific data"),
+  ];
+
+  const groupedMessages = useMemo(
+    () => groupMessagesByDate(messages, {
+      today: t("Oggi", "Today"),
+      yesterday: t("Ieri", "Yesterday"),
+      locale: locale === "en" ? "en-US" : "it-IT",
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [messages, locale]
+  );
 
   const formatTime = (dateStr?: string) => {
     const date = dateStr ? new Date(dateStr) : new Date();
@@ -605,11 +619,14 @@ const Chat: React.FC = () => {
   return (
     <>
       <SEO
-        title="Chat AI"
-        description="Chatta con Sthenox, l'AI coach di calisthenics, per ricevere consigli personalizzati sul tuo allenamento a corpo libero."
+        title={t("Chat AI", "AI Chat")}
+        description={t(
+          "Chatta con Sthenox, l'AI coach di calisthenics, per ricevere consigli personalizzati sul tuo allenamento a corpo libero.",
+          "Chat with Sthenox, the calisthenics AI coach, for personalized advice on your bodyweight training."
+        )}
         keywords="AI chat calisthenics, coaching fitness, assistente allenamento"
       />
-      <div className="h-screen bg-zinc-950 text-white flex overflow-hidden relative">
+      <div className="h-screen bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-white flex overflow-hidden relative">
 
         {/* ── Deletion Modal ── */}
         <AnimatePresence>
@@ -620,7 +637,7 @@ const Chat: React.FC = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setDeleteConfirmId(null)}
-                className="absolute inset-0 bg-zinc-950/80 backdrop-blur-md"
+                className="absolute inset-0 bg-zinc-500/30 dark:bg-zinc-950/80 backdrop-blur-md"
               />
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -631,21 +648,21 @@ const Chat: React.FC = () => {
                 <div className="w-14 h-14 rounded-xl bg-red-600/10 border border-red-500/20 flex items-center justify-center mb-6">
                   <Trash2 className="text-red-500" size={28} aria-hidden />
                 </div>
-                <h3 className="text-xl font-bold text-white tracking-tight mb-3">Elimina chat?</h3>
-                <p className="body-copy text-sm mb-8">Questa azione è irreversibile. Tutti i dati di questa conversazione verranno rimossi dai nostri sistemi.</p>
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight mb-3">{t("Elimina chat?", "Delete chat?")}</h3>
+                <p className="body-copy text-sm mb-8">{t("Questa azione è irreversibile. Tutti i dati di questa conversazione verranno rimossi dai nostri sistemi.", "This action is irreversible. All data in this conversation will be removed from our systems.")}</p>
 
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => setDeleteConfirmId(null)}
                     className="btn-secondary-sm"
                   >
-                    Annulla
+                    {t("Annulla", "Cancel")}
                   </button>
                   <button
                     onClick={confirmDelete}
                     className="btn-primary-sm"
                   >
-                    Elimina
+                    {t("Elimina", "Delete")}
                   </button>
                 </div>
               </motion.div>
@@ -659,9 +676,9 @@ const Chat: React.FC = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             onClick={() => setIsSidebarOpen(true)}
-            className="fixed top-6 left-6 z-50 p-3 card hover:bg-zinc-800 transition-colors shadow-2xl group"
+            className="fixed top-6 left-6 z-50 p-3 card hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-2xl group"
           >
-            <Menu size={20} className="text-zinc-400 group-hover:text-white" />
+            <Menu size={20} className="text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
           </motion.button>
         )}
 
@@ -673,9 +690,9 @@ const Chat: React.FC = () => {
             opacity: isSidebarOpen ? 1 : 0,
           }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="fixed lg:relative inset-y-0 left-0 z-40 bg-zinc-950/50 backdrop-blur-3xl border-r border-white/10 flex flex-col overflow-hidden"
+          className="fixed lg:relative inset-y-0 left-0 z-40 bg-white/70 dark:bg-zinc-950/50 backdrop-blur-3xl border-r border-zinc-200 dark:border-white/10 flex flex-col overflow-hidden"
         >
-          <div className="p-6 border-b border-white/10">
+          <div className="p-6 border-b border-zinc-200 dark:border-white/10">
             <div className="flex items-center justify-between mb-8">
               <Link to="/" className="flex items-center gap-3 group">
                 <Image
@@ -691,7 +708,8 @@ const Chat: React.FC = () => {
               </Link>
               <button
                 onClick={() => setIsSidebarOpen(false)}
-                className="p-2 hover:bg-white/5 rounded-xl transition-colors text-zinc-500 hover:text-white"
+                aria-label={t("Chiudi indice chat", "Close chat index")}
+                className="p-2 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
               >
                 <ChevronLeft size={20} />
               </button>
@@ -701,18 +719,18 @@ const Chat: React.FC = () => {
               className="btn-primary-sm w-full py-3.5"
             >
               <Plus size={16} aria-hidden />
-              Nuova chat
+              {t("Nuova chat", "New chat")}
             </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-hide">
             <p className="meta-mono px-4 py-4">
-              Recenti
+              {t("Recenti", "Recent")}
             </p>
             {history.length === 0 ? (
               <div className="px-4 py-8 text-center">
                 <p className="meta-mono leading-relaxed">
-                  Nessuna conversazione <br /> salvata
+                  {t("Nessuna conversazione", "No conversations")} <br /> {t("salvata", "saved")}
                 </p>
               </div>
             ) : (
@@ -722,10 +740,10 @@ const Chat: React.FC = () => {
                     onClick={() => selectChat(chat._id)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-bold transition-colors group border ${activeChatId === chat._id
                       ? "bg-red-600/10 text-red-500 border-red-500/20"
-                      : "text-zinc-500 hover:bg-white/5 hover:text-zinc-300 border-transparent"
+                      : "text-zinc-500 hover:bg-zinc-900/5 dark:hover:bg-white/5 hover:text-zinc-700 dark:hover:text-zinc-300 border-transparent"
                       }`}
                   >
-                    <MessageSquare size={14} className={activeChatId === chat._id ? "text-red-500" : "text-zinc-700 group-hover:text-zinc-500"} />
+                    <MessageSquare size={14} className={activeChatId === chat._id ? "text-red-500" : "text-zinc-400 dark:text-zinc-700 group-hover:text-zinc-500"} />
                     {renamingChatId === chat._id ? (
                       <input
                         value={renamingChatTitle}
@@ -734,26 +752,26 @@ const Chat: React.FC = () => {
                         onBlur={saveRename}
                         autoFocus
                         onClick={(e) => e.stopPropagation()}
-                        className="flex-1 bg-zinc-800 text-white px-2 py-1 rounded text-xs outline-none border border-red-500/30"
+                        className="flex-1 bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white px-2 py-1 rounded text-xs outline-none border border-red-500/30"
                       />
                     ) : (
                       <span className="truncate flex-1 pr-10">
-                        {chat.title || "Chat senza titolo"}
+                        {chat.title || t("Chat senza titolo", "Untitled chat")}
                       </span>
                     )}
                   </button>
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
                     <button
                       onClick={(e) => { e.stopPropagation(); startRename(chat._id, chat.title); }}
-                      title="Rinomina"
-                      className="p-1.5 text-zinc-700 hover:text-amber-500 opacity-0 group-hover/item:opacity-100 transition-colors"
+                      title={t("Rinomina", "Rename")}
+                      className="p-1.5 text-zinc-400 dark:text-zinc-700 hover:text-amber-500 opacity-0 group-hover/item:opacity-100 transition-colors"
                     >
                       <Pencil size={12} />
                     </button>
                     <button
                       onClick={(e) => handleDeleteChat(e, chat._id)}
-                      title="Elimina chat"
-                      className="p-1.5 text-zinc-700 hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-colors"
+                      title={t("Elimina chat", "Delete chat")}
+                      className="p-1.5 text-zinc-400 dark:text-zinc-700 hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-colors"
                     >
                       <Trash2 size={12} />
                     </button>
@@ -763,7 +781,7 @@ const Chat: React.FC = () => {
             )}
           </div>
 
-          <div className="p-6 border-t border-white/10 bg-zinc-950/40">
+          <div className="p-6 border-t border-zinc-200 dark:border-white/10 bg-zinc-100/60 dark:bg-zinc-950/40">
             {user ? (
               <div className="flex items-center gap-3">
                 {user.avatar ? (
@@ -772,16 +790,16 @@ const Chat: React.FC = () => {
                     alt={user.name}
                     width={36}
                     height={36}
-                    className="rounded-full object-cover border border-white/10"
+                    className="rounded-full object-cover border border-zinc-200 dark:border-white/10"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-white/10">
+                  <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center border border-zinc-200 dark:border-white/10">
                     <UserIcon size={18} className="text-zinc-500" />
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-sm font-bold truncate tracking-tight text-white">{user.name}</p>
+                    <p className="text-sm font-bold truncate tracking-tight text-zinc-900 dark:text-white">{user.name}</p>
                     {user.subscriptionTier && user.subscriptionTier !== 'free' && (
                       <span className="meta-mono px-1.5 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded text-amber-500">
                         {user.subscriptionTier}
@@ -797,7 +815,8 @@ const Chat: React.FC = () => {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="p-2 text-zinc-700 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors"
+                  aria-label={t("Esci", "Logout")}
+                  className="p-2 text-zinc-400 dark:text-zinc-700 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors"
                 >
                   <LogOut size={14} />
                 </button>
@@ -805,7 +824,7 @@ const Chat: React.FC = () => {
             ) : (
               <div className="space-y-4">
                 <p className="meta-mono text-center">
-                  Accedi per salvare i dati
+                  {t("Accedi per salvare i dati", "Log in to save your data")}
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <Link
@@ -834,7 +853,7 @@ const Chat: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsSidebarOpen(false)}
-              className="fixed inset-0 bg-zinc-950/80 backdrop-blur-md z-30 lg:hidden"
+              className="fixed inset-0 bg-zinc-500/30 dark:bg-zinc-950/80 backdrop-blur-md z-30 lg:hidden"
             />
           )}
         </AnimatePresence>
@@ -843,7 +862,7 @@ const Chat: React.FC = () => {
         <div className="flex-1 flex flex-col min-w-0 relative h-full">
 
           {/* Top bar */}
-          <div className="px-6 py-3 border-b border-white/10 flex items-center justify-between shrink-0 bg-zinc-950/30 backdrop-blur-xl">
+          <div className="px-6 py-3 border-b border-zinc-200 dark:border-white/10 flex items-center justify-between shrink-0 bg-white/60 dark:bg-zinc-950/30 backdrop-blur-xl">
             <div className="flex items-center gap-3">
               {showSearch ? (
                 <div className="flex items-center gap-2">
@@ -852,8 +871,8 @@ const Chat: React.FC = () => {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => handleSearch(e.target.value)}
-                    placeholder="Cerca nei messaggi..."
-                    className="bg-zinc-900 border border-white/10 text-white px-4 py-2 rounded-xl text-xs outline-none focus:border-red-500/30 w-64 transition-colors placeholder:text-zinc-600"
+                    placeholder={t("Cerca nei messaggi...", "Search messages...")}
+                    className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white px-4 py-2 rounded-xl text-xs outline-none focus:border-red-500/30 w-64 transition-colors placeholder:text-zinc-400 dark:placeholder:text-zinc-600"
                     autoFocus
                   />
                   <div className="flex items-center gap-1">
@@ -865,21 +884,24 @@ const Chat: React.FC = () => {
                     <button
                       onClick={() => navigateSearchResult('up')}
                       disabled={searchResults.length === 0}
-                      className="p-1.5 text-zinc-500 hover:text-white disabled:opacity-30 transition-colors"
+                      aria-label={t("Risultato precedente", "Previous result")}
+                      className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white disabled:opacity-30 transition-colors"
                     >
                       <ChevronDown size={14} className="rotate-180" />
                     </button>
                     <button
                       onClick={() => navigateSearchResult('down')}
                       disabled={searchResults.length === 0}
-                      className="p-1.5 text-zinc-500 hover:text-white disabled:opacity-30 transition-colors"
+                      aria-label={t("Risultato successivo", "Next result")}
+                      className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white disabled:opacity-30 transition-colors"
                     >
                       <ChevronDown size={14} />
                     </button>
                   </div>
                   <button
                     onClick={() => { setShowSearch(false); setSearchQuery(""); setSearchResults([]); }}
-                    className="p-1.5 text-zinc-500 hover:text-white transition-colors"
+                    aria-label={t("Chiudi ricerca", "Close search")}
+                    className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
                   >
                     <X size={14} />
                   </button>
@@ -898,16 +920,16 @@ const Chat: React.FC = () => {
                 <>
                   <button
                     onClick={() => setShowSearch(true)}
-                    className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
-                    title="Cerca"
+                    className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
+                    title={t("Cerca", "Search")}
                   >
                     <Search size={15} />
                   </button>
                   <div className="relative" ref={exportMenuRef}>
                     <button
                       onClick={() => setExportMenuOpen(!exportMenuOpen)}
-                      className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
-                      title="Esporta"
+                      className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
+                      title={t("Esporta", "Export")}
                     >
                       <Download size={15} />
                     </button>
@@ -917,21 +939,21 @@ const Chat: React.FC = () => {
                           initial={{ opacity: 0, y: 10, scale: 0.95 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                          className="absolute right-0 top-full mt-2 w-52 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50"
+                          className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl shadow-2xl overflow-hidden z-50"
                         >
                           <button
                             onClick={handleExportText}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 transition-colors text-left border-b border-white/10"
+                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 transition-colors text-left border-b border-zinc-200 dark:border-white/10"
                           >
                             <Copy size={14} />
-                            Copia chat (testo)
+                            {t("Copia chat (testo)", "Copy chat (text)")}
                           </button>
                           <button
                             onClick={handleExportMarkdown}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 transition-colors text-left"
+                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 transition-colors text-left"
                           >
                             <Download size={14} />
-                            Scarica Markdown
+                            {t("Scarica Markdown", "Download Markdown")}
                           </button>
                         </motion.div>
                       )}
@@ -963,12 +985,15 @@ const Chat: React.FC = () => {
                   <Brain size={32} className="text-red-500" aria-hidden />
                 </motion.div>
 
-                <p className="eyebrow mb-3">Coach AI Sthenox</p>
+                <p className="eyebrow mb-3">{t("Coach AI Sthenox", "Sthenox AI Coach")}</p>
                 <h2 className="page-title mb-4">
-                  Come posso aiutarti?
+                  {t("Come posso aiutarti?", "How can I help?")}
                 </h2>
                 <p className="body-copy text-sm mb-10 max-w-md mx-auto">
-                  Protocolli d&apos;azione, analisi biomeccanica e programmazione d&apos;élite a tua disposizione.
+                  {t(
+                    "Protocolli d'azione, analisi biomeccanica e programmazione d'élite a tua disposizione.",
+                    "Action protocols, biomechanical analysis and elite programming at your disposal."
+                  )}
                 </p>
 
                 <div className="max-w-xl mx-auto mb-10">
@@ -979,17 +1004,17 @@ const Chat: React.FC = () => {
                     onStop={stopGeneration}
                     isLoading={isLoading}
                     isStreaming={isStreaming}
-                    placeholder="Chiedi qualsiasi cosa"
+                    placeholder={t("Chiedi qualsiasi cosa", "Ask anything")}
                     autoFocus
                     textareaRef={inputRef}
                     onPlus={startNewChat}
-                    plusLabel="Nuova conversazione"
+                    plusLabel={t("Nuova conversazione", "New conversation")}
                     showSuggestions
                     suggestions={[
-                      "Crea un protocollo per la Planche",
-                      "Analisi biomeccanica Front Lever",
-                      "Come gestire il volume allenante?",
-                      "Consigli per il recupero neurale",
+                      t("Crea un protocollo per la Planche", "Create a Planche protocol"),
+                      t("Analisi biomeccanica Front Lever", "Front Lever biomechanical analysis"),
+                      t("Come gestire il volume allenante?", "How to manage training volume?"),
+                      t("Consigli per il recupero neurale", "Tips for neural recovery"),
                     ]}
                     onSuggestionClick={(suggestion) => {
                       setInput(suggestion);
@@ -998,7 +1023,7 @@ const Chat: React.FC = () => {
                     onEscape={handleInputEscape}
                   />
                   <p className="meta-mono text-center mt-3">
-                    <kbd className="px-1.5 py-0.5 bg-zinc-900 rounded text-zinc-500">Enter</kbd> invia · <kbd className="px-1.5 py-0.5 bg-zinc-900 rounded text-zinc-500">Shift+Enter</kbd> nuova riga
+                    <kbd className="px-1.5 py-0.5 bg-zinc-200 dark:bg-zinc-900 rounded text-zinc-500">Enter</kbd> {t("invia", "send")} · <kbd className="px-1.5 py-0.5 bg-zinc-200 dark:bg-zinc-900 rounded text-zinc-500">Shift+Enter</kbd> {t("nuova riga", "new line")}
                   </p>
                 </div>
               </motion.div>
@@ -1007,11 +1032,11 @@ const Chat: React.FC = () => {
                 {groupedMessages.map((group) => (
                   <div key={group.date}>
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="flex-1 h-px bg-white/10" />
+                      <div className="flex-1 h-px bg-zinc-200 dark:bg-white/10" />
                       <span className="meta-mono shrink-0">
                         {group.label}
                       </span>
-                      <div className="flex-1 h-px bg-white/10" />
+                      <div className="flex-1 h-px bg-zinc-200 dark:bg-white/10" />
                     </div>
                     <div className="space-y-6">
                       {group.messages.map((msg, msgIdx) => {
@@ -1036,7 +1061,7 @@ const Chat: React.FC = () => {
                             <div className={`max-w-[85%] lg:max-w-[80%] ${msg.role === "user" ? "text-right" : "text-left"}`}>
                               {msg.role === "assistant" && msgIdx === 0 && (
                                 <div className="flex items-center gap-2 mb-3">
-                                  <div className="w-8 h-8 bg-zinc-900 border border-white/10 rounded-xl flex items-center justify-center">
+                                  <div className="w-8 h-8 bg-zinc-200 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl flex items-center justify-center">
                                     <Brain size={14} className="text-red-500" />
                                   </div>
                                   <span className="eyebrow flex items-center gap-1.5">
@@ -1054,7 +1079,7 @@ const Chat: React.FC = () => {
                                     onChange={(e) => setEditingMessageContent(e.target.value)}
                                     onKeyDown={handleEditKeyDown}
                                     autoFocus
-                                    className="w-full bg-zinc-900 border border-red-500/30 text-white px-4 py-3 rounded-2xl text-sm outline-none resize-none"
+                                    className="w-full bg-white dark:bg-zinc-900 border border-red-500/30 text-zinc-900 dark:text-white px-4 py-3 rounded-2xl text-sm outline-none resize-none"
                                     rows={3}
                                   />
                                   <div className="flex items-center gap-2 justify-end">
@@ -1062,14 +1087,14 @@ const Chat: React.FC = () => {
                                       onClick={cancelEdit}
                                       className="btn-ghost px-3 py-1.5 text-xs"
                                     >
-                                      Annulla
+                                      {t("Annulla", "Cancel")}
                                     </button>
                                     <button
                                       onClick={saveEdit}
                                       className="btn-primary-sm"
                                     >
                                       <CheckCheck size={12} aria-hidden />
-                                      Salva e rigenera
+                                      {t("Salva e rigenera", "Save & regenerate")}
                                     </button>
                                   </div>
                                 </div>
@@ -1078,7 +1103,7 @@ const Chat: React.FC = () => {
                                   <div
                                     className={`card p-4 text-sm leading-relaxed ${msg.role === "user"
                                       ? "bg-red-600/90 border-red-500/30 text-white"
-                                      : "text-zinc-200"
+                                      : "text-zinc-700 dark:text-zinc-200"
                                       }`}
                                   >
                                     {msg.role === "assistant" && (msg.isNew || msg.isStreaming) ? (
@@ -1104,8 +1129,8 @@ const Chat: React.FC = () => {
                                       {/* Copy button */}
                                       <button
                                         onClick={() => copyMessage(msg.content, globalIdx)}
-                                        className="p-1 text-zinc-700 hover:text-zinc-400 transition-colors"
-                                        title="Copia messaggio"
+                                        className="p-1 text-zinc-500 dark:text-zinc-700 hover:text-zinc-700 dark:hover:text-zinc-400 transition-colors"
+                                        title={t("Copia messaggio", "Copy message")}
                                       >
                                         {copiedMessageId === globalIdx ? (
                                           <Check size={10} className="text-green-500" />
@@ -1118,8 +1143,8 @@ const Chat: React.FC = () => {
                                       {msg.role === "user" && !isStreaming && (
                                         <button
                                           onClick={() => startEdit(globalIdx, msg.content)}
-                                          className="p-1 text-zinc-700 hover:text-amber-500 transition-colors"
-                                          title="Modifica messaggio"
+                                          className="p-1 text-zinc-500 dark:text-zinc-700 hover:text-amber-500 transition-colors"
+                                          title={t("Modifica messaggio", "Edit message")}
                                         >
                                           <Pencil size={10} />
                                         </button>
@@ -1129,8 +1154,8 @@ const Chat: React.FC = () => {
                                       {msg.role === "assistant" && !isStreaming && !isLoading && globalIdx === messages.length - 1 && (
                                         <button
                                           onClick={() => regenerate()}
-                                          className="p-1 text-zinc-700 hover:text-blue-500 transition-colors"
-                                          title="Rigenera risposta"
+                                          className="p-1 text-zinc-500 dark:text-zinc-700 hover:text-blue-500 transition-colors"
+                                          title={t("Rigenera risposta", "Regenerate response")}
                                         >
                                           <RefreshCw size={10} />
                                         </button>
@@ -1145,12 +1170,12 @@ const Chat: React.FC = () => {
                                         onClick={() => handleVote(globalIdx, "up")}
                                         disabled={isStreaming}
                                         aria-pressed={msg.feedback === "up"}
-                                        title="Utile"
-                                        aria-label="Risposta utile"
+                                        title={t("Utile", "Helpful")}
+                                        aria-label={t("Risposta utile", "Helpful response")}
                                         className={`p-1.5 border rounded-lg transition-colors disabled:opacity-40 ${
                                           msg.feedback === "up"
                                             ? "bg-green-500/10 border-green-500/40 text-green-500"
-                                            : "bg-zinc-900/60 border-white/10 text-zinc-600 hover:text-green-500 hover:border-green-500/30"
+                                            : "bg-white dark:bg-zinc-900/60 border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-600 hover:text-green-500 hover:border-green-500/30"
                                         }`}
                                       >
                                         <ThumbsUp size={10} />
@@ -1159,12 +1184,12 @@ const Chat: React.FC = () => {
                                         onClick={() => handleVote(globalIdx, "down")}
                                         disabled={isStreaming}
                                         aria-pressed={msg.feedback === "down"}
-                                        title="Non utile"
-                                        aria-label="Risposta non utile"
+                                        title={t("Non utile", "Not helpful")}
+                                        aria-label={t("Risposta non utile", "Unhelpful response")}
                                         className={`p-1.5 border rounded-lg transition-colors disabled:opacity-40 ${
                                           msg.feedback === "down"
                                             ? "bg-red-500/10 border-red-500/40 text-red-500"
-                                            : "bg-zinc-900/60 border-white/10 text-zinc-600 hover:text-red-500 hover:border-red-500/30"
+                                            : "bg-white dark:bg-zinc-900/60 border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-600 hover:text-red-500 hover:border-red-500/30"
                                         }`}
                                       >
                                         <ThumbsDown size={10} />
@@ -1196,9 +1221,9 @@ const Chat: React.FC = () => {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: idx * 0.05 }}
                           onClick={() => handleSuggestionClick(followUp)}
-                          className="px-3 py-2 card text-xs font-bold text-zinc-500 hover:text-white hover:border-red-500/30 hover:bg-zinc-900 transition-colors text-left flex items-center gap-2 whitespace-nowrap"
+                          className="px-3 py-2 card text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:border-red-500/30 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors text-left flex items-center gap-2 whitespace-nowrap"
                         >
-                          <Plus size={10} className="shrink-0 text-zinc-700" />
+                          <Plus size={10} className="shrink-0 text-zinc-400 dark:text-zinc-700" />
                           {followUp}
                         </motion.button>
                       ))}
@@ -1226,7 +1251,7 @@ const Chat: React.FC = () => {
                           ))}
                         </div>
                         <span className="meta-mono">
-                          Generazione in corso...
+                          {t("Generazione in corso...", "Generating...")}
                         </span>
                       </div>
                     ) : (
@@ -1242,7 +1267,7 @@ const Chat: React.FC = () => {
                           ))}
                         </div>
                         <span className="meta-mono">
-                          Analisi in corso...
+                          {t("Analisi in corso...", "Thinking...")}
                         </span>
                       </div>
                     )}
@@ -1260,15 +1285,15 @@ const Chat: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               onClick={scrollToBottom}
-              className="absolute bottom-40 right-8 z-20 p-3 card hover:bg-zinc-800 transition-colors shadow-2xl group"
+              className="absolute bottom-40 right-8 z-20 p-3 card hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-2xl group"
             >
-              <ChevronDown size={18} className="text-zinc-400 group-hover:text-white" />
+              <ChevronDown size={18} className="text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
             </motion.button>
           )}
 
           {/* Bottom Input */}
           {hasMessages && (
-            <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-6 bg-linear-to-t from-zinc-950 via-zinc-950/90 to-transparent pointer-events-none">
+            <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-6 bg-linear-to-t from-zinc-100 via-zinc-100/90 dark:from-zinc-950 dark:via-zinc-950/90 to-transparent pointer-events-none">
               <div className="max-w-[720px] mx-auto pointer-events-auto">
                 <ChatInput
                   value={input}
@@ -1277,16 +1302,16 @@ const Chat: React.FC = () => {
                   onStop={stopGeneration}
                   isLoading={isLoading}
                   isStreaming={isStreaming}
-                  placeholder="Chiedi qualsiasi cosa"
+                  placeholder={t("Chiedi qualsiasi cosa", "Ask anything")}
                   textareaRef={inputRef}
                   onPlus={startNewChat}
-                  plusLabel="Nuova conversazione"
+                  plusLabel={t("Nuova conversazione", "New conversation")}
                   onEscape={handleInputEscape}
                 />
                 <div className="flex items-center justify-between mt-4 px-6">
                   <div className="flex items-center gap-4">
                     <p className="meta-mono">
-                      Terminale Sthenox
+                      {t("Terminale Sthenox", "Sthenox Terminal")}
                     </p>
                     {activeChat && (
                       <p className="meta-mono max-w-[200px] truncate">
@@ -1297,14 +1322,14 @@ const Chat: React.FC = () => {
                   {!user ? (
                     <p className="meta-mono">
                       {guestMessageCount >= 5 ? (
-                        <span className="text-red-500">Accesso Limitato. <Link to="/register" className="underline">Registrati</Link></span>
+                        <span className="text-red-500">{t("Accesso Limitato.", "Limited Access.")} <Link to="/register" className="underline">{t("Registrati", "Sign up")}</Link></span>
                       ) : (
-                        <span className="text-zinc-600">Buffer ospite: {5 - guestMessageCount} msg</span>
+                        <span className="text-zinc-500 dark:text-zinc-600">{t("Buffer ospite:", "Guest buffer:")} {5 - guestMessageCount} msg</span>
                       )}
                     </p>
                   ) : (
                     <p className="meta-mono">
-                      <kbd className="px-1 py-0.5 bg-zinc-900 rounded">Enter</kbd> invia · <kbd className="px-1 py-0.5 bg-zinc-900 rounded">Shift+Enter</kbd> nuova riga
+                      <kbd className="px-1 py-0.5 bg-zinc-200 dark:bg-zinc-900 rounded">Enter</kbd> {t("invia", "send")} · <kbd className="px-1 py-0.5 bg-zinc-200 dark:bg-zinc-900 rounded">Shift+Enter</kbd> {t("nuova riga", "new line")}
                     </p>
                   )}
                 </div>

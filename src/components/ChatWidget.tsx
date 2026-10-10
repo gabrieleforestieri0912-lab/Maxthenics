@@ -10,6 +10,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useChatContext, IMessage, Corner } from "../context/ChatContext";
+import { useLanguage } from "../context/LanguageContext";
 import ChatInput from "./ChatInput";
 
 const Typewriter = ({ text, onComplete, isStreaming }: { text: string; onComplete?: () => void; isStreaming?: boolean }) => {
@@ -38,7 +39,7 @@ const FormattedMessage = ({ text }: { text: string }) => {
     return parts.map((part, i) => {
       if (part.startsWith("**") && part.endsWith("**")) {
         return (
-          <strong key={i} className="font-black text-white">
+          <strong key={i} className="font-bold text-zinc-900 dark:text-white">
             {part.slice(2, -2)}
           </strong>
         );
@@ -79,6 +80,7 @@ const ChatWidget = () => {
 
 const ChatWidgetContent = () => {
   const { addNotification } = useAuth();
+  const { locale, t } = useLanguage();
   const location = useLocation();
   const {
     messages, setMessages, activeChatId, isLoading, isStreaming,
@@ -185,7 +187,7 @@ const ChatWidgetContent = () => {
     if (deleteConfirmId) {
       await deleteChat(deleteConfirmId);
       setDeleteConfirmId(null);
-      addNotification("Chat eliminata correttamente", "success");
+      addNotification(t("Chat eliminata correttamente", "Chat deleted successfully"), "success");
     }
   };
 
@@ -250,7 +252,7 @@ const ChatWidgetContent = () => {
 
   const handleExportText = async () => {
     await copyChatToClipboard();
-    addNotification("Chat copiata negli appunti", "success");
+    addNotification(t("Chat copiata negli appunti", "Chat copied to clipboard"), "success");
   };
 
   const handleExportMarkdown = () => {
@@ -263,7 +265,7 @@ const ChatWidgetContent = () => {
     a.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}.md`;
     a.click();
     URL.revokeObjectURL(url);
-    addNotification("Chat scaricata come Markdown", "success");
+    addNotification(t("Chat scaricata come Markdown", "Chat downloaded as Markdown"), "success");
   };
 
   const anim = panelAnimVars(corner);
@@ -281,22 +283,22 @@ const ChatWidgetContent = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setDeleteConfirmId(null)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-zinc-500/30 dark:bg-black/60 backdrop-blur-sm"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-[320px] bg-zinc-900 border border-white/10 p-6 rounded-2xl shadow-2xl"
+              className="relative w-full max-w-[320px] card p-6 shadow-2xl"
             >
-              <div className="w-12 h-12 bg-red-600/10 rounded-xl flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-red-600/10 border border-red-500/20 rounded-xl flex items-center justify-center mb-4">
                 <Trash2 className="text-red-500" size={24} />
               </div>
-              <h3 className="text-lg font-black text-white uppercase tracking-tighter mb-2">Elimina Chat?</h3>
-              <p className="text-zinc-500 text-xs font-medium mb-6">Questa azione è irreversibile. Sei sicuro di voler procedere?</p>
+              <h3 className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight mb-2">{t("Elimina chat?", "Delete chat?")}</h3>
+              <p className="body-copy text-xs mb-6">{t("Questa azione è irreversibile. Sei sicuro di voler procedere?", "This action is irreversible. Are you sure you want to proceed?")}</p>
               <div className="grid grid-cols-2 gap-3">
-                <button onClick={() => setDeleteConfirmId(null)} className="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Annulla</button>
-                <button onClick={confirmDelete} className="px-4 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-red-900/20">Elimina</button>
+                <button onClick={() => setDeleteConfirmId(null)} className="btn-secondary-sm">{t("Annulla", "Cancel")}</button>
+                <button onClick={confirmDelete} className="btn-primary-sm">{t("Elimina", "Delete")}</button>
               </div>
             </motion.div>
           </div>
@@ -320,7 +322,7 @@ const ChatWidgetContent = () => {
               animate={anim.animate}
               exit={anim.exit}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              className="fixed z-50 w-[calc(100vw-2rem)] sm:w-[380px] h-[460px] sm:h-[560px] max-h-[85vh] bg-zinc-950/90 backdrop-blur-3xl border border-white/[0.06] rounded-2xl shadow-[0_40px_120px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden"
+              className="fixed z-50 w-[calc(100vw-2rem)] sm:w-[380px] h-[460px] sm:h-[560px] max-h-[85vh] bg-white/90 dark:bg-zinc-950/90 backdrop-blur-3xl border border-zinc-200 dark:border-white/[0.06] rounded-2xl shadow-[0_40px_120px_rgba(0,0,0,0.25)] dark:shadow-[0_40px_120px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden"
               style={posStyle}
             >
               {/* Gradient top edge accent */}
@@ -329,7 +331,7 @@ const ChatWidgetContent = () => {
               {/* ── Header ── */}
               <div className="px-4 py-3 relative shrink-0">
                 {/* Background blur */}
-                <div className="absolute inset-0 bg-white/[0.02] rounded-t-3xl" />
+                <div className="absolute inset-0 bg-zinc-900/[0.02] dark:bg-white/[0.02] rounded-t-3xl" />
 
                 <div className="relative flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -337,16 +339,16 @@ const ChatWidgetContent = () => {
                       <Sparkles size={15} className="text-white" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[13px] font-black text-white uppercase tracking-tight leading-none">Sthenox AI</span>
+                      <span className="text-[13px] font-bold text-zinc-900 dark:text-white tracking-tight leading-none">Sthenox AI</span>
                       <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-[0.15em] mt-0.5">
-                        {isStreaming ? "Sta scrivendo..." : (messages.length > 0 ? `${messages.length} messaggi` : "In linea")}
+                        {isStreaming ? t("Sta scrivendo...", "Typing...") : (messages.length > 0 ? `${messages.length} ${t("messaggi", "messages")}` : t("In linea", "Online"))}
                       </span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-0.5">
                     <div ref={historyRef} className="relative">
-                      <button onClick={() => setShowHistory(!showHistory)} className={`p-2 rounded-xl transition-all ${showHistory ? 'bg-red-600/20 text-red-500' : 'text-zinc-500 hover:text-white hover:bg-white/5'}`}>
+                      <button onClick={() => setShowHistory(!showHistory)} aria-label={t("Cronologia chat", "Chat history")} className={`p-2 rounded-xl transition-colors ${showHistory ? 'bg-red-600/20 text-red-500' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-900/5 dark:hover:text-white dark:hover:bg-white/5'}`}>
                         <History size={15} />
                       </button>
                       <AnimatePresence>
@@ -355,29 +357,29 @@ const ChatWidgetContent = () => {
                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                            className="absolute top-full right-0 mt-2 w-64 bg-zinc-950/95 backdrop-blur-3xl border border-white/[0.06] rounded-2xl shadow-2xl overflow-hidden z-[70]"
+                            className="absolute top-full right-0 mt-2 w-64 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-3xl border border-zinc-200 dark:border-white/[0.06] rounded-2xl shadow-2xl overflow-hidden z-[70]"
                           >
-                            <div className="p-2 border-b border-white/[0.04]">
-                              <button onClick={handleNewChat} className="w-full flex items-center gap-3 p-2.5 hover:bg-white/5 rounded-xl text-xs font-bold text-white transition-all group">
-                                <div className="w-6 h-6 rounded-lg bg-linear-to-br from-red-600 to-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-red-900/30"><Plus size={13} /></div> Nuova Chat
+                            <div className="p-2 border-b border-zinc-200 dark:border-white/[0.04]">
+                              <button onClick={handleNewChat} className="w-full flex items-center gap-3 p-2.5 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl text-xs font-bold text-zinc-900 dark:text-white transition-colors group">
+                                <div className="w-6 h-6 rounded-lg bg-linear-to-br from-red-600 to-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-red-900/30"><Plus size={13} /></div> {t("Nuova Chat", "New Chat")}
                               </button>
                             </div>
                             <div className="max-h-[300px] overflow-y-auto p-1.5 scrollbar-hide">
                               {history.length === 0 ? (
-                                <p className="p-4 text-[10px] text-zinc-600 text-center font-bold uppercase tracking-widest">Nessuna cronologia</p>
+                                <p className="p-4 text-[10px] text-zinc-500 dark:text-zinc-600 text-center font-bold uppercase tracking-widest">{t("Nessuna cronologia", "No history")}</p>
                               ) : (
                                 history.map((chat: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                                   <div key={chat._id} className="relative group/item">
-                                    <button onClick={() => handleSelectChat(chat._id)} className={`w-full text-left p-3 rounded-xl text-[11px] transition-all hover:bg-white/[0.03] ${activeChatId === chat._id ? 'bg-red-600/[0.06] border border-red-500/20 text-red-400' : 'text-zinc-400 border border-transparent'}`}>
+                                    <button onClick={() => handleSelectChat(chat._id)} className={`w-full text-left p-3 rounded-xl text-[11px] transition-colors hover:bg-zinc-900/[0.03] dark:hover:bg-white/[0.03] ${activeChatId === chat._id ? 'bg-red-600/[0.06] border border-red-500/20 text-red-400' : 'text-zinc-500 dark:text-zinc-400 border border-transparent'}`}>
                                       {renamingChatId === chat._id ? (
-                                        <input value={renamingChatTitle} onChange={(e) => setRenamingChatTitle(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') saveRename(); if (e.key === 'Escape') { setRenamingChatId(null); } }} onBlur={saveRename} autoFocus onClick={(e) => e.stopPropagation()} className="w-full bg-zinc-800 text-white px-2 py-1 rounded text-[11px] outline-none border border-red-500/30" />
+                                        <input value={renamingChatTitle} onChange={(e) => setRenamingChatTitle(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') saveRename(); if (e.key === 'Escape') { setRenamingChatId(null); } }} onBlur={saveRename} autoFocus onClick={(e) => e.stopPropagation()} className="w-full bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white px-2 py-1 rounded text-[11px] outline-none border border-red-500/30" />
                                       ) : (
-                                        <><div className="font-bold truncate pr-16">{chat.title || 'Nuova Conversazione'}</div><div className="text-[8px] opacity-40 mt-1 uppercase font-black tracking-tighter">{new Date(chat.updatedAt).toLocaleDateString()}</div></>
+                                        <><div className="font-bold truncate pr-16">{chat.title || t('Nuova Conversazione', 'New Conversation')}</div><div className="text-[8px] opacity-40 mt-1 uppercase font-bold tracking-tighter">{new Date(chat.updatedAt).toLocaleDateString(locale === 'en' ? 'en-US' : 'it-IT')}</div></>
                                       )}
                                     </button>
                                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
-                                      <button onClick={(e) => { e.stopPropagation(); startRename(chat._id, chat.title); }} className="p-1.5 text-zinc-600 hover:text-amber-400 opacity-0 group-hover/item:opacity-100 transition-all"><Pencil size={11} /></button>
-                                      <button onClick={(e) => { e.stopPropagation(); setDeleteConfirmId(chat._id); }} className="p-1.5 text-zinc-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-all"><Trash2 size={11} /></button>
+                                      <button onClick={(e) => { e.stopPropagation(); startRename(chat._id, chat.title); }} aria-label={t("Rinomina", "Rename")} className="p-1.5 text-zinc-400 dark:text-zinc-600 hover:text-amber-400 opacity-0 group-hover/item:opacity-100 transition-colors"><Pencil size={11} /></button>
+                                      <button onClick={(e) => { e.stopPropagation(); setDeleteConfirmId(chat._id); }} aria-label={t("Elimina", "Delete")} className="p-1.5 text-zinc-400 dark:text-zinc-600 hover:text-red-400 opacity-0 group-hover/item:opacity-100 transition-colors"><Trash2 size={11} /></button>
                                     </div>
                                   </div>
                                 ))
@@ -387,7 +389,7 @@ const ChatWidgetContent = () => {
                         )}
                       </AnimatePresence>
                     </div>
-                    <button onClick={() => setIsChatOpen(false)} className="p-2 rounded-xl text-zinc-500 hover:text-white hover:bg-white/5 transition-all">
+                    <button onClick={() => setIsChatOpen(false)} aria-label={t("Chiudi chat", "Close chat")} className="p-2 rounded-xl text-zinc-500 hover:text-zinc-900 hover:bg-zinc-900/5 dark:hover:text-white dark:hover:bg-white/5 transition-colors">
                       <X size={15} />
                     </button>
                   </div>
@@ -402,24 +404,29 @@ const ChatWidgetContent = () => {
                       <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-red-600/20 to-orange-500/20 border border-red-500/10 flex items-center justify-center mx-auto mb-5">
                         <Sparkles size={28} className="text-red-500" />
                       </div>
-                      <h2 className="text-2xl font-black text-white uppercase tracking-tighter mb-2">
-                        Come posso <span className="text-red-500">aiutarti</span>?
+                      <h2 className="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight mb-2">
+                        {t("Come posso", "How can I")} <span className="text-red-500">{t("aiutarti", "help you")}</span>?
                       </h2>
-                      <p className="text-zinc-500 text-xs font-medium">Scegli un argomento o scrivi la tua domanda</p>
+                      <p className="text-zinc-500 text-xs font-medium">{t("Scegli un argomento o scrivi la tua domanda", "Pick a topic or write your question")}</p>
                     </motion.div>
                     <div className="grid grid-cols-1 gap-2 w-full max-w-xs">
-                      {["Come inizio il Front Lever?", "Programmi personalizzati", "Analisi biomeccanica AI", "Prezzi Membership"].map((suggestion, idx) => (
+                      {[
+                        t("Come inizio il Front Lever?", "How do I start the Front Lever?"),
+                        t("Programmi personalizzati", "Custom programs"),
+                        t("Analisi biomeccanica AI", "AI biomechanical analysis"),
+                        t("Prezzi Membership", "Membership pricing"),
+                      ].map((suggestion, idx) => (
                         <motion.button key={idx} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.1 }}
                           onClick={() => sendMessage(suggestion)}
-                          className="w-full p-3 bg-white/[0.03] border border-white/[0.06] rounded-2xl text-left text-[11px] font-bold text-zinc-400 hover:text-white hover:border-red-500/30 hover:bg-red-600/[0.04] transition-all flex items-center justify-between group"
+                          className="w-full p-3 bg-zinc-900/[0.03] dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.06] rounded-2xl text-left text-[11px] font-bold text-zinc-500 hover:text-zinc-900 hover:border-red-500/30 hover:bg-red-600/[0.04] dark:hover:text-white transition-colors flex items-center justify-between group"
                         >
                           <span className="flex items-center gap-2.5">
-                            <span className="w-5 h-5 rounded-lg bg-white/[0.04] flex items-center justify-center text-zinc-600">
+                            <span className="w-5 h-5 rounded-lg bg-zinc-900/[0.04] dark:bg-white/[0.04] flex items-center justify-center text-zinc-400 dark:text-zinc-600">
                               <CornerDownRight size={10} />
                             </span>
                             {suggestion}
                           </span>
-                          <ArrowRight size={12} className="text-zinc-700 group-hover:text-red-400 transition-colors" />
+                          <ArrowRight size={12} className="text-zinc-300 dark:text-zinc-700 group-hover:text-red-400 transition-colors" />
                         </motion.button>
                       ))}
                     </div>
@@ -439,10 +446,10 @@ const ChatWidgetContent = () => {
                           <div className={`max-w-[88%] ${msg.role === "user" ? "text-right" : "text-left"}`}>
                             {isEditing ? (
                               <div className="space-y-2">
-                                <textarea value={editingMessageContent} onChange={(e) => setEditingMessageContent(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === 'Escape') cancelEdit(); }} autoFocus className="w-full bg-zinc-800 border border-red-500/30 text-white px-3 py-2 rounded-2xl text-xs outline-none resize-none" rows={2} />
+                                <textarea value={editingMessageContent} onChange={(e) => setEditingMessageContent(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === 'Escape') cancelEdit(); }} autoFocus className="w-full bg-white dark:bg-zinc-800 border border-red-500/30 text-zinc-900 dark:text-white px-3 py-2 rounded-2xl text-xs outline-none resize-none" rows={2} />
                                 <div className="flex items-center gap-2 justify-end">
-                                  <button onClick={cancelEdit} className="text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all">Annulla</button>
-                                  <button onClick={saveEdit} className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition-all flex items-center gap-1 shadow-lg shadow-red-900/30"><CheckCheck size={10} /> Rigenera</button>
+                                  <button onClick={cancelEdit} className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">{t("Annulla", "Cancel")}</button>
+                                  <button onClick={saveEdit} className="btn-primary px-3 py-1 text-[9px]"><CheckCheck size={10} /> {t("Rigenera", "Regenerate")}</button>
                                 </div>
                               </div>
                             ) : (
@@ -450,7 +457,7 @@ const ChatWidgetContent = () => {
                                 <div className={`px-4 py-3 text-[13px] leading-relaxed ${
                                   msg.role === "user"
                                     ? "bg-linear-to-br from-red-600 to-orange-500 text-white rounded-2xl rounded-tr-md shadow-lg shadow-red-900/20"
-                                    : "bg-white/[0.04] border border-white/[0.06] text-zinc-200 rounded-2xl rounded-tl-md"
+                                    : "bg-zinc-900/[0.04] dark:bg-white/[0.04] border border-zinc-200 dark:border-white/[0.06] text-zinc-700 dark:text-zinc-200 rounded-2xl rounded-tl-md"
                                 }`}>
                                   {msg.role === "assistant" && (msg.isNew || msg.isStreaming) ? (
                                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -461,11 +468,11 @@ const ChatWidgetContent = () => {
                                 </div>
                                 {!msg.isStreaming && (
                                   <div className={`flex items-center gap-1.5 mt-1.5 px-1 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                                    <span className="text-[7px] text-zinc-700 font-bold uppercase tracking-widest">{formatTime(msg.createdAt)}</span>
-                                    <span className="text-zinc-800">·</span>
-                                    <button onClick={() => copyMessage(msg.content, i)} className="p-0.5 text-zinc-700 hover:text-zinc-400 transition-colors" title="Copia">{copiedMessageId === i ? <Check size={9} className="text-green-500" /> : <Copy size={9} />}</button>
-                                    {msg.role === "user" && <button onClick={() => startEdit(i, msg.content)} className="p-0.5 text-zinc-700 hover:text-amber-400 transition-colors" title="Modifica"><Pencil size={9} /></button>}
-                                    {msg.role === "assistant" && !isLoading && !isStreaming && i === messages.length - 1 && <button onClick={() => regenerate()} className="p-0.5 text-zinc-700 hover:text-blue-400 transition-colors" title="Rigenera"><RefreshCw size={9} /></button>}
+                                    <span className="text-[7px] text-zinc-500 dark:text-zinc-700 font-bold uppercase tracking-widest">{formatTime(msg.createdAt)}</span>
+                                    <span className="text-zinc-300 dark:text-zinc-800">·</span>
+                                    <button onClick={() => copyMessage(msg.content, i)} className="p-0.5 text-zinc-400 dark:text-zinc-700 hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors" title={t("Copia", "Copy")}>{copiedMessageId === i ? <Check size={9} className="text-green-500" /> : <Copy size={9} />}</button>
+                                    {msg.role === "user" && <button onClick={() => startEdit(i, msg.content)} className="p-0.5 text-zinc-400 dark:text-zinc-700 hover:text-amber-400 transition-colors" title={t("Modifica", "Edit")}><Pencil size={9} /></button>}
+                                    {msg.role === "assistant" && !isLoading && !isStreaming && i === messages.length - 1 && <button onClick={() => regenerate()} className="p-0.5 text-zinc-400 dark:text-zinc-700 hover:text-blue-400 transition-colors" title={t("Rigenera", "Regenerate")}><RefreshCw size={9} /></button>}
                                   </div>
                                 )}
                               </>
@@ -476,9 +483,9 @@ const ChatWidgetContent = () => {
                     })}
                     {isLoading && (
                       <div className="flex justify-start">
-                        <div className="bg-white/[0.04] border border-white/[0.06] px-4 py-3 rounded-2xl rounded-tl-md flex items-center gap-2">
+                        <div className="bg-zinc-900/[0.04] dark:bg-white/[0.04] border border-zinc-200 dark:border-white/[0.06] px-4 py-3 rounded-2xl rounded-tl-md flex items-center gap-2">
                           {[0, 1, 2].map((i) => <motion.span key={i} animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }} className="w-1.5 h-1.5 bg-linear-to-r from-red-500 to-orange-400 rounded-full" />)}
-                          {isStreaming && <span className="text-[7px] text-zinc-500 font-bold uppercase tracking-widest ml-1">Scrittura...</span>}
+                          {isStreaming && <span className="text-[7px] text-zinc-500 font-bold uppercase tracking-widest ml-1">{t("Scrittura...", "Writing...")}</span>}
                         </div>
                       </div>
                     )}
@@ -489,7 +496,7 @@ const ChatWidgetContent = () => {
 
               {/* ── Footer / Input ── */}
               <div className="px-3 pb-3 pt-1 relative">
-                <div className="absolute top-0 left-3 right-3 h-[1px] bg-linear-to-r from-transparent via-white/[0.04] to-transparent" />
+                <div className="absolute top-0 left-3 right-3 h-[1px] bg-linear-to-r from-transparent via-zinc-300 dark:via-white/[0.04] to-transparent" />
                 <ChatInput
                   value={input}
                   onChange={setInput}
@@ -497,32 +504,32 @@ const ChatWidgetContent = () => {
                   onStop={stopGeneration}
                   isLoading={isLoading}
                   isStreaming={isStreaming}
-                  placeholder="Chiedi qualsiasi cosa"
+                  placeholder={t("Chiedi qualsiasi cosa", "Ask anything")}
                   compact
                   textareaRef={inputRef}
                   onPlus={handleNewChat}
-                  plusLabel="Nuova chat"
+                  plusLabel={t("Nuova chat", "New chat")}
                   onEscape={handleInputEscape}
                 />
                 <div className="flex items-center justify-between mt-2 px-1">
                   <div className="flex items-center gap-2">
                     {messages.length > 0 && (
                       <>
-                        <button onClick={() => { setShowSearch(!showSearch); if (!showSearch) setTimeout(() => searchInputRef.current?.focus(), 100); else setSearchQuery(""); }} className="text-[7px] text-zinc-600 hover:text-zinc-400 font-bold uppercase tracking-[0.15em] transition-all flex items-center gap-1">{showSearch ? <X size={9} /> : <Eye size={9} />} Cerca</button>
-                        <button onClick={handleExportText} className="text-[7px] text-zinc-600 hover:text-zinc-400 font-bold uppercase tracking-[0.15em] transition-all flex items-center gap-1"><Copy size={9} /> Copia</button>
-                        <button onClick={handleExportMarkdown} className="text-[7px] text-zinc-600 hover:text-zinc-400 font-bold uppercase tracking-[0.15em] transition-all flex items-center gap-1"><Download size={9} /> .md</button>
+                        <button onClick={() => { setShowSearch(!showSearch); if (!showSearch) setTimeout(() => searchInputRef.current?.focus(), 100); else setSearchQuery(""); }} className="text-[7px] text-zinc-500 dark:text-zinc-600 hover:text-zinc-700 dark:hover:text-zinc-400 font-bold uppercase tracking-[0.15em] transition-colors flex items-center gap-1">{showSearch ? <X size={9} /> : <Eye size={9} />} {t("Cerca", "Search")}</button>
+                        <button onClick={handleExportText} className="text-[7px] text-zinc-500 dark:text-zinc-600 hover:text-zinc-700 dark:hover:text-zinc-400 font-bold uppercase tracking-[0.15em] transition-colors flex items-center gap-1"><Copy size={9} /> {t("Copia", "Copy")}</button>
+                        <button onClick={handleExportMarkdown} className="text-[7px] text-zinc-500 dark:text-zinc-600 hover:text-zinc-700 dark:hover:text-zinc-400 font-bold uppercase tracking-[0.15em] transition-colors flex items-center gap-1"><Download size={9} /> .md</button>
                       </>
                     )}
                   </div>
                 </div>
                 {showSearch && (
                   <div className="mt-2">
-                    <input ref={searchInputRef} type="text" value={searchQuery} onChange={(e) => handleSearch(e.target.value)} placeholder="Cerca nei messaggi..." className="w-full bg-white/[0.03] border border-white/[0.06] text-white px-3 py-2 rounded-xl text-[11px] outline-none focus:border-red-500/30 focus:bg-white/[0.06] transition-all" />
+                    <input ref={searchInputRef} type="text" value={searchQuery} onChange={(e) => handleSearch(e.target.value)} placeholder={t("Cerca nei messaggi...", "Search messages...")} className="w-full bg-zinc-900/[0.03] dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.06] text-zinc-900 dark:text-white px-3 py-2 rounded-xl text-[11px] outline-none focus:border-red-500/30 focus:bg-zinc-900/[0.06] dark:focus:bg-white/[0.06] transition-colors" />
                     {searchResults.length > 0 && (
                       <div className="flex items-center gap-2 mt-2">
                         <span className="text-[8px] text-zinc-500 font-bold">{activeSearchIndex + 1}/{searchResults.length}</span>
-                        <button onClick={() => navigateSearch('up')} className="p-1 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"><ChevronDown size={11} className="rotate-180" /></button>
-                        <button onClick={() => navigateSearch('down')} className="p-1 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"><ChevronDown size={11} /></button>
+                        <button onClick={() => navigateSearch('up')} aria-label={t("Risultato precedente", "Previous result")} className="p-1 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-900/5 dark:hover:text-white dark:hover:bg-white/5 rounded-lg transition-colors"><ChevronDown size={11} className="rotate-180" /></button>
+                        <button onClick={() => navigateSearch('down')} aria-label={t("Risultato successivo", "Next result")} className="p-1 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-900/5 dark:hover:text-white dark:hover:bg-white/5 rounded-lg transition-colors"><ChevronDown size={11} /></button>
                       </div>
                     )}
                   </div>

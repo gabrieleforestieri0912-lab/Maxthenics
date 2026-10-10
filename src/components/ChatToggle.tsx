@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useChatContext } from "../context/ChatContext";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { Sparkles, Bot, X } from "lucide-react";
 
 type Corner = "bottom-right" | "bottom-left" | "top-right" | "top-left";
@@ -45,41 +46,45 @@ function snapCorner(x: number, y: number, w: number, h: number): Corner {
 }
 
 // Section-aware assistant messages
-const getSectionMessages = (userName: string | null): Record<string, string[]> => ({
+const getSectionMessages = (
+  userName: string | null,
+  t: (it: string, en: string) => string
+): Record<string, string[]> => ({
   "how-it-works": [
-    "Ecco come funziona il protocollo",
-    "Scopri l'integrazione con l'AI",
+    t("Ecco come funziona il protocollo", "Here's how the protocol works"),
+    t("Scopri l'integrazione con l'AI", "Discover the AI integration"),
   ],
   "programs": [
-    "Sblocca Planche & Front Lever",
-    "Trova il programma perfetto per te",
-    "Protocolli basati sulla scienza",
+    t("Sblocca Planche & Front Lever", "Unlock Planche & Front Lever"),
+    t("Trova il programma perfetto per te", "Find the perfect program for you"),
+    t("Protocolli basati sulla scienza", "Science-based protocols"),
   ],
   "pricing": [
-    "Scegli il piano ideale per i tuoi obiettivi",
+    t("Scegli il piano ideale per i tuoi obiettivi", "Choose the ideal plan for your goals"),
   ],
   "coaching": [
-    "Coaching 1:1 d'Élite dedicato",
+    t("Coaching 1:1 d'Élite dedicato", "Dedicated 1:1 Elite coaching"),
   ],
   "about": [
-    "Maxthenics è più di una scheda",
+    t("Maxthenics è più di una scheda", "Maxthenics is more than a plan"),
   ],
   "default": userName
     ? [
-        `Ciao ${userName}! Sono Sthenox, il tuo Coach`,
-        `Bentornato ${userName}! Come posso aiutarti?`,
-        `${userName}, hai domande sul tuo allenamento?`,
+        t(`Ciao ${userName}! Sono Sthenox, il tuo Coach`, `Hi ${userName}! I'm Sthenox, your Coach`),
+        t(`Bentornato ${userName}! Come posso aiutarti?`, `Welcome back ${userName}! How can I help?`),
+        t(`${userName}, hai domande sul tuo allenamento?`, `${userName}, any questions about your training?`),
       ]
     : [
-        "Ciao! Sono Sthenox AI, il tuo Coach",
-        "Come posso aiutarti oggi?",
-        "Hai domande sul tuo allenamento?",
+        t("Ciao! Sono Sthenox AI, il tuo Coach", "Hi! I'm Sthenox AI, your Coach"),
+        t("Come posso aiutarti oggi?", "How can I help you today?"),
+        t("Hai domande sul tuo allenamento?", "Any questions about your training?"),
       ],
 });
 
 export default function ChatToggle() {
   const { isChatOpen, setIsChatOpen, chatCorner: corner, setChatCorner: setCorner } = useChatContext();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [dragging, setDragging] = useState(false);
   const [snapping, setSnapping] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -127,7 +132,7 @@ export default function ChatToggle() {
     }
 
     const triggerBubble = () => {
-      const SECTION_MESSAGES = getSectionMessages(user?.name || null);
+      const SECTION_MESSAGES = getSectionMessages(user?.name || null, t);
       const messages = SECTION_MESSAGES[activeSection] || SECTION_MESSAGES["default"];
       const randomMsg = messages[Math.floor(Math.random() * messages.length)];
       setPreviewMsg(randomMsg);
@@ -218,27 +223,17 @@ export default function ChatToggle() {
               [isCornerRight ? "right" : "left"]: GAP,
             }}
           >
-            <div className="relative bg-zinc-950/95 border border-white/10 text-white text-xs font-medium px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-xl flex items-center gap-2.5 max-w-[260px] hover:border-red-500/40 transition-colors">
+            <div className="relative bg-white/95 dark:bg-zinc-950/95 border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white text-xs font-medium px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-xl flex items-center gap-2.5 max-w-[260px] hover:border-red-500/40 transition-colors">
               <div className="p-1.5 rounded-lg bg-red-500/10 text-red-500 shrink-0">
                 <Bot size={15} />
               </div>
-              <span className="leading-snug text-zinc-200">{previewMsg}</span>
+              <span className="leading-snug text-zinc-700 dark:text-zinc-200">{previewMsg}</span>
 
               {/* Tail Arrow Pointer */}
               <div
-                className={`absolute w-3 h-3 bg-zinc-950 border-r border-b border-white/10 rotate-45 ${
-                  isCornerBottom ? "-bottom-1.5" : "-top-1.5"
+                className={`absolute w-3 h-3 bg-white dark:bg-zinc-950 border-zinc-200 dark:border-white/10 rotate-45 ${
+                  isCornerBottom ? "-bottom-1.5 border-r border-b" : "-top-1.5 border-l border-t"
                 } ${isCornerRight ? "right-6" : "left-6"}`}
-                style={
-                  isCornerBottom
-                    ? undefined
-                    : {
-                        borderRight: "none",
-                        borderBottom: "none",
-                        borderLeft: "1px solid rgba(255,255,255,0.1)",
-                        borderTop: "1px solid rgba(255,255,255,0.1)",
-                      }
-                }
               />
             </div>
           </motion.div>
@@ -251,7 +246,7 @@ export default function ChatToggle() {
         onMouseDown={handleMouseDown}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="fixed z-50 rounded-full bg-zinc-950 border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.5)] flex items-center justify-center text-zinc-300 hover:text-white hover:border-red-500/40 transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+        className="fixed z-50 rounded-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-red-500/40 transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950"
         style={{
           width: BTN_SIZE,
           height: BTN_SIZE,
@@ -260,7 +255,7 @@ export default function ChatToggle() {
           transition: dragging || snapping ? "none" : "transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1)",
           cursor: dragging ? "grabbing" : "grab",
         }}
-        aria-label={isChatOpen ? "Chiudi chat" : "Apri chat con Sthenox AI"}
+        aria-label={isChatOpen ? t("Chiudi chat", "Close chat") : t("Apri chat con Sthenox AI", "Open chat with Sthenox AI")}
       >
         <span className="relative flex items-center justify-center">
           {isChatOpen ? (
@@ -270,12 +265,12 @@ export default function ChatToggle() {
               <Sparkles
                 size={22}
                 strokeWidth={2}
-                className={isHovered || dragging ? "text-red-500" : "text-zinc-200"}
+                className={isHovered || dragging ? "text-red-500" : "text-zinc-700 dark:text-zinc-200"}
               />
               {!dragging && (
                 <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-60 animate-ping motion-reduce:animate-none" />
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600 border-2 border-zinc-950" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600 border-2 border-white dark:border-zinc-950" />
                 </span>
               )}
             </>

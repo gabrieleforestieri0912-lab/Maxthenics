@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowUp, Mic, Plus, Square } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 export interface ChatInputProps {
   value: string;
@@ -63,6 +64,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const [listening, setListening] = useState(false);
   const [micSupported] = useState(speechRecognitionAvailable);
   const recognitionRef = useRef<{ stop: () => void } | null>(null);
+  const { locale, t } = useLanguage();
 
   // Keep an optional external ref in sync (assignment inside effect, never during render).
   useEffect(() => {
@@ -126,7 +128,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
     const SR = w.SpeechRecognition || w.webkitSpeechRecognition;
     if (!SR) return;
     const rec = new SR();
-    rec.lang = "it-IT";
+    rec.lang = locale === "en" ? "en-US" : "it-IT";
     rec.interimResults = false;
     rec.continuous = false;
     let base = value;
@@ -171,7 +173,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
         }}
       >
         <div
-          className={`bg-zinc-900 border border-white/10 shadow-[0_1px_2px_rgba(0,0,0,0.4)] transition-all duration-200 motion-reduce:transition-none focus-within:border-white/25 focus-within:shadow-[0_4px_24px_rgba(0,0,0,0.5)] ${
+          className={`bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 shadow-[0_1px_2px_rgba(0,0,0,0.08)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4)] transition-all duration-200 motion-reduce:transition-none focus-within:border-zinc-400 dark:focus-within:border-white/25 focus-within:shadow-[0_4px_24px_rgba(0,0,0,0.10)] dark:focus-within:shadow-[0_4px_24px_rgba(0,0,0,0.5)] ${
             multiline ? "rounded-3xl" : "rounded-full"
           }`}
         >
@@ -182,7 +184,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
                 onClick={onPlus}
                 title={plusLabel}
                 aria-label={plusLabel}
-                className="shrink-0 p-2 rounded-full text-zinc-500 hover:text-white hover:bg-white/10 transition-colors duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                className="shrink-0 p-2 rounded-full text-zinc-500 hover:text-zinc-900 hover:bg-zinc-900/10 dark:hover:text-white dark:hover:bg-white/10 transition-colors duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-white/40"
               >
                 <Plus size={iconSize} />
               </button>
@@ -199,7 +201,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
               rows={1}
               autoFocus={autoFocus}
               aria-label={placeholder}
-              className={`grow bg-transparent text-zinc-100 focus:outline-none placeholder:text-zinc-600 resize-none block min-w-0 ${
+              className={`grow bg-transparent text-zinc-900 dark:text-zinc-100 focus:outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-600 resize-none block min-w-0 ${
                 compact ? "px-2 py-1.5 text-[13px] leading-[18px]" : "px-2 py-2 text-sm leading-5"
               }`}
             />
@@ -208,9 +210,9 @@ const ChatInput: React.FC<ChatInputProps> = ({
               <button
                 type="button"
                 onClick={onStop}
-                title="Interrompi generazione"
-                aria-label="Interrompi generazione"
-                className={`shrink-0 ${actionSize} rounded-full bg-white text-black hover:bg-zinc-200 transition-colors duration-150 motion-reduce:transition-none flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900`}
+                title={t("Interrompi generazione", "Stop generation")}
+                aria-label={t("Interrompi generazione", "Stop generation")}
+                className={`shrink-0 ${actionSize} rounded-full bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-white dark:text-black dark:hover:bg-zinc-200 transition-colors duration-150 motion-reduce:transition-none flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-900`}
               >
                 <Square size={compact ? 12 : 14} fill="currentColor" aria-hidden />
               </button>
@@ -220,16 +222,16 @@ const ChatInput: React.FC<ChatInputProps> = ({
                 <button
                   type="button"
                   onClick={toggleDictation}
-                  title={listening ? "Interrompi dettatura" : "Dettatura vocale"}
-                  aria-label={listening ? "Interrompi dettatura" : "Dettatura vocale"}
+                  title={listening ? t("Interrompi dettatura", "Stop dictation") : t("Dettatura vocale", "Voice dictation")}
+                  aria-label={listening ? t("Interrompi dettatura", "Stop dictation") : t("Dettatura vocale", "Voice dictation")}
                   aria-hidden={canSend}
                   tabIndex={canSend ? -1 : 0}
-                  className={`absolute inset-0 rounded-full flex items-center justify-center transition-all duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 ${
+                  className={`absolute inset-0 rounded-full flex items-center justify-center transition-all duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-white/40 ${
                     canSend
                       ? "opacity-0 scale-90 pointer-events-none"
                       : listening
-                        ? "text-red-400 bg-red-500/10 opacity-100 scale-100"
-                        : "text-zinc-400 hover:text-white hover:bg-white/10 opacity-100 scale-100"
+                        ? "text-red-500 bg-red-500/10 opacity-100 scale-100"
+                        : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-900/10 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-white/10 opacity-100 scale-100"
                   } ${micSupported ? "" : "hidden"}`}
                 >
                   <span className={listening ? "absolute inset-0 rounded-full bg-red-500/20 animate-ping motion-reduce:animate-none" : "hidden"} />
@@ -238,12 +240,12 @@ const ChatInput: React.FC<ChatInputProps> = ({
                 <button
                   type="submit"
                   disabled={!canSend}
-                  title="Invia messaggio"
-                  aria-label="Invia messaggio"
-                  className={`absolute inset-0 rounded-full flex items-center justify-center transition-all duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 ${
+                  title={t("Invia messaggio", "Send message")}
+                  aria-label={t("Invia messaggio", "Send message")}
+                  className={`absolute inset-0 rounded-full flex items-center justify-center transition-all duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-900 ${
                     canSend
-                      ? "bg-white text-black hover:bg-zinc-200 opacity-100 scale-100"
-                      : "bg-zinc-800 text-zinc-600 cursor-not-allowed opacity-0 scale-90 pointer-events-none"
+                      ? "bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-white dark:text-black dark:hover:bg-zinc-200 opacity-100 scale-100"
+                      : "bg-zinc-200 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-600 cursor-not-allowed opacity-0 scale-90 pointer-events-none"
                   }`}
                 >
                   <ArrowUp size={iconSize} strokeWidth={2.5} aria-hidden />
@@ -262,7 +264,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
               type="button"
               role="listitem"
               onClick={() => onSuggestionClick!(s)}
-              className={`shrink-0 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/20 text-zinc-400 hover:text-white transition-colors duration-150 font-medium motion-reduce:transition-none ${
+              className={`shrink-0 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-900/[0.03] dark:bg-white/[0.03] hover:bg-zinc-900/[0.07] dark:hover:bg-white/[0.07] hover:border-zinc-400 dark:hover:border-white/20 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors duration-150 font-medium motion-reduce:transition-none ${
                 compact ? "px-3 py-1.5 text-[11px]" : "px-4 py-2 text-xs"
               }`}
             >
