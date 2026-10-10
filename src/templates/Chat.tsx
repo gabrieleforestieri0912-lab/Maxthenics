@@ -30,6 +30,8 @@ import { useChatContext, IMessage as ChatMessage } from "../context/ChatContext"
 import { useLanguage } from "../context/LanguageContext";
 import SEO from "../components/SEO";
 import ChatInput from "../components/ChatInput";
+import ChatMarkdown from "../components/ChatMarkdown";
+import { QUICK_SUGGESTIONS } from "../lib/sthenox";
 import Image from 'next/image';
 
 interface TypewriterProps {
@@ -61,185 +63,11 @@ const Typewriter: React.FC<TypewriterProps> = ({ text, speed = 20, onComplete, i
     return () => clearTimeout(timeout);
   }, [displayedText, text, speed, onComplete, isStreaming]);
 
-  return <RenderContent content={displayedText} />;
+  return <ChatMarkdown content={displayedText} />;
 };
 
-interface RenderContentProps {
-  content: string;
-}
-
-const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
-  const [copiedCodeBlock, setCopiedCodeBlock] = useState<string | null>(null);
-  const { t } = useLanguage();
-
-  const formatText = (text: string) => {
-    const parts = text.split(/(\*\*.*?\*\*)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith("**") && part.endsWith("**")) {
-        return (
-          <strong key={i} className="font-bold text-zinc-900 dark:text-white">
-            {part.slice(2, -2)}
-          </strong>
-        );
-      }
-      return part;
-    });
-  };
-
-  const parseCodeBlocks = (text: string) => {
-    const parts: { type: 'code' | 'text'; content: string; language?: string }[] = [];
-    const regex = /```(\w*)\n?([\s\S]*?)```/g;
-    let lastIndex = 0;
-    let match;
-
-    while ((match = regex.exec(text)) !== null) {
-      if (match.index > lastIndex) {
-        parts.push({ type: 'text', content: text.slice(lastIndex, match.index) });
-      }
-      parts.push({
-        type: 'code',
-        language: match[1] || undefined,
-        content: match[2].trim(),
-      });
-      lastIndex = match.index + match[0].length;
-    }
-
-    if (lastIndex < text.length) {
-      parts.push({ type: 'text', content: text.slice(lastIndex) });
-    }
-
-    return parts;
-  };
-
-  const copyCode = async (code: string) => {
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopiedCodeBlock(code);
-      setTimeout(() => setCopiedCodeBlock(null), 2000);
-    } catch {
-      // fallback
-    }
-  };
-
-  const renderLine = (line: string, i: number) => {
-    const trimmed = line.trim();
-    const bulletMatch = line.match(/^(\s*[•\-*]\s+)(.*)/);
-
-    if (bulletMatch) {
-      const content = bulletMatch[2];
-      return (
-        <li key={i} className="ml-4 list-disc text-zinc-700 dark:text-zinc-300 mt-1 first:mt-0">
-          {formatText(content)}
-        </li>
-      );
-    }
-
-    if (/^\d+\.\s/.test(trimmed)) {
-      return (
-        <li key={i} className="ml-4 list-decimal text-zinc-700 dark:text-zinc-300 mt-1 first:mt-0">
-          {formatText(trimmed.replace(/^\d+\.\s/, ""))}
-        </li>
-      );
-    }
-
-    if (/^###\s/.test(trimmed)) {
-      return (
-        <h3 key={i} className="text-sm font-bold text-zinc-900 dark:text-white tracking-tight mt-4 mb-2">
-          {formatText(trimmed.replace(/^###\s/, ""))}
-        </h3>
-      );
-    }
-
-    if (/^##\s/.test(trimmed)) {
-      return (
-        <h2 key={i} className="text-base font-bold text-zinc-900 dark:text-white tracking-tight mt-5 mb-2">
-          {formatText(trimmed.replace(/^##\s/, ""))}
-        </h2>
-      );
-    }
-
-    if (/^#\s/.test(trimmed)) {
-      return (
-        <h1 key={i} className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight mt-6 mb-2">
-          {formatText(trimmed.replace(/^#\s/, ""))}
-        </h1>
-      );
-    }
-
-    return (
-      <div key={i} className={trimmed === "" ? "h-2" : "mt-1.5 first:mt-0 text-zinc-700 dark:text-zinc-300"}>
-        {formatText(line)}
-      </div>
-    );
-  };
-
-  const renderTextPart = (text: string) => {
-    const lines = text.split("\n");
-    const elements: React.ReactNode[] = [];
-    let regularLines: string[] = [];
-
-    const flushRegularLines = () => {
-      if (regularLines.length > 0) {
-        elements.push(
-          <div key={`text-${elements.length}`} className="leading-relaxed">
-            {regularLines.map((line, i) => renderLine(line, i))}
-          </div>
-        );
-        regularLines = [];
-      }
-    };
-
-    lines.forEach((line, i) => {
-      const trimmed = line.trim();
-      const isBullet = line.match(/^(\s*[•\-*]\s+)/);
-      const isOrdered = /^\d+\.\s/.test(trimmed);
-      const isHeading = /^#{1,3}\s/.test(trimmed);
-
-      if (isBullet || isOrdered || isHeading) {
-        flushRegularLines();
-        elements.push(renderLine(line, i));
-      } else {
-        regularLines.push(line);
-      }
-    });
-
-    flushRegularLines();
-    return elements;
-  };
-
-  const blocks = parseCodeBlocks(content);
-
-  return (
-    <div className="leading-relaxed space-y-3">
-      {blocks.map((block, idx) => {
-        if (block.type === 'code') {
-          return (
-            <div key={`code-${idx}`} className="relative group/code my-3">
-              <div className="flex items-center justify-between px-4 py-2 bg-zinc-800/80 border border-white/10 rounded-t-xl">
-                <span className="meta-mono">
-                  {block.language || 'code'}
-                </span>
-                <button
-                  onClick={() => copyCode(block.content)}
-                  className="flex items-center gap-1.5 px-2 py-1 rounded-lg meta-mono hover:text-white hover:bg-white/5 transition-colors"
-                >
-                  {copiedCodeBlock === block.content ? (
-                    <><Check size={12} className="text-green-400" /> {t("Copiato", "Copied")}</>
-                  ) : (
-                    <><Copy size={12} /> {t("Copia", "Copy")}</>
-                  )}
-                </button>
-              </div>
-              <pre className="bg-zinc-900/80 border border-t-0 border-white/10 rounded-b-xl p-4 overflow-x-auto">
-                <code className="text-xs text-zinc-300 font-mono leading-relaxed">{block.content}</code>
-              </pre>
-            </div>
-          );
-        }
-        return <div key={`text-${idx}`}>{renderTextPart(block.content)}</div>;
-      })}
-    </div>
-  );
+const RenderContent: React.FC<{ content: string }> = ({ content }) => {
+  return <ChatMarkdown content={content} />;
 };
 
 type IMessage = ChatMessage;
@@ -282,6 +110,7 @@ const Chat: React.FC = () => {
     sendMessage, stopGeneration, editMessage, regenerate,
     clearChat, history, loadChat, deleteChat, renameChat,
     exportChat, copyChatToClipboard, searchMessages,
+    retry, lastError, isOffline,
   } = useChatContext();
   const navigate = useNavigate();
   const [input, setInput] = useState("");
@@ -315,11 +144,18 @@ const Chat: React.FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const exportMenuRef = useRef<HTMLDivElement>(null);
 
+  const isNearBottom = useCallback(() => {
+    const el = messagesContainerRef.current;
+    if (!el) return true;
+    return el.scrollHeight - el.scrollTop - el.clientHeight < 160;
+  }, []);
+
   useEffect(() => {
-    if (messages.length > 0) {
+    // Scroll automatico solo se l'utente e gia in fondo: non strappa mai il controllo.
+    if (messages.length > 0 && isNearBottom()) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, isNearBottom]);
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -372,6 +208,10 @@ const Chat: React.FC = () => {
 
   const handleSend = async () => {
     if (!input.trim() || isLoading || isStreaming) return;
+    if (isOffline) {
+      addNotification(t('Sei offline. Riconnettiti per chattare con Sthenox.', 'You are offline. Reconnect to chat with Sthenox.'), 'error');
+      return;
+    }
 
     if (!user) {
       if (guestMessageCount >= 5) {
@@ -968,7 +808,10 @@ const Chat: React.FC = () => {
           <div
             ref={messagesContainerRef}
             onScroll={handleScroll}
-            className={`flex-1 overflow-y-auto scrollbar-hide overscroll-contain ${hasMessages ? 'p-4 lg:p-8 space-y-8' : 'flex flex-col items-center justify-center'}`}
+            role="log"
+            aria-live="polite"
+            aria-label={t("Conversazione con Sthenox", "Conversation with Sthenox")}
+            className={`flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide overscroll-contain ${hasMessages ? 'p-4 lg:p-8 space-y-8' : 'flex flex-col items-center justify-center'}`}
           >
             {!hasMessages ? (
               <motion.div
@@ -1010,15 +853,11 @@ const Chat: React.FC = () => {
                     onPlus={startNewChat}
                     plusLabel={t("Nuova conversazione", "New conversation")}
                     showSuggestions
-                    suggestions={[
-                      t("Crea un protocollo per la Planche", "Create a Planche protocol"),
-                      t("Analisi biomeccanica Front Lever", "Front Lever biomechanical analysis"),
-                      t("Come gestire il volume allenante?", "How to manage training volume?"),
-                      t("Consigli per il recupero neurale", "Tips for neural recovery"),
-                    ]}
+                    suggestions={QUICK_SUGGESTIONS.map((s) => t(s, s))}
                     onSuggestionClick={(suggestion) => {
-                      setInput(suggestion);
-                      inputRef.current?.focus();
+                      if (isLoading || isStreaming || isOffline) return;
+                      setShowFollowUps(false);
+                      sendMessage(suggestion);
                     }}
                     onEscape={handleInputEscape}
                   />
@@ -1207,7 +1046,7 @@ const Chat: React.FC = () => {
                 ))}
 
                 {/* Suggested follow-ups */}
-                {showFollowUps && !isStreaming && (
+                {showFollowUps && !isStreaming && !isLoading && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -1221,7 +1060,8 @@ const Chat: React.FC = () => {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: idx * 0.05 }}
                           onClick={() => handleSuggestionClick(followUp)}
-                          className="px-3 py-2 card text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:border-red-500/30 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors text-left flex items-center gap-2 whitespace-nowrap"
+                          disabled={isLoading || isStreaming || isOffline}
+                          className="px-3 py-2 card text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:border-red-500/30 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors text-left flex items-center gap-2 whitespace-nowrap disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                         >
                           <Plus size={10} className="shrink-0 text-zinc-400 dark:text-zinc-700" />
                           {followUp}
@@ -1250,8 +1090,8 @@ const Chat: React.FC = () => {
                             />
                           ))}
                         </div>
-                        <span className="meta-mono">
-                          {t("Generazione in corso...", "Generating...")}
+                        <span className="meta-mono" role="status">
+                          {t("Sthenox sta scrivendo…", "Sthenox is typing…")}
                         </span>
                       </div>
                     ) : (
@@ -1273,6 +1113,27 @@ const Chat: React.FC = () => {
                     )}
                   </motion.div>
                 )}
+                {/* Offline / errore con Riprova */}
+                {isOffline && hasMessages && (
+                  <div role="alert" className="card flex items-center justify-between gap-3 border-amber-500/30 px-4 py-3 text-sm">
+                    <span className="font-bold text-amber-600 dark:text-amber-400">
+                      {t("Sei offline. Le risposte riprenderanno alla riconnessione.", "You are offline. Answers will resume on reconnect.")}
+                    </span>
+                  </div>
+                )}
+                {lastError && !isLoading && (
+                  <div role="alert" className="card flex items-center justify-between gap-3 border-red-500/30 px-4 py-3 text-sm">
+                    <span className="font-bold text-red-600 dark:text-red-400">{lastError}</span>
+                    <button
+                      type="button"
+                      onClick={() => retry()}
+                      className="btn-primary-sm shrink-0"
+                    >
+                      <RefreshCw size={12} aria-hidden />
+                      {t("Riprova", "Retry")}
+                    </button>
+                  </div>
+                )}
                 <div ref={messagesEndRef} />
               </div>
             )}
@@ -1293,7 +1154,7 @@ const Chat: React.FC = () => {
 
           {/* Bottom Input */}
           {hasMessages && (
-            <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-6 bg-linear-to-t from-zinc-100 via-zinc-100/90 dark:from-zinc-950 dark:via-zinc-950/90 to-transparent pointer-events-none">
+            <div className="absolute bottom-0 left-0 right-0 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] lg:p-6 bg-linear-to-t from-zinc-100 via-zinc-100/90 dark:from-zinc-950 dark:via-zinc-950/90 to-transparent pointer-events-none">
               <div className="max-w-[720px] mx-auto pointer-events-auto">
                 <ChatInput
                   value={input}

@@ -12,6 +12,8 @@ import { useAuth } from "../context/AuthContext";
 import { useChatContext, IMessage, Corner } from "../context/ChatContext";
 import { useLanguage } from "../context/LanguageContext";
 import ChatInput from "./ChatInput";
+import ChatMarkdown from "./ChatMarkdown";
+import { QUICK_SUGGESTIONS } from "../lib/sthenox";
 
 const Typewriter = ({ text, onComplete, isStreaming }: { text: string; onComplete?: () => void; isStreaming?: boolean }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -30,45 +32,11 @@ const Typewriter = ({ text, onComplete, isStreaming }: { text: string; onComplet
     return () => clearTimeout(timeout);
   }, [displayedText, text, onComplete, isStreaming]);
 
-  return <FormattedMessage text={displayedText} />;
+  return <ChatMarkdown content={displayedText} />;
 };
 
 const FormattedMessage = ({ text }: { text: string }) => {
-  const formatLine = (content: string) => {
-    const parts = content.split(/(\*\*.*?\*\*)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith("**") && part.endsWith("**")) {
-        return (
-          <strong key={i} className="font-bold text-zinc-900 dark:text-white">
-            {part.slice(2, -2)}
-          </strong>
-        );
-      }
-      return part;
-    });
-  };
-
-  return (
-    <div className="leading-relaxed">
-      {text.split("\n").map((line, i) => {
-        const isBullet = line.trim().match(/^[•\-*]\s+/);
-        if (isBullet) {
-          const content = line.trim().replace(/^[•\-*]\s+/, "");
-          return (
-            <div key={i} className="flex gap-2 mt-1.5 first:mt-0">
-              <span className="text-red-500 font-bold shrink-0">•</span>
-              <span className="flex-1">{formatLine(content)}</span>
-            </div>
-          );
-        }
-        return (
-          <div key={i} className={line.trim() === "" ? "h-2" : "mt-1.5 first:mt-0"}>
-            {formatLine(line)}
-          </div>
-        );
-      })}
-    </div>
-  );
+  return <ChatMarkdown content={text} />;
 };
 
 const ChatWidget = () => {
@@ -87,6 +55,7 @@ const ChatWidgetContent = () => {
     sendMessage, stopGeneration, editMessage, regenerate,
     clearChat, history, loadChat, deleteChat, renameChat,
     exportChat, copyChatToClipboard, isChatOpen, setIsChatOpen, chatCorner,
+    retry, lastError, isOffline,
   } = useChatContext();
   const [showHistory, setShowHistory] = React.useState(false);
   const [input, setInput] = React.useState("");
@@ -119,6 +88,7 @@ const ChatWidgetContent = () => {
   }
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -134,9 +104,11 @@ const ChatWidgetContent = () => {
   }, []);
 
   useEffect(() => {
-    if (isChatOpen) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
+    if (!isChatOpen || messages.length === 0) return;
+    // Scroll automatico solo se l'utente e gia in fondo.
+    const el = messagesContainerRef.current;
+    if (el && el.scrollHeight - el.scrollTop - el.clientHeight > 160) return;
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isChatOpen]);
 
   // Auto-create new chat when widget opens (except on /chat page)
@@ -157,6 +129,10 @@ const ChatWidgetContent = () => {
 
   const handleSend = async () => {
     if (!input.trim() || isLoading || isStreaming) return;
+    if (isOffline) {
+      addNotification(t("Sei offline. Riconnettiti per chattare.", "You are offline. Reconnect to chat."), "error");
+      return;
+    }
     const text = input;
     setInput("");
     const ok = await sendMessage(text);
@@ -340,8 +316,8 @@ const ChatWidgetContent = () => {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-[13px] font-bold text-zinc-900 dark:text-white tracking-tight leading-none">Sthenox AI</span>
-                      <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-[0.15em] mt-0.5">
-                        {isStreaming ? t("Sta scrivendo...", "Typing...") : (messages.length > 0 ? `${messages.length} ${t("messaggi", "messages")}` : t("In linea", "Online"))}
+                      <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-[0.15em] mt-0.5" role="status">
+                        {isStreaming ? t("Sthenox sta scrivendo…", "Sthenox is typing…") : (messages.length > 0 ? `${messages.length} ${t("messaggi", "messages")}` : t("In linea", "Online"))}
                       </span>
                     </div>
                   </div>
@@ -397,7 +373,18 @@ const ChatWidgetContent = () => {
               </div>
 
               {/* ── Messages ── */}
-              <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-4 scrollbar-hide overscroll-contain">
+              <div
+                ref={messagesContainerRef}
+                role="log"
+                aria-live="polite"
+                aria-label={t("Conversazione con Sthenox", "Conversation with Sthenox")}
+                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-4 scrollbar-hide overscroll-contain"
+              >
+                {isOffline && (
+                  <div role="alert" className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                    {t("Sei offline. Le risposte riprenderanno alla riconnessione.", "You are offline. Answers will resume on reconnect.")}
+                  </div>
+                )}
                 {messages.length === 0 && !isLoading ? (
                   <div className="flex flex-col items-center justify-center h-full text-center px-4">
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
@@ -410,21 +397,17 @@ const ChatWidgetContent = () => {
                       <p className="text-zinc-500 text-xs font-medium">{t("Scegli un argomento o scrivi la tua domanda", "Pick a topic or write your question")}</p>
                     </motion.div>
                     <div className="grid grid-cols-1 gap-2 w-full max-w-xs">
-                      {[
-                        t("Come inizio il Front Lever?", "How do I start the Front Lever?"),
-                        t("Programmi personalizzati", "Custom programs"),
-                        t("Analisi biomeccanica AI", "AI biomechanical analysis"),
-                        t("Prezzi Membership", "Membership pricing"),
-                      ].map((suggestion, idx) => (
-                        <motion.button key={idx} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.1 }}
-                          onClick={() => sendMessage(suggestion)}
-                          className="w-full p-3 bg-zinc-900/[0.03] dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.06] rounded-2xl text-left text-[11px] font-bold text-zinc-500 hover:text-zinc-900 hover:border-red-500/30 hover:bg-red-600/[0.04] dark:hover:text-white transition-colors flex items-center justify-between group"
+                      {QUICK_SUGGESTIONS.map((suggestion) => (
+                        <motion.button key={suggestion}
+                          onClick={() => { if (!isLoading && !isStreaming && !isOffline) sendMessage(t(suggestion, suggestion)); }}
+                          disabled={isLoading || isStreaming || isOffline}
+                          className="w-full p-3 bg-zinc-900/[0.03] dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.06] rounded-2xl text-left text-[11px] font-bold text-zinc-500 hover:text-zinc-900 hover:border-red-500/30 hover:bg-red-600/[0.04] dark:hover:text-white transition-colors flex items-center justify-between group disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                         >
                           <span className="flex items-center gap-2.5">
                             <span className="w-5 h-5 rounded-lg bg-zinc-900/[0.04] dark:bg-white/[0.04] flex items-center justify-center text-zinc-400 dark:text-zinc-600">
                               <CornerDownRight size={10} />
                             </span>
-                            {suggestion}
+                            {t(suggestion, suggestion)}
                           </span>
                           <ArrowRight size={12} className="text-zinc-300 dark:text-zinc-700 group-hover:text-red-400 transition-colors" />
                         </motion.button>
@@ -443,7 +426,7 @@ const ChatWidgetContent = () => {
                           transition={{ duration: 0.3 }}
                           className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} ${searchResults.length > 0 && searchResults[activeSearchIndex]?.index === i ? 'ring-2 ring-red-500/20 rounded-2xl' : ''}`}
                         >
-                          <div className={`max-w-[88%] ${msg.role === "user" ? "text-right" : "text-left"}`}>
+                          <div className={`max-w-[85%] min-w-0 ${msg.role === "user" ? "text-right" : "text-left"}`}>
                             {isEditing ? (
                               <div className="space-y-2">
                                 <textarea value={editingMessageContent} onChange={(e) => setEditingMessageContent(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === 'Escape') cancelEdit(); }} autoFocus className="w-full bg-white dark:bg-zinc-800 border border-red-500/30 text-zinc-900 dark:text-white px-3 py-2 rounded-2xl text-xs outline-none resize-none" rows={2} />
@@ -454,7 +437,7 @@ const ChatWidgetContent = () => {
                               </div>
                             ) : (
                               <>
-                                <div className={`px-4 py-3 text-[13px] leading-relaxed ${
+                                <div className={`px-4 py-3 text-[13px] leading-relaxed break-words ${
                                   msg.role === "user"
                                     ? "bg-linear-to-br from-red-600 to-orange-500 text-white rounded-2xl rounded-tr-md shadow-lg shadow-red-900/20"
                                     : "bg-zinc-900/[0.04] dark:bg-white/[0.04] border border-zinc-200 dark:border-white/[0.06] text-zinc-700 dark:text-zinc-200 rounded-2xl rounded-tl-md"
@@ -485,8 +468,20 @@ const ChatWidgetContent = () => {
                       <div className="flex justify-start">
                         <div className="bg-zinc-900/[0.04] dark:bg-white/[0.04] border border-zinc-200 dark:border-white/[0.06] px-4 py-3 rounded-2xl rounded-tl-md flex items-center gap-2">
                           {[0, 1, 2].map((i) => <motion.span key={i} animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }} className="w-1.5 h-1.5 bg-linear-to-r from-red-500 to-orange-400 rounded-full" />)}
-                          {isStreaming && <span className="text-[7px] text-zinc-500 font-bold uppercase tracking-widest ml-1">{t("Scrittura...", "Writing...")}</span>}
+                          {isStreaming && <span className="text-[7px] text-zinc-500 font-bold uppercase tracking-widest ml-1" role="status">{t("Sthenox sta scrivendo…", "Sthenox is typing…")}</span>}
                         </div>
+                      </div>
+                    )}
+                    {lastError && !isLoading && (
+                      <div role="alert" className="flex items-center justify-between gap-2 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-[11px] font-bold text-red-600 dark:text-red-400">
+                        <span>{lastError}</span>
+                        <button
+                          type="button"
+                          onClick={() => retry()}
+                          className="flex shrink-0 items-center gap-1 rounded-xl bg-red-600 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                        >
+                          <RefreshCw size={10} aria-hidden /> {t("Riprova", "Retry")}
+                        </button>
                       </div>
                     )}
                   </>
@@ -495,7 +490,7 @@ const ChatWidgetContent = () => {
               </div>
 
               {/* ── Footer / Input ── */}
-              <div className="px-3 pb-3 pt-1 relative">
+              <div className="px-3 pt-1 pb-[max(0.75rem,env(safe-area-inset-bottom))] relative">
                 <div className="absolute top-0 left-3 right-3 h-[1px] bg-linear-to-r from-transparent via-zinc-300 dark:via-white/[0.04] to-transparent" />
                 <ChatInput
                   value={input}

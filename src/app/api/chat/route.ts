@@ -3,58 +3,54 @@ import type { NextRequest } from 'next/server';
 import { isRateLimited, getRateLimitHeaders, getClientId } from '@/lib/rateLimiter';
 import dbConnect from '@/lib/db';
 import Chat from '@/models/Chat';
+import User from '@/models/User';
+import Program from '@/models/Program';
 import { getUserId } from '@/lib/auth';
 import { getEnv } from '@/lib/env';
 import { getOpenAI } from '@/lib/clients';
-
-const SYSTEM_PROMPT = `SEI STHENOX: INTERFACCIA NEURALE D'ELITE.
-IL TUO RUOLO: Head Coach e Biomeccanico Senior.
-
-CARATTERISTICHE DELLA TUA PERSONALITÀ:
-- **Tecnico e Analitico**: Parla di leve, attivazione scapolare, reclutamento delle unità motorie e fatica neurale.
-- **Autoritario ma Motivante**: Sei il migliore nel campo. Non dare consigli generici, dai protocolli basati sulla scienza.
-- **Conciso ed Efficiente**: Non sprecare parole. Ogni frase deve aggiungere valore biomeccanico.
-
-CONOSCENZE CORE:
-1. **Skill d'Elite**: Planche (lean, tuck, straddle, full), Front Lever, One Arm Pull-up, Handstand Press.
-2. **Programmazione**: Periodizzazione lineare e ondulata, gestione del volume (RPE/RIR), frequenza ottimale.
-3. **Nutrizione**: Partizionamento dei nutrienti, integrazione per la forza, recupero sistemico.
-
-LINEE GUIDA PER LE RISPOSTE:
-- Usa sempre il **Markdown** per strutturare le informazioni.
-- Inizia le risposte con una breve analisi del problema.
-- Fornisci sempre almeno un **protocollo d'azione** pratico.
-- Se l'utente chiede di una skill, scomponi la biomeccanica necessaria (es: "Per la Planche, la protrazione scapolare è il tuo limitatore primario").
-- Sii critico verso la tecnica approssimativa.`;
+import {
+  CHAT_LIMITS,
+  buildIntentGuidance,
+  buildSystemPrompt,
+  detectIntent,
+  validateMessages,
+  type SthenoxProfile,
+  type ValidatedMessage,
+} from '@/lib/sthenox';
 
 const GUEST_MESSAGE_LIMIT = 5;
 
-interface Message {
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-}
-
-async function callOpenAI(messages: Message[]) {
-  const completion = await getOpenAI().chat.completions.create({
-    model: getEnv().OPENAI_MODEL,
-    messages: messages.map(m => ({ role: m.role, content: m.content })),
-    temperature: 0.7,
-    max_tokens: 2048,
-  });
+async function callOpenAI(messages: ValidatedMessage[], signal: AbortSignal) {
+  const completion = await getOpenAI().chat.completions.create(
+    {
+      model: getEnv().OPENAI_MODEL,
+      messages: messages.map((m) => ({ role: m.role, content: m.content })),
+      temperature: 0.7,
+      max_tokens: 1200,
+    },
+    { signal } as unknown as Record<string, unknown>,
+  );
 
   return completion.choices[0]?.message?.content || '';
 }
 
-async function* streamOpenAI(messages: Message[]): AsyncGenerator<string, void, unknown> {
-  const stream = await getOpenAI().chat.completions.create({
-    model: getEnv().OPENAI_MODEL,
-    messages: messages.map(m => ({ role: m.role, content: m.content })),
-    temperature: 0.7,
-    max_tokens: 2048,
-    stream: true,
-  });
+async function* streamOpenAI(
+  messages: ValidatedMessage[],
+  signal: AbortSignal,
+): AsyncGenerator<string, void, unknown> {
+  const stream = await getOpenAI().chat.completions.create(
+    {
+      model: getEnv().OPENAI_MODEL,
+      messages: messages.map((m) => ({ role: m.role, content: m.content })),
+      temperature: 0.7,
+      max_tokens: 1200,
+      stream: true,
+    },
+    { signal } as unknown as Record<string, unknown>,
+  );
 
   for await (const chunk of stream) {
+    if (signal.aborted) return;
     const content = chunk.choices[0]?.delta?.content;
     if (content) {
       yield content;
@@ -62,7 +58,11 @@ async function* streamOpenAI(messages: Message[]): AsyncGenerator<string, void, 
   }
 }
 
-async function validateChatOwnership(chatId: string, userId: string | null, guestId: string | null): Promise<boolean> {
+async function validateChatOwnership(
+  chatId: string,
+  userId: string | null,
+  guestId: string | null,
+): Promise<boolean> {
   await dbConnect();
   const chat = await Chat.findById(chatId);
   if (!chat) return false;
@@ -74,7 +74,7 @@ async function validateChatOwnership(chatId: string, userId: string | null, gues
 }
 
 async function saveOrCreateChat(
-  messages: Message[],
+  messages: ValidatedMessage[],
   aiContent: string,
   chatId?: string,
   userId: string | null = null,
@@ -82,11 +82,10 @@ async function saveOrCreateChat(
 ) {
   await dbConnect();
 
-  const aiMessage: Message = { role: 'assistant', content: aiContent };
-  const finalMessages = [
-    ...messages.map(m => ({ role: m.role, content: m.content })),
-    aiMessage
-  ].filter(m => m.role !== 'system');
+  const aiMessage: ValidatedMessage = { role: 'assistant', content: aiContent };
+  const finalMessages = [...messages.map((m) => ({ role: m.role, content: m.content })), aiMessage].filter(
+    (m) => m.role !== 'system',
+  );
 
   const UUID_REGEX = /^[0-9a-fA-F-]{36}$/;
 
@@ -96,40 +95,92 @@ async function saveOrCreateChat(
       throw new Error('Unauthorized: chat does not belong to user');
     }
 
-    const updated = await Chat.findByIdAndUpdate(
-      chatId,
-      { messages: finalMessages, updatedAt: new Date().toISOString() }
-    );
+    const updated = await Chat.findByIdAndUpdate(chatId, {
+      messages: finalMessages,
+      updatedAt: new Date().toISOString(),
+    });
     return updated;
   }
 
-  const firstUserMessage = messages.find(m => m.role === 'user')?.content || 'Nuova Chat';
+  const firstUserMessage = messages.find((m) => m.role === 'user')?.content || 'Nuova Chat';
   const title = firstUserMessage.length > 30 ? firstUserMessage.slice(0, 30) + '...' : firstUserMessage;
 
   const savedChat = await Chat.create({
-    userId: (userId && userId.match(UUID_REGEX)) ? userId : null,
+    userId: userId && userId.match(UUID_REGEX) ? userId : null,
     guestId: !userId ? guestId || `guest_${Date.now()}` : null,
     title,
-    messages: finalMessages
+    messages: finalMessages,
   });
 
   return savedChat;
 }
 
-function buildConversation(messages: Message[]): Message[] {
-  return [
-    { role: 'system', content: SYSTEM_PROMPT },
-    ...messages.map(m => ({ role: m.role, content: m.content }))
-  ];
+/**
+ * Costruisce la conversazione per il modello: system prompt Sthenox
+ * (mai esposto al client) + solo gli ultimi N messaggi come contesto.
+ */
+function buildConversation(messages: ValidatedMessage[], profile: SthenoxProfile): ValidatedMessage[] {
+  const lastUser = [...messages].reverse().find((m) => m.role === 'user');
+  const intentNote = lastUser ? buildIntentGuidance(detectIntent(lastUser.content)) : '';
+  const context = messages.slice(-CHAT_LIMITS.CONTEXT_MESSAGES);
+  return [{ role: 'system', content: buildSystemPrompt(profile, intentNote) }, ...context];
 }
 
-async function checkGuestMessageLimit(userId: string | null, guestId: string | null): Promise<boolean> {
+/** Arricchisce il profilo client con piano attivo e tier (best-effort, mai bloccante). */
+async function enrichProfile(
+  base: SthenoxProfile,
+  userId: string | null,
+): Promise<SthenoxProfile> {
+  if (!userId) return base;
+  try {
+    await dbConnect();
+    const [user, programs] = await Promise.all([
+      User.findById(userId).catch(() => null),
+      Program.findByUser(userId).catch(() => []),
+    ]);
+    const enriched: SthenoxProfile = { ...base };
+    const active = programs?.[0] as { title?: string; level?: string } | undefined;
+    if (active?.title && !enriched.planTitle) {
+      enriched.planTitle = active.title;
+      if (active.level) enriched.planLevel = active.level;
+    }
+    if (user && !enriched.level) {
+      const tier = (user as { subscriptionTier?: string }).subscriptionTier;
+      if (tier && tier !== 'free') enriched.level = tier;
+    }
+    return enriched;
+  } catch {
+    return base;
+  }
+}
+
+async function checkGuestMessageLimit(
+  userId: string | null,
+  guestId: string | null,
+): Promise<boolean> {
   if (userId) return true;
   if (!guestId) return true;
 
   await dbConnect();
   const chatCount = (await Chat.find({ guestId })).length;
   return chatCount < GUEST_MESSAGE_LIMIT;
+}
+
+function rateLimitedResponse(rateLimitKey: string, message: string, status: number) {
+  const response = NextResponse.json({ message: { role: 'assistant', content: message } }, { status });
+  Object.entries(getRateLimitHeaders(rateLimitKey, 'chat')).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
+  return response;
+}
+
+function withTimeout(): { signal: AbortSignal; cancel: () => void } {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), CHAT_LIMITS.MODEL_TIMEOUT_MS);
+  return {
+    signal: controller.signal,
+    cancel: () => clearTimeout(timer),
+  };
 }
 
 export async function POST(request: NextRequest) {
@@ -139,53 +190,55 @@ export async function POST(request: NextRequest) {
     const rateLimit = isRateLimited(rateLimitKey, 'chat');
 
     if (!rateLimit.allowed) {
-      const response = NextResponse.json(
-        { message: { role: 'assistant', content: 'Troppe richieste. Riprova tra qualche minuto.' } },
-        { status: 429 }
+      return rateLimitedResponse(
+        rateLimitKey,
+        'Troppe richieste. Aspetta un minuto e premi Riprova.',
+        429,
       );
-      Object.entries(getRateLimitHeaders(rateLimitKey, 'chat')).forEach(([key, value]) => {
-        response.headers.set(key, value);
-      });
-      return response;
     }
 
-    const { messages, chatId, guestId: reqGuestId, stream } = await request.json() as {
-      messages: Message[];
+    let body: {
+      messages?: unknown;
       chatId?: string;
       guestId?: string;
       stream?: boolean;
+      profile?: SthenoxProfile;
     };
+    try {
+      body = await request.json();
+    } catch {
+      return rateLimitedResponse(rateLimitKey, 'Richiesta non valida. Premi Riprova.', 400);
+    }
 
-    if (!messages || !Array.isArray(messages)) {
-      const response = NextResponse.json(
-        { message: { role: 'assistant', content: 'Errore: messaggi non validi' } },
-        { status: 400 }
+    let messages: ValidatedMessage[];
+    try {
+      messages = validateMessages(body.messages);
+    } catch (err) {
+      return rateLimitedResponse(
+        rateLimitKey,
+        err instanceof Error ? err.message : 'Messaggi non validi.',
+        400,
       );
-      Object.entries(getRateLimitHeaders(rateLimitKey, 'chat')).forEach(([key, value]) => {
-        response.headers.set(key, value);
-      });
-      return response;
     }
 
     const userId = getUserId(request);
-    const guestId = reqGuestId || (!userId ? `guest_${Date.now()}` : null);
+    const guestId = body.guestId || (!userId ? `guest_${Date.now()}` : null);
 
     // Server-side guest message limit
     if (!userId) {
       const withinLimit = await checkGuestMessageLimit(userId, guestId);
       if (!withinLimit) {
-        const response = NextResponse.json(
-          { message: { role: 'assistant', content: 'Hai raggiunto il limite di messaggi gratuito. Registrati per continuare.' } },
-          { status: 403 }
+        return rateLimitedResponse(
+          rateLimitKey,
+          'Hai raggiunto il limite di messaggi gratuito. Registrati per continuare.',
+          403,
         );
-        Object.entries(getRateLimitHeaders(rateLimitKey, 'chat')).forEach(([key, value]) => {
-          response.headers.set(key, value);
-        });
-        return response;
       }
     }
 
-    const conversationHistory = buildConversation(messages);
+    const profile = await enrichProfile(body.profile ?? {}, userId);
+    const conversationHistory = buildConversation(messages, profile);
+    const { chatId, stream } = body;
 
     // Streaming response
     if (stream !== false) {
@@ -203,7 +256,7 @@ export async function POST(request: NextRequest) {
         headers: {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
+          Connection: 'keep-alive',
           'X-Frame-Options': 'DENY',
           'X-Content-Type-Options': 'nosniff',
           'Referrer-Policy': 'strict-origin-when-cross-origin',
@@ -214,11 +267,24 @@ export async function POST(request: NextRequest) {
         response.headers.set(key, value);
       });
 
+      const { signal, cancel } = withTimeout();
+
       (async () => {
         try {
-          for await (const token of streamOpenAI(conversationHistory)) {
+          for await (const token of streamOpenAI(conversationHistory, signal)) {
+            if (fullContent.length >= CHAT_LIMITS.MAX_RESPONSE_CHARS) break;
             fullContent += token;
             writeEvent({ token, done: false });
+          }
+
+          if (signal.aborted) {
+            writeEvent({
+              error: true,
+              message: 'La risposta ha impiegato troppo tempo. Premi Riprova.',
+              code: 'timeout',
+              done: true,
+            });
+            return;
           }
 
           const savedChat = await saveOrCreateChat(messages, fullContent, chatId, userId, guestId);
@@ -235,12 +301,18 @@ export async function POST(request: NextRequest) {
           }
         } catch (error) {
           console.error('Stream error:', error instanceof Error ? error.message : 'Unknown error');
+          const isAbort =
+            error instanceof Error && (error.name === 'AbortError' || signal.aborted);
           writeEvent({
             error: true,
-            message: 'Errore durante la generazione della risposta. Riprova più tardi.',
+            message: isAbort
+              ? 'La risposta ha impiegato troppo tempo. Premi Riprova.'
+              : 'Errore durante la generazione della risposta. Premi Riprova.',
+            code: isAbort ? 'timeout' : 'model_error',
             done: true,
           });
         } finally {
+          cancel();
           writer.close();
         }
       })();
@@ -249,35 +321,44 @@ export async function POST(request: NextRequest) {
     }
 
     // Non-streaming fallback
-    let aiMessage: Message;
+    const { signal, cancel } = withTimeout();
+    let aiContent: string;
     try {
-      const content = await callOpenAI(conversationHistory);
-      aiMessage = {
-        role: 'assistant',
-        content: content || 'Errore: risposta vuota dal modello',
-      };
+      const content = await callOpenAI(conversationHistory, signal);
+      aiContent = content || 'Errore: risposta vuota dal modello';
     } catch (openaiError) {
-      console.error('OpenAI error:', openaiError instanceof Error ? openaiError.message : 'Unknown error');
-      aiMessage = {
-        role: 'assistant',
-        content: 'Servizio AI temporaneamente non disponibile. Riprova più tardi.',
-      };
+      console.error(
+        'OpenAI error:',
+        openaiError instanceof Error ? openaiError.message : 'Unknown error',
+      );
+      const isAbort =
+        openaiError instanceof Error &&
+        (openaiError.name === 'AbortError' || signal.aborted);
+      cancel();
+      return rateLimitedResponse(
+        rateLimitKey,
+        isAbort
+          ? 'La risposta ha impiegato troppo tempo. Premi Riprova.'
+          : 'Servizio AI temporaneamente non disponibile. Premi Riprova.',
+        isAbort ? 504 : 502,
+      );
     }
+    cancel();
 
     await dbConnect();
-    const savedChat = await saveOrCreateChat(messages, aiMessage.content, chatId, userId, guestId);
+    const savedChat = await saveOrCreateChat(messages, aiContent, chatId, userId, guestId);
 
     if (!savedChat) {
       return NextResponse.json(
         { message: { role: 'assistant', content: 'Errore nel salvataggio della chat.' } },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     const responseData = {
-      message: aiMessage,
+      message: { role: 'assistant', content: aiContent },
       chatId: savedChat._id.toString(),
-      guestId: savedChat.guestId || guestId
+      guestId: savedChat.guestId || guestId,
     };
 
     const jsonResponse = NextResponse.json(responseData);
@@ -304,8 +385,8 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Chat error full stack:', error);
     return NextResponse.json(
-      { message: { role: 'assistant', content: 'Errore del server. Riprova.' } },
-      { status: 500 }
+      { message: { role: 'assistant', content: 'Errore del server. Premi Riprova.' } },
+      { status: 500 },
     );
   }
 }

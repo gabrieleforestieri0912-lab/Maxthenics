@@ -2,6 +2,12 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from "react";
 import { useAuth } from "./AuthContext";
+import {
+  extractProfileHints,
+  loadProfile,
+  saveProfile,
+  type SthenoxProfile,
+} from "../lib/sthenox";
 
 export interface IMessage {
   id?: string;
@@ -32,6 +38,7 @@ interface ChatContextType {
   setChatCorner: React.Dispatch<React.SetStateAction<Corner>>;
   sendMessage: (content: string, isInitial?: boolean) => Promise<boolean>;
   stopGeneration: () => void;
+  retry: () => Promise<boolean>;
   editMessage: (index: number, newContent: string) => Promise<void>;
   regenerate: () => Promise<void>;
   loadChat: (chatId: string) => Promise<void>;
@@ -47,6 +54,9 @@ interface ChatContextType {
   setMessages: React.Dispatch<React.SetStateAction<IMessage[]>>;
   setActiveChatId: React.Dispatch<React.SetStateAction<string | null>>;
   guestId: string | null;
+  lastError: string | null;
+  lastFailedInput: string | null;
+  isOffline: boolean;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -69,6 +79,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [guestId, setGuestId] = useState<string | null>(null);
+  const [lastError, setLastError] = useState<string | null>(null);
+  const [lastFailedInput, setLastFailedInput] = useState<string | null>(null);
+  const [isOffline, setIsOffline] = useState(
+    () => typeof navigator !== "undefined" && !navigator.onLine
+  );
+  const profileRef = useRef<SthenoxProfile>({});
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const messagesRef = useRef<IMessage[]>([]);
@@ -113,9 +129,27 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("maxthenicsChatCorner", chatCorner);
   }, [chatCorner]);
 
+  useEffect(() => {
+    profileRef.current = loadProfile();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const goOffline = () => setIsOffline(true);
+    const goOnline = () => setIsOffline(false);
+    window.addEventListener("offline", goOffline);
+    window.addEventListener("online", goOnline);
+    return () => {
+      window.removeEventListener("offline", goOffline);
+      window.removeEventListener("online", goOnline);
+    };
+  }, []);
+
   const clearChat = useCallback(() => {
     setMessages([]);
     setActiveChatId(null);
+    setLastError(null);
+    setLastFailedInput(null);
   }, []);
 
   const deleteChat = useCallback(async (chatId: string) => {
@@ -219,6 +253,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     if ((!content.trim() && !isInitial) || isLoadingRef.current) return false;
 
+    // Raccogli hint di profilo dal testo (una domanda mirata alla volta la fa il modello).
+    if (!isInitial && content.trim()) {
+      const updated = extractProfileHints(content, profileRef.current);
+      profileRef.current = updated;
+      saveProfile(updated);
+    }
+    setLastError(null);
+
     let updatedMessages = [...currentMessages];
 
     if (!isInitial) {
@@ -253,12 +295,19 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             : updatedMessages,
           chatId: currentActiveChatId,
           guestId: currentGuestId,
+          profile: profileRef.current,
           stream: true,
         }),
         signal: abortController.signal,
       });
 
       if (!response.ok) {
+        if (response.status === 429) {
+          throw new Error('RATE_LIMIT');
+        }
+        if (response.status === 408 || response.status === 504) {
+          throw new Error('TIMEOUT');
+        }
         throw new Error(`HTTP ${response.status}`);
       }
 
@@ -364,12 +413,22 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         return true;
       }
 
+      const kind = error?.message === 'RATE_LIMIT' ? 'rate' : error?.message === 'TIMEOUT' ? 'timeout' : 'network';
+      const friendly =
+        kind === 'rate'
+          ? 'Troppe richieste. Aspetta un minuto e premi Riprova.'
+          : kind === 'timeout'
+            ? 'La risposta ha impiegato troppo tempo. Premi Riprova.'
+            : 'Errore di connessione. Verifica la rete e premi Riprova.';
+      setLastError(friendly);
+      if (!isInitial && content.trim()) setLastFailedInput(content);
+
       setMessages((prev) => [
         ...prev,
         {
           id: `msg-err-${Date.now()}`,
           role: "assistant",
-          content: "Errore di connessione. Verifica la rete e riprova.",
+          content: friendly,
           isNew: false,
           isStreaming: false,
           createdAt: new Date().toISOString(),
@@ -412,6 +471,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           messages: msgsToKeep.map(({ id: _id, isNew: _isNew, isStreaming: _isStreaming, createdAt: _createdAt, ..._rest }) => _rest),
           chatId: currentActiveChatId,
           guestId: currentGuestId,
+          profile: profileRef.current,
           stream: true,
         }),
         signal: abortController.signal,
@@ -476,6 +536,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     } catch {
+      setLastError("Errore durante la rigenerazione. Premi Riprova.");
       setMessages((prev) => [
         ...prev,
         {
@@ -530,6 +591,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           messages: msgsToKeep.map(({ id: _id, isNew: _isNew, isStreaming: _isStreaming, createdAt: _createdAt, ..._rest }) => _rest),
           chatId: currentActiveChatId,
           guestId: currentGuestId,
+          profile: profileRef.current,
           stream: true,
         }),
         signal: abortController.signal,
@@ -598,6 +660,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     } catch {
+      setLastError("Errore durante la rigenerazione. Premi Riprova.");
       setMessages((prev) => [
         ...prev,
         {
@@ -654,6 +717,19 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       .filter(({ message }) => message.content.toLowerCase().includes(lowerQuery));
   }, []);
 
+  const retry = useCallback(async (): Promise<boolean> => {
+    if (isLoadingRef.current) return false;
+    setLastError(null);
+    setLastFailedInput(null);
+    // Rimuove i bubble di errore; regenerate riusa l'ultimo messaggio utente
+    // gia presente (non duplica il messaggio).
+    setMessages((prev) =>
+      prev.filter((m) => !(m.id?.startsWith("msg-err-") && m.role === "assistant"))
+    );
+    await regenerate();
+    return true;
+  }, [regenerate]);
+
   return (
     <ChatContext.Provider
       value={{
@@ -664,6 +740,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         history,
         sendMessage,
         stopGeneration,
+        retry,
         editMessage,
         regenerate,
         loadChat,
@@ -681,6 +758,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setMessages,
         setActiveChatId,
         guestId,
+        lastError,
+        lastFailedInput,
+        isOffline,
       }}
     >
       {children}
