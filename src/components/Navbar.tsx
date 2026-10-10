@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useLanguage } from "../context/LanguageContext";
+import { useTheme } from "../context/ThemeContext";
 
 interface NavLink {
   name: string;
@@ -38,6 +39,8 @@ function Navbar() {
   // ── Scroll-driven shrink ──
   const [scrolled, setScrolled] = useState(false);
   const { t } = useLanguage();
+  const { theme } = useTheme();
+  const dark = theme === "dark";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -92,13 +95,15 @@ function Navbar() {
             paddingLeft: scrolled ? 16 : 24,
             paddingRight: scrolled ? 16 : 24,
             boxShadow: scrolled
-              ? "0 10px 40px rgba(0,0,0,0.8)"
-              : "0 20px 60px rgba(0,0,0,0.6)",
-            backgroundColor: scrolled ? "rgba(9,9,9,0.95)" : "rgba(9,9,9,0.85)",
+              ? dark ? "0 10px 40px rgba(0,0,0,0.8)" : "0 10px 30px rgba(0,0,0,0.12)"
+              : dark ? "0 20px 60px rgba(0,0,0,0.6)" : "0 20px 50px rgba(0,0,0,0.10)",
+            backgroundColor: scrolled
+              ? dark ? "rgba(9,9,9,0.95)" : "rgba(255,255,255,0.92)"
+              : dark ? "rgba(9,9,9,0.85)" : "rgba(255,255,255,0.80)",
           }}
           transition={{ duration: 0.4, ease: "easeInOut" }}
           style={{ borderRadius: 24 }}
-          className="w-full backdrop-blur-xl border border-white/10 pointer-events-auto"
+          className="w-full backdrop-blur-xl border border-zinc-200 dark:border-zinc-200 dark:border-white/10 pointer-events-auto"
         >
           <div className="flex items-center justify-between h-14">
           {/* Logo */}
@@ -116,9 +121,9 @@ function Navbar() {
                 className="h-7 w-auto"
                 priority
               />
-              <span className="text-base sm:text-xl font-black tracking-tighter text-white group-hover:text-red-500 transition-colors duration-300">
+              <span className="text-base sm:text-xl font-black tracking-tighter text-zinc-900 group-hover:text-red-500 transition-colors duration-300 dark:text-white">
                 MAX
-                <span className="text-red-600 group-hover:text-white transition-colors duration-300">
+                <span className="text-red-600 group-hover:text-zinc-900 transition-colors duration-300 dark:group-hover:text-white">
                   THENICS
                 </span>
               </span>
@@ -131,7 +136,7 @@ function Navbar() {
               <Link
                 key={link.name}
                 to={link.to}
-                className="text-[13px] font-medium text-zinc-300 hover:text-white transition-colors relative group px-2 py-1"
+                className="text-[13px] font-medium text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors relative group px-2 py-1"
               >
                 {link.name}
                 <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-red-600 transition-all group-hover:w-full"></span>
@@ -141,12 +146,12 @@ function Navbar() {
             {/* Cart Icon */}
             <Link
               to="/cart"
-              className="relative p-1.5 text-zinc-400 hover:text-white transition-all"
+              className="relative p-1.5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"
             >
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
                 <span
-                  className="absolute -top-1 -right-1 bg-linear-to-tr from-red-600 to-orange-500 text-white text-[9px] font-black h-4 w-4 flex items-center justify-center rounded-full border-2 border-zinc-950 shadow-[0_0_10px_rgba(220,38,38,0.5)]"
+                  className="absolute -top-1 -right-1 bg-linear-to-tr from-red-600 to-orange-500 text-white text-[9px] font-black h-4 w-4 flex items-center justify-center rounded-full border-2 border-white dark:border-zinc-950 shadow-[0_0_10px_rgba(220,38,38,0.5)]"
                 >
                   {cartCount}
                 </span>
@@ -157,7 +162,7 @@ function Navbar() {
               <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-1.5 pl-3 lg:pl-4 border-l border-white/10"
+                    className="flex items-center gap-1.5 pl-3 lg:pl-4 border-l border-zinc-200 dark:border-white/10"
                   >
                     <div className="flex items-center gap-1.5">
                       {user.avatar ? (
@@ -169,12 +174,12 @@ function Navbar() {
                           className="w-7 h-7 rounded-full object-cover border-2 border-red-500 shadow-[0_0_10px_rgba(220,38,38,0.4)]"
                         />
                       ) : (
-                        <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center border-2 border-red-500 shadow-[0_0_10px_rgba(220,38,38,0.4)]">
-                          <UserIcon className="w-3.5 h-3.5 text-zinc-400" />
+                        <div className="w-7 h-7 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center border-2 border-red-500 shadow-[0_0_10px_rgba(220,38,38,0.4)]">
+                          <UserIcon className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
                         </div>
                       )}
                       <ChevronDown
-                        className={`w-3.5 h-3.5 text-zinc-400 transition-transform ${userMenuOpen ? "rotate-180" : ""}`}
+                        className={`w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400 transition-transform ${userMenuOpen ? "rotate-180" : ""}`}
                       />
                     </div>
                   </button>
@@ -184,10 +189,10 @@ function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute right-0 top-10 mt-1 w-52 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50"
+                      className="absolute right-0 top-10 mt-1 w-52 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50"
                     >
-                      <div className="p-4 border-b border-white/10">
-                        <p className="font-bold text-white text-sm">
+                      <div className="p-4 border-b border-zinc-200 dark:border-white/10">
+                        <p className="font-bold text-zinc-900 dark:text-white text-sm">
                           {user.name}
                         </p>
                         <p className="text-xs text-zinc-500">{user.email}</p>
@@ -196,40 +201,40 @@ function Navbar() {
                         <Link
                           to="/my-program"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors"
+                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
                         >
-                          <Layout className="w-4 h-4 text-zinc-400" />
-                          <span className="text-sm text-zinc-300">
+                          <Layout className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                          <span className="text-sm text-zinc-600 dark:text-zinc-300">
                             {t("Il mio Programma", "My Program")}
                           </span>
                         </Link>
                         <Link
                           to="/my-workouts"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors"
+                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
                         >
                           <Dumbbell className="w-4 h-4 text-red-500" />
-                          <span className="text-sm text-zinc-300">
+                          <span className="text-sm text-zinc-600 dark:text-zinc-300">
                             {t("I Miei Workout", "My Workouts")}
                           </span>
                         </Link>
                         <Link
                           to="/create"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors"
+                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
                         >
-                          <Plus className="w-4 h-4 text-zinc-400" />
-                          <span className="text-sm text-zinc-300">
+                          <Plus className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                          <span className="text-sm text-zinc-600 dark:text-zinc-300">
                             {t("Crea Programma", "Create Program")}
                           </span>
                         </Link>
                         <Link
                           to="/calisthenics-room"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-white/5 rounded-xl transition-colors"
+                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
                         >
                           <Crown className="w-4 h-4 text-red-500" />
-                          <span className="text-sm text-zinc-300">
+                          <span className="text-sm text-zinc-600 dark:text-zinc-300">
                             {t("Coaching Elite", "Elite Coaching")}
                           </span>
                         </Link>
@@ -262,12 +267,12 @@ function Navbar() {
           <div className="flex nav:hidden items-center gap-2 relative z-50">
             <Link
               to="/cart"
-              className="relative p-2 text-zinc-400 hover:text-white transition-colors"
+              className="relative p-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
               onClick={() => setIsOpen(false)}
             >
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
-                <span className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-zinc-950">
+                <span className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white dark:border-zinc-950">
                   {cartCount}
                 </span>
               )}
@@ -275,11 +280,11 @@ function Navbar() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="text-zinc-400 hover:text-white p-2 transition-transform active:scale-90"
+              className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white p-2 transition-transform active:scale-90"
               aria-expanded={isOpen}
             >
               {isOpen ? (
-                <X className="h-7 w-7 text-white" />
+                <X className="h-7 w-7 text-zinc-900 dark:text-white" />
               ) : (
                 <Menu className="h-7 w-7" />
               )}
@@ -296,7 +301,7 @@ function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 nav:hidden bg-zinc-950 overflow-y-auto">
+            className="fixed inset-0 z-40 nav:hidden bg-zinc-50 dark:bg-zinc-950 overflow-y-auto">
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.1)_0%,transparent_50%)] pointer-events-none" />
 
           <div className="relative z-10 min-h-screen flex flex-col">
@@ -305,7 +310,7 @@ function Navbar() {
                 <div key={link.name}>
                   <Link
                     to={link.to}
-                    className="block py-3 text-2xl sm:text-3xl font-black text-white hover:text-red-500 transition-colors uppercase tracking-tighter"
+                    className="block py-3 text-2xl sm:text-3xl font-black text-zinc-900 hover:text-red-500 transition-colors uppercase tracking-tighter dark:text-white"
                     onClick={() => setIsOpen(false)}
                   >
                     {link.name}
@@ -314,18 +319,18 @@ function Navbar() {
               ))}
             </div>
 
-            <div className="sticky bottom-0 px-6 pb-8 space-y-4 bg-zinc-950">
+            <div className="sticky bottom-0 px-6 pb-8 space-y-4 bg-zinc-50 dark:bg-zinc-950">
               {user ? (
-                  <div className="p-4 rounded-2xl bg-zinc-900 border border-white/10">
+                  <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5 shrink-0">
-                        <UserIcon size={18} className="text-zinc-400" />
+                      <div className="w-10 h-10 bg-zinc-200 dark:bg-zinc-800 rounded-xl flex items-center justify-center border border-zinc-300 dark:border-white/5 shrink-0">
+                        <UserIcon size={18} className="text-zinc-500 dark:text-zinc-400" />
                       </div>
                       <div className="min-w-0">
                         <p className="text-[9px] font-black text-red-500 uppercase tracking-widest leading-none mb-0.5">
                           {t("Livello Atleta", "Athlete Level")}
                         </p>
-                        <p className="text-base font-bold text-white truncate">
+                        <p className="text-base font-bold text-zinc-900 dark:text-white truncate">
                           {user.name}
                         </p>
                       </div>
@@ -333,7 +338,7 @@ function Navbar() {
                     <div className="grid grid-cols-2 gap-2.5">
                       <Link
                         to="/create"
-                        className="flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-[11px] font-bold border border-white/10 transition-all"
+                        className="flex items-center justify-center gap-2 py-3 bg-zinc-900/5 hover:bg-zinc-900/10 text-zinc-900 rounded-xl text-[11px] font-bold border border-zinc-200 dark:border-white/10 transition-all dark:bg-white/5 dark:hover:bg-white/10 dark:text-white"
                         onClick={() => setIsOpen(false)}
                       >
                         <Plus size={15} />

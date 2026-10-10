@@ -80,7 +80,7 @@ function Footer() {
   };
 
   return (
-    <footer className="relative bg-black border-t border-black pt-20 lg:pt-28 pb-12 overflow-hidden">
+    <footer className="relative bg-white border-t border-zinc-200 pt-20 lg:pt-28 pb-12 overflow-hidden dark:bg-black dark:border-black">
 
       <div className="container-max relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12 mb-16">
@@ -95,7 +95,7 @@ function Footer() {
                 className="h-8 sm:h-10 w-auto group-hover:scale-110 transition-transform duration-500"
                 priority
               />
-              <span className="text-xl sm:text-2xl font-black tracking-tighter text-white">
+              <span className="text-xl sm:text-2xl font-black tracking-tighter text-zinc-900 dark:text-white">
                 MAX<span className="text-red-600">THENICS</span>
               </span>
             </Link>
@@ -119,7 +119,7 @@ function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-black border border-white/10 flex items-center justify-center text-zinc-500 hover:text-white hover:border-white/30 transition-colors group"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white border border-zinc-200 flex items-center justify-center text-zinc-500 hover:text-zinc-900 hover:border-zinc-400 transition-colors group dark:bg-black dark:border-white/10 dark:hover:text-white dark:hover:border-white/30"
                 >
                   {social.icon}
                 </a>
@@ -137,7 +137,7 @@ function Footer() {
                 <li key={link.name}>
                   <Link
                     to={link.to}
-                    className="text-xs sm:text-sm text-zinc-500 hover:text-white transition-colors flex items-center group"
+                    className="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors flex items-center group"
                   >
                     {link.name}
                     <ArrowUpRight
@@ -151,7 +151,7 @@ function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-6">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 dark:text-zinc-400 mb-6">
               {t("Risorse", "Resources")}
             </h4>
             <ul className="space-y-3">
@@ -159,7 +159,7 @@ function Footer() {
                 <li key={link.name}>
                   <Link
                     to={link.to}
-                    className="text-xs sm:text-sm text-zinc-500 hover:text-white transition-colors flex items-center group"
+                    className="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors flex items-center group"
                   >
                     {link.name}
                     <ArrowUpRight
@@ -173,7 +173,7 @@ function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-6">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 dark:text-zinc-400 mb-6">
               {t("Legale", "Legal")}
             </h4>
             <ul className="space-y-3">
@@ -181,7 +181,7 @@ function Footer() {
                 <li key={link.name}>
                   <Link
                     to={link.to}
-                    className="text-xs sm:text-sm text-zinc-500 hover:text-white transition-colors flex items-center group"
+                    className="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors flex items-center group"
                   >
                     {link.name}
                     <ArrowUpRight
@@ -196,7 +196,7 @@ function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="pt-8 border-t border-zinc-200 dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-4">
             <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
               © {currentYear} Maxthenics

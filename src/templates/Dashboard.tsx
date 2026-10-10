@@ -13,10 +13,12 @@ import {
   Zap,
   Activity,
   History,
-  Languages
+  Languages,
+  Palette
 } from 'lucide-react';
 import Button from "../components/Button";
 import LanguageToggle from "../components/LanguageToggle";
+import ThemeToggle from "../components/ThemeToggle";
 import SEO from "../components/SEO";
 import { safeJsonParse } from "../lib/safeJson";
 import type { SavedProgram } from "@/types/program";
@@ -341,6 +343,19 @@ const Dashboard: React.FC = () => {
                   </span>
                 </span>
                 <LanguageToggle compact />
+              </div>
+              <div className="flex items-center justify-between gap-3 p-3 mt-1 rounded-lg bg-white/[0.02] border border-white/10">
+                <span className="flex items-center gap-3">
+                  <Palette
+                    size={16}
+                    className="text-zinc-500"
+                    aria-hidden
+                  />
+                  <span className="text-sm font-bold text-zinc-300">
+                    Tema
+                  </span>
+                </span>
+                <ThemeToggle compact />
               </div>
             </nav>
           </div>

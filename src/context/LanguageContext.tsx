@@ -25,8 +25,7 @@ function detectInitialLocale(): Locale {
   } catch {
     /* ignore */
   }
-  const nav = typeof navigator !== "undefined" ? navigator.language.toLowerCase() : "it";
-  if (nav.startsWith("en")) return "en";
+  // Default sempre italiano: l'inglese si attiva solo dalle impostazioni.
   return "it";
 }
 

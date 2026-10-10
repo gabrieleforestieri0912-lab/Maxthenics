@@ -84,8 +84,8 @@ if (googleVerification) {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it" className={inter.variable}>
-      <body className={`${inter.className} relative antialiased bg-zinc-950 text-gray-200`}>
+    <html lang="it" className={`${inter.variable} dark`}>
+      <body className={`${inter.className} relative antialiased bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-gray-200`}>
         <StructuredData data={[organizationJsonLd(), websiteJsonLd()]} />
         <Providers>
           <div className="min-h-screen flex flex-col">

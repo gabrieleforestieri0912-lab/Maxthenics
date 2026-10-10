@@ -5,6 +5,7 @@ import { AuthProvider } from '../context/AuthContext';
 import { CartProvider } from '../context/CartContext';
 import { ChatProvider } from '../context/ChatContext';
 import { LanguageProvider } from '../context/LanguageContext';
+import { ThemeProvider } from '../context/ThemeContext';
 import { BrowserRouter } from 'react-router-dom';
 import ScrollToTop from './ScrollToTop';
 import NotificationRenderer from './NotificationRenderer';
@@ -24,6 +25,7 @@ function BrowserRouterWrapper({ children }: { children: ReactNode }) {
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
+    <ThemeProvider>
     <LanguageProvider>
     <AuthProvider>
       <CartProvider>
@@ -36,5 +38,6 @@ export default function Providers({ children }: { children: ReactNode }) {
       </CartProvider>
     </AuthProvider>
     </LanguageProvider>
+    </ThemeProvider>
   );
 }
