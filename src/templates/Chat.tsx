@@ -142,7 +142,7 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
 
     if (/^###\s/.test(trimmed)) {
       return (
-        <h3 key={i} className="text-sm font-black text-white uppercase tracking-wider mt-4 mb-2">
+        <h3 key={i} className="text-sm font-bold text-white tracking-tight mt-4 mb-2">
           {formatText(trimmed.replace(/^###\s/, ""))}
         </h3>
       );
@@ -150,7 +150,7 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
 
     if (/^##\s/.test(trimmed)) {
       return (
-        <h2 key={i} className="text-base font-black text-white uppercase tracking-wider mt-5 mb-2">
+        <h2 key={i} className="text-base font-bold text-white tracking-tight mt-5 mb-2">
           {formatText(trimmed.replace(/^##\s/, ""))}
         </h2>
       );
@@ -158,7 +158,7 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
 
     if (/^#\s/.test(trimmed)) {
       return (
-        <h1 key={i} className="text-lg font-black text-white uppercase tracking-wider mt-6 mb-2">
+        <h1 key={i} className="text-lg font-bold text-white tracking-tight mt-6 mb-2">
           {formatText(trimmed.replace(/^#\s/, ""))}
         </h1>
       );
@@ -213,13 +213,13 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
         if (block.type === 'code') {
           return (
             <div key={`code-${idx}`} className="relative group/code my-3">
-              <div className="flex items-center justify-between px-4 py-2 bg-zinc-800/80 border border-white/5 rounded-t-xl">
-                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+              <div className="flex items-center justify-between px-4 py-2 bg-zinc-800/80 border border-white/10 rounded-t-xl">
+                <span className="meta-mono">
                   {block.language || 'code'}
                 </span>
                 <button
                   onClick={() => copyCode(block.content)}
-                  className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[10px] font-bold text-zinc-500 hover:text-white hover:bg-white/5 transition-all"
+                  className="flex items-center gap-1.5 px-2 py-1 rounded-lg meta-mono hover:text-white hover:bg-white/5 transition-colors"
                 >
                   {copiedCodeBlock === block.content ? (
                     <><Check size={12} className="text-green-400" /> Copiato</>
@@ -228,7 +228,7 @@ const RenderContent: React.FC<RenderContentProps> = ({ content }) => {
                   )}
                 </button>
               </div>
-              <pre className="bg-zinc-900/80 border border-t-0 border-white/5 rounded-b-xl p-4 overflow-x-auto">
+              <pre className="bg-zinc-900/80 border border-t-0 border-white/10 rounded-b-xl p-4 overflow-x-auto">
                 <code className="text-xs text-zinc-300 font-mono leading-relaxed">{block.content}</code>
               </pre>
             </div>
@@ -609,7 +609,7 @@ const Chat: React.FC = () => {
         description="Chatta con Sthenox, l'AI coach di calisthenics, per ricevere consigli personalizzati sul tuo allenamento a corpo libero."
         keywords="AI chat calisthenics, coaching fitness, assistente allenamento"
       />
-      <div className="h-screen bg-zinc-950 text-white flex overflow-hidden relative font-sans">
+      <div className="h-screen bg-zinc-950 text-white flex overflow-hidden relative">
 
         {/* ── Deletion Modal ── */}
         <AnimatePresence>
@@ -620,30 +620,30 @@ const Chat: React.FC = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setDeleteConfirmId(null)}
-                className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                className="absolute inset-0 bg-zinc-950/80 backdrop-blur-md"
               />
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="relative w-full max-w-[360px] bg-zinc-950 border border-white/10 p-8 rounded-2xl shadow-2xl"
+                className="relative w-full max-w-[360px] card p-8 shadow-2xl"
               >
-                <div className="w-16 h-16 bg-red-600/10 rounded-2xl flex items-center justify-center mb-6">
-                  <Trash2 className="text-red-500" size={32} />
+                <div className="w-14 h-14 rounded-xl bg-red-600/10 border border-red-500/20 flex items-center justify-center mb-6">
+                  <Trash2 className="text-red-500" size={28} aria-hidden />
                 </div>
-                <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-3">Elimina Chat?</h3>
-                <p className="text-zinc-500 text-sm font-medium mb-8 leading-relaxed">Questa azione è irreversibile. Tutti i dati di questa conversazione verranno rimossi dai nostri sistemi.</p>
+                <h3 className="text-xl font-bold text-white tracking-tight mb-3">Elimina chat?</h3>
+                <p className="body-copy text-sm mb-8">Questa azione è irreversibile. Tutti i dati di questa conversazione verranno rimossi dai nostri sistemi.</p>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => setDeleteConfirmId(null)}
-                    className="px-6 py-4 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 rounded-2xl text-xs font-black uppercase tracking-widest transition-all"
+                    className="btn-secondary-sm"
                   >
                     Annulla
                   </button>
                   <button
                     onClick={confirmDelete}
-                    className="px-6 py-4 bg-red-600 hover:bg-red-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-red-900/40"
+                    className="btn-primary-sm"
                   >
                     Elimina
                   </button>
@@ -659,7 +659,7 @@ const Chat: React.FC = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             onClick={() => setIsSidebarOpen(true)}
-            className="fixed top-6 left-6 z-50 p-3 bg-zinc-900/50 backdrop-blur-xl border border-white/5 rounded-2xl hover:bg-zinc-800 transition-all shadow-2xl group"
+            className="fixed top-6 left-6 z-50 p-3 card hover:bg-zinc-800 transition-colors shadow-2xl group"
           >
             <Menu size={20} className="text-zinc-400 group-hover:text-white" />
           </motion.button>
@@ -673,9 +673,9 @@ const Chat: React.FC = () => {
             opacity: isSidebarOpen ? 1 : 0,
           }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="fixed lg:relative inset-y-0 left-0 z-40 bg-zinc-950/50 backdrop-blur-3xl border-r border-white/5 flex flex-col overflow-hidden"
+          className="fixed lg:relative inset-y-0 left-0 z-40 bg-zinc-950/50 backdrop-blur-3xl border-r border-white/10 flex flex-col overflow-hidden"
         >
-          <div className="p-6 border-b border-white/5">
+          <div className="p-6 border-b border-white/10">
             <div className="flex items-center justify-between mb-8">
               <Link to="/" className="flex items-center gap-3 group">
                 <Image
@@ -698,20 +698,20 @@ const Chat: React.FC = () => {
             </div>
             <button
               onClick={startNewChat}
-              className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-red-600 hover:bg-red-500 rounded-2xl transition-all text-[11px] font-black uppercase tracking-widest shadow-lg shadow-red-900/20 active:scale-95"
+              className="btn-primary-sm w-full py-3.5"
             >
-              <Plus size={16} />
+              <Plus size={16} aria-hidden />
               Nuova chat
             </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-hide">
-            <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.4em] px-4 py-4">
+            <p className="meta-mono px-4 py-4">
               Recenti
             </p>
             {history.length === 0 ? (
               <div className="px-4 py-8 text-center">
-                <p className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest leading-relaxed">
+                <p className="meta-mono leading-relaxed">
                   Nessuna conversazione <br /> salvata
                 </p>
               </div>
@@ -720,7 +720,7 @@ const Chat: React.FC = () => {
                 <div key={chat._id} className="relative group/item">
                   <button
                     onClick={() => selectChat(chat._id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left text-xs font-bold transition-all group border ${activeChatId === chat._id
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-bold transition-colors group border ${activeChatId === chat._id
                       ? "bg-red-600/10 text-red-500 border-red-500/20"
                       : "text-zinc-500 hover:bg-white/5 hover:text-zinc-300 border-transparent"
                       }`}
@@ -746,14 +746,14 @@ const Chat: React.FC = () => {
                     <button
                       onClick={(e) => { e.stopPropagation(); startRename(chat._id, chat.title); }}
                       title="Rinomina"
-                      className="p-1.5 text-zinc-700 hover:text-amber-500 opacity-0 group-hover/item:opacity-100 transition-all"
+                      className="p-1.5 text-zinc-700 hover:text-amber-500 opacity-0 group-hover/item:opacity-100 transition-colors"
                     >
                       <Pencil size={12} />
                     </button>
                     <button
                       onClick={(e) => handleDeleteChat(e, chat._id)}
                       title="Elimina chat"
-                      className="p-1.5 text-zinc-700 hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-all"
+                      className="p-1.5 text-zinc-700 hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-colors"
                     >
                       <Trash2 size={12} />
                     </button>
@@ -763,7 +763,7 @@ const Chat: React.FC = () => {
             )}
           </div>
 
-          <div className="p-6 border-t border-white/5 bg-black/20">
+          <div className="p-6 border-t border-white/10 bg-zinc-950/40">
             {user ? (
               <div className="flex items-center gap-3">
                 {user.avatar ? (
@@ -781,42 +781,42 @@ const Chat: React.FC = () => {
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-xs font-black truncate uppercase tracking-tight">{user.name}</p>
+                    <p className="text-sm font-bold truncate tracking-tight text-white">{user.name}</p>
                     {user.subscriptionTier && user.subscriptionTier !== 'free' && (
-                      <span className="flex items-center gap-1 px-1.5 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded text-[8px] font-black text-amber-500 uppercase tracking-widest">
+                      <span className="meta-mono px-1.5 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded text-amber-500">
                         {user.subscriptionTier}
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
-                    <p className="text-[9px] text-zinc-600 font-bold uppercase tracking-widest">
+                    <p className="meta-mono">
                       {user.subscriptionTier === 'free' || !user.subscriptionTier ? 'Basic' : user.subscriptionTier}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="p-2 text-zinc-700 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                  className="p-2 text-zinc-700 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors"
                 >
                   <LogOut size={14} />
                 </button>
               </div>
             ) : (
               <div className="space-y-4">
-                <p className="text-[9px] text-zinc-600 text-center font-bold uppercase tracking-widest">
+                <p className="meta-mono text-center">
                   Accedi per salvare i dati
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <Link
                     to="/login"
-                    className="flex items-center justify-center px-3 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                    className="btn-secondary-sm"
                   >
                     Login
                   </Link>
                   <Link
                     to="/register"
-                    className="flex items-center justify-center px-3 py-3 bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                    className="btn-primary-sm"
                   >
                     Join
                   </Link>
@@ -834,7 +834,7 @@ const Chat: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsSidebarOpen(false)}
-              className="fixed inset-0 bg-black/80 backdrop-blur-md z-30 lg:hidden"
+              className="fixed inset-0 bg-zinc-950/80 backdrop-blur-md z-30 lg:hidden"
             />
           )}
         </AnimatePresence>
@@ -843,7 +843,7 @@ const Chat: React.FC = () => {
         <div className="flex-1 flex flex-col min-w-0 relative h-full">
 
           {/* Top bar */}
-          <div className="px-6 py-3 border-b border-white/5 flex items-center justify-between shrink-0 bg-zinc-950/30 backdrop-blur-xl">
+          <div className="px-6 py-3 border-b border-white/10 flex items-center justify-between shrink-0 bg-zinc-950/30 backdrop-blur-xl">
             <div className="flex items-center gap-3">
               {showSearch ? (
                 <div className="flex items-center gap-2">
@@ -853,42 +853,42 @@ const Chat: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => handleSearch(e.target.value)}
                     placeholder="Cerca nei messaggi..."
-                    className="bg-zinc-900 border border-white/10 text-white px-4 py-2 rounded-xl text-xs outline-none focus:border-red-500/30 w-64 transition-all placeholder:text-zinc-600"
+                    className="bg-zinc-900 border border-white/10 text-white px-4 py-2 rounded-xl text-xs outline-none focus:border-red-500/30 w-64 transition-colors placeholder:text-zinc-600"
                     autoFocus
                   />
                   <div className="flex items-center gap-1">
                     {searchResults.length > 0 && (
-                      <span className="text-[10px] text-zinc-500 font-bold">
+                      <span className="meta-mono">
                         {activeSearchIndex + 1}/{searchResults.length}
                       </span>
                     )}
                     <button
                       onClick={() => navigateSearchResult('up')}
                       disabled={searchResults.length === 0}
-                      className="p-1.5 text-zinc-500 hover:text-white disabled:opacity-30 transition-all"
+                      className="p-1.5 text-zinc-500 hover:text-white disabled:opacity-30 transition-colors"
                     >
                       <ChevronDown size={14} className="rotate-180" />
                     </button>
                     <button
                       onClick={() => navigateSearchResult('down')}
                       disabled={searchResults.length === 0}
-                      className="p-1.5 text-zinc-500 hover:text-white disabled:opacity-30 transition-all"
+                      className="p-1.5 text-zinc-500 hover:text-white disabled:opacity-30 transition-colors"
                     >
                       <ChevronDown size={14} />
                     </button>
                   </div>
                   <button
                     onClick={() => { setShowSearch(false); setSearchQuery(""); setSearchResults([]); }}
-                    className="p-1.5 text-zinc-500 hover:text-white transition-all"
+                    className="p-1.5 text-zinc-500 hover:text-white transition-colors"
                   >
                     <X size={14} />
                   </button>
                 </div>
               ) : (
                 <>
-                  <Brain size={16} className="text-red-500" />
-                  <span className="text-[11px] font-black text-zinc-400 uppercase tracking-widest">
-                    STHENOX
+                  <Brain size={16} className="text-red-500" aria-hidden />
+                  <span className="eyebrow">
+                    Sthenox
                   </span>
                 </>
               )}
@@ -898,7 +898,7 @@ const Chat: React.FC = () => {
                 <>
                   <button
                     onClick={() => setShowSearch(true)}
-                    className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                    className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
                     title="Cerca"
                   >
                     <Search size={15} />
@@ -906,7 +906,7 @@ const Chat: React.FC = () => {
                   <div className="relative" ref={exportMenuRef}>
                     <button
                       onClick={() => setExportMenuOpen(!exportMenuOpen)}
-                      className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                      className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
                       title="Esporta"
                     >
                       <Download size={15} />
@@ -917,18 +917,18 @@ const Chat: React.FC = () => {
                           initial={{ opacity: 0, y: 10, scale: 0.95 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                          className="absolute right-0 top-full mt-2 w-52 bg-zinc-900 border border-white/5 rounded-xl shadow-2xl overflow-hidden z-50"
+                          className="absolute right-0 top-full mt-2 w-52 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50"
                         >
                           <button
                             onClick={handleExportText}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 transition-all text-left border-b border-white/5"
+                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 transition-colors text-left border-b border-white/10"
                           >
                             <Copy size={14} />
                             Copia chat (testo)
                           </button>
                           <button
                             onClick={handleExportMarkdown}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 transition-all text-left"
+                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/5 transition-colors text-left"
                           >
                             <Download size={14} />
                             Scarica Markdown
@@ -958,16 +958,16 @@ const Chat: React.FC = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-                  className="w-20 h-20 bg-red-600/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-red-500/20"
+                  className="w-16 h-16 rounded-2xl bg-red-600/10 border border-red-500/20 flex items-center justify-center mx-auto mb-8"
                 >
-                  <Brain size={40} className="text-red-500" />
+                  <Brain size={32} className="text-red-500" aria-hidden />
                 </motion.div>
 
-                <h2 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter leading-none mb-6">
-                  COME POSSO <br />
-                  <span className="text-red-600">AIUTARTI?</span>
+                <p className="eyebrow mb-3">Coach AI Sthenox</p>
+                <h2 className="page-title mb-4">
+                  Come posso aiutarti?
                 </h2>
-                <p className="text-zinc-500 text-sm font-medium leading-relaxed mb-10 max-w-md mx-auto">
+                <p className="body-copy text-sm mb-10 max-w-md mx-auto">
                   Protocolli d&apos;azione, analisi biomeccanica e programmazione d&apos;élite a tua disposizione.
                 </p>
 
@@ -997,7 +997,7 @@ const Chat: React.FC = () => {
                     }}
                     onEscape={handleInputEscape}
                   />
-                  <p className="text-[9px] text-zinc-700 text-center font-bold uppercase tracking-widest mt-3">
+                  <p className="meta-mono text-center mt-3">
                     <kbd className="px-1.5 py-0.5 bg-zinc-900 rounded text-zinc-500">Enter</kbd> invia · <kbd className="px-1.5 py-0.5 bg-zinc-900 rounded text-zinc-500">Shift+Enter</kbd> nuova riga
                   </p>
                 </div>
@@ -1007,11 +1007,11 @@ const Chat: React.FC = () => {
                 {groupedMessages.map((group) => (
                   <div key={group.date}>
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="flex-1 h-px bg-white/5" />
-                      <span className="text-[9px] font-black text-zinc-700 uppercase tracking-widest shrink-0">
+                      <div className="flex-1 h-px bg-white/10" />
+                      <span className="meta-mono shrink-0">
                         {group.label}
                       </span>
-                      <div className="flex-1 h-px bg-white/5" />
+                      <div className="flex-1 h-px bg-white/10" />
                     </div>
                     <div className="space-y-6">
                       {group.messages.map((msg, msgIdx) => {
@@ -1031,7 +1031,7 @@ const Chat: React.FC = () => {
                                 : {}),
                             }}
                             transition={{ duration: searchResults.length > 0 && searchResults[activeSearchIndex]?.index === globalIdx ? 0.5 : 0.3 }}
-                            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} ${searchResults.length > 0 && searchResults[activeSearchIndex]?.index === globalIdx ? 'ring-2 ring-red-500/30 rounded-3xl' : ''}`}
+                            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} ${searchResults.length > 0 && searchResults[activeSearchIndex]?.index === globalIdx ? 'ring-2 ring-red-500/30 rounded-2xl' : ''}`}
                           >
                             <div className={`max-w-[85%] lg:max-w-[80%] ${msg.role === "user" ? "text-right" : "text-left"}`}>
                               {msg.role === "assistant" && msgIdx === 0 && (
@@ -1039,9 +1039,9 @@ const Chat: React.FC = () => {
                                   <div className="w-8 h-8 bg-zinc-900 border border-white/10 rounded-xl flex items-center justify-center">
                                     <Brain size={14} className="text-red-500" />
                                   </div>
-                                  <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] flex items-center gap-1.5">
-                                    <Sparkles size={10} />
-                                    STHENOX
+                                  <span className="eyebrow flex items-center gap-1.5">
+                                    <Sparkles size={10} aria-hidden />
+                                    Sthenox
                                   </span>
                                 </div>
                               )}
@@ -1060,15 +1060,15 @@ const Chat: React.FC = () => {
                                   <div className="flex items-center gap-2 justify-end">
                                     <button
                                       onClick={cancelEdit}
-                                      className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all"
+                                      className="btn-ghost px-3 py-1.5 text-xs"
                                     >
                                       Annulla
                                     </button>
                                     <button
                                       onClick={saveEdit}
-                                      className="px-4 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5"
+                                      className="btn-primary-sm"
                                     >
-                                      <CheckCheck size={12} />
+                                      <CheckCheck size={12} aria-hidden />
                                       Salva e rigenera
                                     </button>
                                   </div>
@@ -1076,9 +1076,9 @@ const Chat: React.FC = () => {
                               ) : (
                                 <>
                                   <div
-                                    className={`p-3 lg:p-4 text-sm leading-relaxed shadow-2xl ${msg.role === "user"
-                                      ? "bg-red-600 text-white rounded-3xl rounded-tr-none"
-                                      : "bg-zinc-900/40 backdrop-blur-xl border border-white/10 text-zinc-200 rounded-3xl rounded-tl-none"
+                                    className={`card p-4 text-sm leading-relaxed ${msg.role === "user"
+                                      ? "bg-red-600/90 border-red-500/30 text-white"
+                                      : "text-zinc-200"
                                       }`}
                                   >
                                     {msg.role === "assistant" && (msg.isNew || msg.isStreaming) ? (
@@ -1097,7 +1097,7 @@ const Chat: React.FC = () => {
                                   {/* Message actions */}
                                   {!msg.isStreaming && (
                                     <div className={`flex items-center gap-1.5 mt-1.5 px-1 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                                      <span className="text-[9px] text-zinc-700 font-bold uppercase tracking-widest">
+                                      <span className="meta-mono">
                                         {formatTime(msg.createdAt)}
                                       </span>
 
@@ -1147,10 +1147,10 @@ const Chat: React.FC = () => {
                                         aria-pressed={msg.feedback === "up"}
                                         title="Utile"
                                         aria-label="Risposta utile"
-                                        className={`p-1.5 border rounded-lg transition-all disabled:opacity-40 ${
+                                        className={`p-1.5 border rounded-lg transition-colors disabled:opacity-40 ${
                                           msg.feedback === "up"
                                             ? "bg-green-500/10 border-green-500/40 text-green-500"
-                                            : "bg-zinc-900/60 border-white/5 text-zinc-600 hover:text-green-500 hover:border-green-500/30"
+                                            : "bg-zinc-900/60 border-white/10 text-zinc-600 hover:text-green-500 hover:border-green-500/30"
                                         }`}
                                       >
                                         <ThumbsUp size={10} />
@@ -1161,10 +1161,10 @@ const Chat: React.FC = () => {
                                         aria-pressed={msg.feedback === "down"}
                                         title="Non utile"
                                         aria-label="Risposta non utile"
-                                        className={`p-1.5 border rounded-lg transition-all disabled:opacity-40 ${
+                                        className={`p-1.5 border rounded-lg transition-colors disabled:opacity-40 ${
                                           msg.feedback === "down"
                                             ? "bg-red-500/10 border-red-500/40 text-red-500"
-                                            : "bg-zinc-900/60 border-white/5 text-zinc-600 hover:text-red-500 hover:border-red-500/30"
+                                            : "bg-zinc-900/60 border-white/10 text-zinc-600 hover:text-red-500 hover:border-red-500/30"
                                         }`}
                                       >
                                         <ThumbsDown size={10} />
@@ -1196,7 +1196,7 @@ const Chat: React.FC = () => {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: idx * 0.05 }}
                           onClick={() => handleSuggestionClick(followUp)}
-                          className="px-3 py-2 bg-zinc-900/60 border border-white/5 rounded-xl text-[10px] font-bold text-zinc-500 hover:text-white hover:border-red-500/30 hover:bg-zinc-900 transition-all text-left flex items-center gap-2 whitespace-nowrap"
+                          className="px-3 py-2 card text-xs font-bold text-zinc-500 hover:text-white hover:border-red-500/30 hover:bg-zinc-900 transition-colors text-left flex items-center gap-2 whitespace-nowrap"
                         >
                           <Plus size={10} className="shrink-0 text-zinc-700" />
                           {followUp}
@@ -1214,7 +1214,7 @@ const Chat: React.FC = () => {
                     className="flex justify-start"
                   >
                     {isStreaming ? (
-                      <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/10 px-6 py-4 rounded-3xl rounded-tl-none flex items-center gap-3">
+                      <div className="card px-6 py-4 flex items-center gap-3">
                         <div className="flex gap-1.5">
                           {[0, 1, 2].map((i) => (
                             <motion.span
@@ -1225,12 +1225,12 @@ const Chat: React.FC = () => {
                             />
                           ))}
                         </div>
-                        <span className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">
+                        <span className="meta-mono">
                           Generazione in corso...
                         </span>
                       </div>
                     ) : (
-                      <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/10 px-6 py-4 rounded-3xl rounded-tl-none flex items-center gap-3">
+                      <div className="card px-6 py-4 flex items-center gap-3">
                         <div className="flex gap-1.5">
                           {[0, 1, 2].map((i) => (
                             <motion.span
@@ -1241,7 +1241,7 @@ const Chat: React.FC = () => {
                             />
                           ))}
                         </div>
-                        <span className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">
+                        <span className="meta-mono">
                           Analisi in corso...
                         </span>
                       </div>
@@ -1260,7 +1260,7 @@ const Chat: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               onClick={scrollToBottom}
-              className="absolute bottom-40 right-8 z-20 p-3 bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-zinc-800 transition-all shadow-2xl group"
+              className="absolute bottom-40 right-8 z-20 p-3 card hover:bg-zinc-800 transition-colors shadow-2xl group"
             >
               <ChevronDown size={18} className="text-zinc-400 group-hover:text-white" />
             </motion.button>
@@ -1285,17 +1285,17 @@ const Chat: React.FC = () => {
                 />
                 <div className="flex items-center justify-between mt-4 px-6">
                   <div className="flex items-center gap-4">
-                    <p className="text-[9px] text-zinc-700 font-bold uppercase tracking-widest">
+                    <p className="meta-mono">
                       Terminale Sthenox
                     </p>
                     {activeChat && (
-                      <p className="text-[9px] text-zinc-700 font-bold uppercase tracking-widest max-w-[200px] truncate">
+                      <p className="meta-mono max-w-[200px] truncate">
                         {activeChat.title}
                       </p>
                     )}
                   </div>
                   {!user ? (
-                    <p className="text-[9px] font-black uppercase tracking-widest">
+                    <p className="meta-mono">
                       {guestMessageCount >= 5 ? (
                         <span className="text-red-500">Accesso Limitato. <Link to="/register" className="underline">Registrati</Link></span>
                       ) : (
@@ -1303,7 +1303,7 @@ const Chat: React.FC = () => {
                       )}
                     </p>
                   ) : (
-                    <p className="text-[9px] text-zinc-700 font-bold uppercase tracking-widest">
+                    <p className="meta-mono">
                       <kbd className="px-1 py-0.5 bg-zinc-900 rounded">Enter</kbd> invia · <kbd className="px-1 py-0.5 bg-zinc-900 rounded">Shift+Enter</kbd> nuova riga
                     </p>
                   )}

@@ -86,8 +86,8 @@ const StepPopup = ({ item, index, anchorEl, onClose }: {
           }
         />
         <div className="flex items-center gap-2 mb-4">
-          <span className="w-7 h-7 rounded-lg bg-red-600/10 flex items-center justify-center text-red-500 font-black text-xs">{item.step}</span>
-          <span className="text-xs font-black text-white uppercase tracking-tight">{item.title}</span>
+          <span className="w-7 h-7 rounded-lg bg-red-600/10 flex items-center justify-center text-red-500 font-bold text-xs">{item.step}</span>
+          <span className="text-xs font-bold text-white tracking-tight">{item.title}</span>
         </div>
         <ul className="space-y-2.5">
           {item.details.map((d: string, di: number) => (
@@ -243,15 +243,15 @@ const CalisthenicsRoom: React.FC = () => {
     ];
 
     return (
-      <div className="min-h-screen bg-zinc-950 text-white selection:bg-red-500/30">
+      <div className="page-shell">
         <SEO
           title="Calisthenics Room - Elite Coaching"
           description="L'esperienza definitiva di coaching 1:1 e programmazione avanzata."
         />
 
         {/* ── HERO ── */}
-        <section className="relative min-h-[92vh] flex items-center justify-center px-6 pt-28 pb-16 overflow-hidden">
-          <div className="absolute inset-0 z-0">
+        <section className="section-padding relative flex items-center justify-center overflow-hidden pt-28">
+          <div className="absolute inset-0 z-0" aria-hidden>
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.18)_0%,transparent_60%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(249,115,22,0.1)_0%,transparent_50%)]" />
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-600/20 rounded-full blur-[150px]" />
@@ -259,32 +259,32 @@ const CalisthenicsRoom: React.FC = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[200px]" />
           </div>
 
-          <div className="relative z-10 max-w-5xl mx-auto text-center">
+          <div className="container-max relative z-10 text-center">
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.3em] mb-8"
+              className="eyebrow-pill mb-8"
             >
-              <Sparkles size={12} />
+              <Sparkles size={12} aria-hidden />
               Coaching d&apos;Élite
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.85] mb-8"
+              className="page-title text-5xl md:text-7xl mb-8"
             >
-              <span className="text-white">CALISTHENICS</span>
+              Calisthenics
               <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-br from-red-500 via-red-600 to-orange-500">ROOM</span>
+              <span className="text-transparent bg-clip-text bg-linear-to-br from-red-500 via-red-600 to-orange-500">Room</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-zinc-400 text-lg md:text-xl max-w-3xl mx-auto font-medium leading-relaxed mb-10"
+              className="body-copy text-lg max-w-3xl mx-auto mb-10"
             >
               L&apos;unico percorso che trasforma radicalmente il tuo fisico e la tua mentalità<br className="hidden md:block" />
               attraverso la scienza della performance.
@@ -294,25 +294,25 @@ const CalisthenicsRoom: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+              className="flex flex-col sm:flex-row items-center justify-center gap-3"
             >
-              <a href="#offers" className="px-10 py-4 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black rounded-2xl text-sm uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-red-900/30">
-                Inizia il Percorso
+              <a href="#offers" className="btn-primary-lg">
+                Inizia il percorso
               </a>
-              <a href="#features" className="px-10 py-4 border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white font-black rounded-2xl text-sm uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95">
-                Scopri di Più
+              <a href="#features" className="btn-secondary-lg">
+                Scopri di più
               </a>
             </motion.div>
           </div>
         </section>
 
         {/* ── HOW IT WORKS ── */}
-        <section id="features" className="py-20 lg:py-24 px-6 lg:px-8 relative">
-          <div className="max-w-5xl mx-auto relative">
-            <div className="text-center mb-16">
-              <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Il Metodo</span>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
-                Come <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">Funziona</span>
+        <section id="features" className="section-padding relative">
+          <div className="container-max relative">
+            <div className="text-center mb-12">
+              <p className="eyebrow mb-3">Il metodo</p>
+              <h2 className="page-title">
+                Come <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">funziona</span>
               </h2>
             </div>
 
@@ -393,19 +393,19 @@ const CalisthenicsRoom: React.FC = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.15 }}
-                            className="group relative p-8 bg-zinc-900/30 border border-white/5 rounded-[2.5rem] hover:border-red-500/30 transition-all duration-500 hover:shadow-xl hover:shadow-red-900/10 cursor-default"
+                            className="group relative card card-hover p-6 md:p-8 cursor-default"
                           >
-                            <div className="absolute inset-0 bg-linear-to-br from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[2.5rem]" />
+                            <div className="card-lift" />
                             <div className="relative z-10">
                               <div className="flex items-center justify-between mb-4">
-                                <span className="text-5xl font-black text-zinc-800 group-hover:text-red-600/20 transition-colors duration-500">{item.step}</span>
-                                <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest group-hover:text-red-500/60 transition-colors">{item.brief}</span>
+                                <span className="meta-mono text-base">{item.step}</span>
+                                <span className="meta-mono group-hover:text-red-500/80 transition-colors">{item.brief}</span>
                               </div>
-                              <div className="w-14 h-14 rounded-2xl bg-red-500/20 flex items-center justify-center mb-5 text-red-500 group-hover:scale-110 transition-transform group-hover:shadow-lg group-hover:shadow-red-900/30">
+                              <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5 text-red-500 group-hover:scale-110 transition-transform">
                                 {item.icon}
                               </div>
-                              <h3 className="text-xl font-black text-white mb-3 uppercase tracking-tight">{item.title}</h3>
-                              <p className="text-zinc-500 text-sm leading-relaxed">{item.desc}</p>
+                              <h3 className="text-lg font-bold text-white mb-2 tracking-tight">{item.title}</h3>
+                              <p className="body-copy text-sm">{item.desc}</p>
                             </div>
                           </motion.div>
                         </div>
@@ -429,12 +429,12 @@ const CalisthenicsRoom: React.FC = () => {
         </section>
 
         {/* ── THREE PILLARS ── */}
-        <section className="py-24 px-6 bg-zinc-900/20 border-y border-white/5 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.08)_0%,transparent_60%)]" />
-          <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-red-500/30 to-transparent" />
-          <div className="absolute bottom-0 left-0 w-full h-px bg-linear-to-r from-transparent via-orange-500/30 to-transparent" />
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="grid md:grid-cols-3 gap-10">
+        <section className="section-padding bg-zinc-900/20 border-y hairline relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.08)_0%,transparent_60%)]" aria-hidden />
+          <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-red-500/30 to-transparent" aria-hidden />
+          <div className="absolute bottom-0 left-0 w-full h-px bg-linear-to-r from-transparent via-orange-500/30 to-transparent" aria-hidden />
+          <div className="container-max relative z-10">
+            <div className="grid md:grid-cols-3 gap-6">
               {[
                 {
                   title: "Coaching 1:1",
@@ -460,12 +460,12 @@ const CalisthenicsRoom: React.FC = () => {
                   transition={{ delay: i * 0.15 }}
                   className="group"
                 >
-                  <div className="text-center mb-8">
-                    <div className="w-24 h-24 rounded-2xl bg-zinc-900/80 border border-white/5 flex items-center justify-center mx-auto mb-8 group-hover:border-red-500/40 group-hover:bg-zinc-900 transition-all duration-500">
-                      {React.cloneElement(item.icon as any, { size: 44, className: "text-red-500 group-hover:scale-110 transition-transform duration-500" })}
+                  <div className="text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-zinc-900/80 border hairline flex items-center justify-center mx-auto mb-6 group-hover:border-red-500/40 group-hover:bg-zinc-900 transition-colors duration-300">
+                      {React.cloneElement(item.icon as any, { size: 32, className: "text-red-500 group-hover:scale-110 transition-transform duration-300" })}
                     </div>
-                    <h3 className="text-2xl font-black mb-4 uppercase tracking-tight">{item.title}</h3>
-                    <p className="text-zinc-400 text-sm leading-relaxed max-w-xs mx-auto">{item.desc}</p>
+                    <h3 className="text-lg font-bold mb-2 tracking-tight text-white">{item.title}</h3>
+                    <p className="body-copy text-sm max-w-xs mx-auto">{item.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -474,21 +474,21 @@ const CalisthenicsRoom: React.FC = () => {
         </section>
 
         {/* ── FEATURES + BONUSES ── */}
-        <section id="offers" className="py-20 lg:py-24 px-6 lg:px-8 relative">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Cosa Ottieni</span>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
-                Il <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">Protocollo</span> Completo
+        <section id="offers" className="section-padding relative">
+          <div className="container-max max-w-4xl">
+            <div className="text-center mb-12">
+              <p className="eyebrow mb-3">Cosa ottieni</p>
+              <h2 className="page-title">
+                Il <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">protocollo</span> completo
               </h2>
             </div>
 
-            <div className="space-y-12">
+            <div className="space-y-6">
               {/* Features */}
-              <div className="bg-zinc-900/20 border border-white/5 rounded-[2.5rem] p-8 md:p-12">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.3em] mb-10">
-                  <Sparkles size={12} />
-                  Cosa Include
+              <div className="card p-6 md:p-8">
+                <div className="eyebrow-pill mb-8">
+                  <Sparkles size={12} aria-hidden />
+                  Cosa include
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
@@ -499,7 +499,7 @@ const CalisthenicsRoom: React.FC = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.04 }}
-                      className="flex items-start gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-red-500/20 hover:bg-red-500/5 transition-all duration-300 group"
+                      className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border hairline hover:border-red-500/20 hover:bg-red-500/5 transition-colors duration-300 group"
                     >
                       <div className="w-7 h-7 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
                         <CheckCircle size={16} className="text-green-500" />
@@ -514,14 +514,14 @@ const CalisthenicsRoom: React.FC = () => {
 
               {/* Bonuses */}
               <div className="relative">
-                <div className="bg-linear-to-br from-zinc-900/40 to-zinc-950/40 border border-white/5 rounded-[2.5rem] p-8 md:p-12 overflow-hidden">
+                <div className="bg-linear-to-br from-zinc-900/40 to-zinc-950/40 border border-white/10 rounded-2xl p-8 md:p-12 overflow-hidden">
                   <div className="absolute -top-20 -right-20 opacity-5">
                     <Crown size={200} />
                   </div>
                   <div className="relative z-10">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-[0.3em] mb-10">
-                      <Sparkles size={12} />
-                      Bonus Esclusivi
+                    <div className="eyebrow-pill mb-8 bg-amber-500/10 border-amber-500/20 text-amber-500">
+                      <Sparkles size={12} aria-hidden />
+                      Bonus esclusivi
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-4">
@@ -532,7 +532,7 @@ const CalisthenicsRoom: React.FC = () => {
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
                           transition={{ delay: 0.2 + i * 0.1 }}
-                          className="flex items-center gap-4 p-6 bg-white/5 rounded-2xl border border-white/5 group hover:border-amber-500/30 hover:bg-amber-500/5 transition-all"
+                          className="flex items-center gap-4 p-5 card group hover:border-amber-500/30 hover:bg-amber-500/5 transition-colors"
                         >
                           <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                             <Crown size={20} className="text-amber-500" />
@@ -542,9 +542,9 @@ const CalisthenicsRoom: React.FC = () => {
                       ))}
                     </div>
 
-                    <div className="mt-10 p-6 bg-linear-to-r from-red-600/10 to-amber-600/10 border border-red-500/20 rounded-2xl flex items-center gap-3">
-                      <Sparkles size={16} className="text-amber-500 shrink-0" />
-                      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-300">
+                    <div className="mt-8 p-5 card border-red-500/20 bg-red-600/[0.08] flex items-center gap-3">
+                      <Sparkles size={16} className="text-amber-500 shrink-0" aria-hidden />
+                      <p className="meta-mono text-zinc-300">
                         Bonus inclusi in tutti i piani
                       </p>
                     </div>
@@ -556,23 +556,23 @@ const CalisthenicsRoom: React.FC = () => {
         </section>
 
         {/* ── PRICING ── */}
-        <section className="pb-20 lg:pb-24 px-6 lg:px-8" id="pricing">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Investimento</span>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
-                Scegli il tuo <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">Percorso</span>
+        <section className="section-padding" id="pricing">
+          <div className="container-max">
+            <div className="text-center mb-12">
+              <p className="eyebrow mb-3">Investimento</p>
+              <h2 className="page-title">
+                Scegli il tuo <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">percorso</span>
               </h2>
-              <p className="text-zinc-500 font-normal mt-4 max-w-xl mx-auto">Più investi su di te, più il costo per mese scende. Il miglior affare? Il pacchetto annuale.</p>
+              <p className="body-copy mt-4 max-w-xl mx-auto">Più investi su di te, più il costo per mese scende. Il miglior affare? Il pacchetto annuale.</p>
             </div>
 
             {/* Frequency Toggle */}
-            <div className="flex justify-center mb-14">
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-zinc-900/60 border border-white/5 rounded-full">
+            <div className="flex justify-center mb-12">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 card rounded-full">
                 {["Mensile", "Semestrale", "Annuale"].map((freq, fi) => (
                   <span
                     key={fi}
-                    className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all cursor-default ${
+                    className={`px-4 py-1.5 rounded-full meta-mono transition-colors cursor-default ${
                       fi === 2
                         ? "bg-red-600 text-white shadow-lg shadow-red-900/30"
                         : "text-zinc-600"
@@ -652,43 +652,40 @@ const CalisthenicsRoom: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.12 }}
-                  className={`relative rounded-[2.5rem] border transition-all duration-500 flex flex-col justify-between overflow-hidden group ${
+                  className={`relative card card-hover flex flex-col justify-between overflow-hidden group ${
                     plan.highlight
-                      ? "bg-red-600 border-red-400 shadow-2xl shadow-red-900/40 scale-[1.02] md:scale-105 z-10"
-                      : "bg-zinc-900/40 border-white/10 hover:border-red-500/30 hover:shadow-xl hover:shadow-red-900/10"
+                      ? "border-red-400 bg-red-600 shadow-2xl shadow-red-900/40 md:scale-105 z-10"
+                      : ""
                   }`}
                 >
                   {/* Background effects */}
                   {plan.highlight && (
-                    <>
-                      <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-bl-full" />
-                      <div className="absolute -top-12 -right-12 w-72 h-72 bg-red-400/10 rounded-full blur-[100px]" />
-                    </>
+                    <div className="absolute -top-12 -right-12 w-72 h-72 bg-red-400/10 rounded-full blur-[100px]" aria-hidden />
                   )}
                   {!plan.highlight && (
-                    <div className="absolute inset-0 bg-linear-to-b from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="card-lift" />
                   )}
 
                   {/* Badge */}
                   {plan.badge && (
                     <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20">
-                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-white text-red-600 rounded-full text-[9px] font-black uppercase tracking-[0.25em] shadow-xl">
-                        <Sparkles size={10} />
+                      <span className="meta-mono inline-flex items-center gap-1.5 px-4 py-1.5 bg-white text-red-600 rounded-full shadow-xl">
+                        <Sparkles size={10} aria-hidden />
                         {plan.badge}
                       </span>
                     </div>
                   )}
 
-                  <div className="relative z-10 p-8 lg:p-10 flex flex-col h-full">
+                  <div className="relative z-10 p-6 md:p-8 flex flex-col h-full">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${
-                        plan.highlight ? "text-red-200" : "text-zinc-500"
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className={`meta-mono ${
+                        plan.highlight ? "text-red-200" : ""
                       }`}>
                         {plan.label}
                       </span>
                       {plan.save && (
-                        <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                        <span className={`meta-mono px-3 py-1 rounded-full ${
                           plan.highlight
                             ? "bg-white/20 text-white"
                             : "bg-red-600/10 text-red-500 border border-red-500/20"
@@ -701,7 +698,7 @@ const CalisthenicsRoom: React.FC = () => {
                     {/* Price */}
                     <div className="mt-6 mb-2">
                       <div className="flex items-end gap-2">
-                        <span className="text-5xl lg:text-6xl font-black tracking-tighter">
+                        <span className="text-4xl md:text-5xl font-bold tracking-tight text-white">
                           €{plan.price}
                         </span>
                         <span className={`text-sm font-bold mb-1.5 ${
@@ -720,8 +717,8 @@ const CalisthenicsRoom: React.FC = () => {
                     </div>
 
                     {/* Description */}
-                    <p className={`text-sm font-medium leading-relaxed mt-4 mb-8 ${
-                      plan.highlight ? "text-red-100" : "text-zinc-400"
+                    <p className={`body-copy text-sm mt-4 mb-8 ${
+                      plan.highlight ? "text-red-100" : ""
                     }`}>
                       {plan.desc}
                     </p>
@@ -748,11 +745,11 @@ const CalisthenicsRoom: React.FC = () => {
                     {/* CTA */}
                     <button
                       onClick={() => handlePurchase(plan)}
-                      className={`w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all relative z-10 ${
+                      className={`w-full relative z-10 ${
                         plan.highlight
-                          ? "bg-white text-black hover:bg-zinc-100 shadow-xl"
-                          : "bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white shadow-lg shadow-red-900/20 hover:shadow-xl hover:shadow-red-900/30"
-                      } hover:scale-[1.02] active:scale-95`}
+                          ? "btn-secondary-lg bg-white text-black hover:bg-zinc-100 border-transparent shadow-xl"
+                          : "btn-primary-lg"
+                      }`}
                     >
                       {plan.cta}
                     </button>
@@ -762,26 +759,26 @@ const CalisthenicsRoom: React.FC = () => {
             </div>
 
             {/* Payment Info */}
-            <div className="mt-16 flex flex-col items-center gap-5">
+            <div className="mt-12 flex flex-col items-center gap-5">
               {purchaseError && (
-                <p className="text-red-400 text-xs font-bold bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-3">
+                <p className="body-copy text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-5 py-3" role="alert">
                   {purchaseError}
                 </p>
               )}
-              <div className="flex items-center gap-6 text-zinc-600 text-[10px] font-black uppercase tracking-[0.15em]">
-                <span className="flex items-center gap-1.5"><ShieldCheck size={12} /> Pagamento sicuro Stripe</span>
-                <span className="w-1 h-1 rounded-full bg-zinc-700" />
-                <span className="flex items-center gap-1.5"><Sparkles size={12} /> Accesso immediato</span>
-                <span className="w-1 h-1 rounded-full bg-zinc-700" />
-                <span className="flex items-center gap-1.5"><Award size={12} /> Garanzia 14 giorni</span>
+              <div className="meta-mono flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+                <span className="flex items-center gap-1.5"><ShieldCheck size={12} aria-hidden /> Pagamento sicuro Stripe</span>
+                <span className="w-1 h-1 rounded-full bg-zinc-700" aria-hidden />
+                <span className="flex items-center gap-1.5"><Sparkles size={12} aria-hidden /> Accesso immediato</span>
+                <span className="w-1 h-1 rounded-full bg-zinc-700" aria-hidden />
+                <span className="flex items-center gap-1.5"><Award size={12} aria-hidden /> Garanzia 14 giorni</span>
               </div>
               {!isAuthenticated && (
-                <div className="flex items-center gap-4 mt-4">
-                  <span className="text-zinc-600 text-xs font-medium">Hai già un account?</span>
-                  <Link to="/login" className="px-5 py-2.5 border border-zinc-700 hover:border-zinc-500 text-zinc-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                <div className="flex flex-wrap items-center justify-center gap-3 mt-4">
+                  <span className="body-copy text-sm">Hai già un account?</span>
+                  <Link to="/login" className="btn-secondary-sm">
                     Accedi
                   </Link>
-                  <Link to="/register" className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                  <Link to="/register" className="btn-primary-sm">
                     Registrati
                   </Link>
                 </div>
@@ -791,11 +788,11 @@ const CalisthenicsRoom: React.FC = () => {
         </section>
 
         {/* ── FAQ ── */}
-        <section className="pb-20 lg:pb-24 px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-16">
-              <span className="text-red-500 font-black tracking-[0.3em] uppercase text-[10px] mb-4 block">Dubbi?</span>
-              <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase">Domande <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">Frequenti</span></h2>
+        <section className="section-padding">
+          <div className="container-max max-w-3xl">
+            <div className="text-center mb-12">
+              <p className="eyebrow mb-3">Dubbi?</p>
+              <h2 className="page-title">Domande <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">frequenti</span></h2>
             </div>
 
             <div className="space-y-3">
@@ -810,10 +807,10 @@ const CalisthenicsRoom: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="group p-6 bg-zinc-900/20 border border-white/5 rounded-2xl hover:border-red-500/20 transition-all"
+                  className="card card-hover group p-6"
                 >
-                  <h3 className="font-black text-white uppercase tracking-tight mb-2 text-sm">{faq.q}</h3>
-                  <p className="text-zinc-500 text-sm leading-relaxed">{faq.a}</p>
+                  <h3 className="font-bold text-white tracking-tight mb-2 text-sm">{faq.q}</h3>
+                  <p className="prose-block">{faq.a}</p>
                 </motion.div>
               ))}
             </div>
@@ -832,75 +829,75 @@ const CalisthenicsRoom: React.FC = () => {
       />
 
       {/* Status Banner */}
-      <div className="pt-24 px-6">
-        <div className="max-w-5xl mx-auto">
+      <div className="px-6 lg:px-8">
+        <div className="container-max max-w-5xl">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 rounded-2xl bg-linear-to-r from-red-600/10 to-transparent border border-red-500/20 flex flex-col md:flex-row justify-between items-center gap-4"
+            className="card border-red-500/20 bg-red-600/[0.08] p-4 flex flex-col md:flex-row justify-between items-center gap-4"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center animate-pulse">
-                <Crown size={20} className="text-white" />
+              <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center">
+                <Crown size={20} className="text-white" aria-hidden />
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Stato Abbonamento</p>
-                <p className="text-sm font-bold text-white uppercase tracking-tight">
-                  Piano {user?.subscriptionTier || 'Elite'} <span className="text-red-500">• ATTIVO</span>
+                <p className="meta-mono">Stato abbonamento</p>
+                <p className="text-sm font-bold text-white tracking-tight">
+                  Piano {user?.subscriptionTier || 'Elite'} <span className="text-red-500">• Attivo</span>
                 </p>
               </div>
             </div>
-            <Link to="/purchase-history" className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors border border-white/5">
-              Gestisci Abbonamento
+            <Link to="/purchase-history" className="btn-secondary-sm">
+              Gestisci abbonamento
             </Link>
           </motion.div>
         </div>
       </div>
 
       {/* Header */}
-      <section className="pt-16 pb-12 px-6">
-        <div className="max-w-5xl mx-auto">
+      <section className="section-padding pb-12">
+        <div className="container-max max-w-5xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 text-red-500 text-[10px] font-black uppercase tracking-widest mb-4">
-              <Sparkles size={12} /> Bentornato
+            <div className="eyebrow-pill mb-4">
+              <Sparkles size={12} aria-hidden /> Bentornato
             </div>
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-4">
-              LA TUA <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">ROOM</span>
+            <h1 className="page-title mb-4">
+              La tua <span className="text-transparent bg-clip-text bg-linear-to-r from-red-500 to-orange-500">room</span>
             </h1>
-            <p className="text-zinc-500 font-normal text-lg">Il tuo portale d&apos;élite per la massima performance fisica.</p>
+            <p className="body-copy text-lg">Il tuo portale d&apos;élite per la massima performance fisica.</p>
           </motion.div>
         </div>
       </section>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-6 pb-32 space-y-20">
+      <div className="container-max max-w-5xl px-6 lg:px-8 pb-20 space-y-12">
 
         {/* Resource Cards */}
         <section>
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-1 h-8 bg-red-600 rounded-full" />
-            <h2 className="text-2xl font-black uppercase tracking-tight">Risorse & Guide</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-1 h-8 bg-red-600 rounded-full" aria-hidden />
+            <h2 className="text-xl font-bold tracking-tight text-white">Risorse e guide</h2>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-4">
             {[
               {
                 title: "Guida Completa al Calisthenics Moderno",
                 desc: "Scienza applicata, programmazione avanzata e protocolli di recupero.",
                 action: "Apri la Guida",
                 to: "/guide",
-                icon: <BookOpen size={32} />,
+                icon: <BookOpen size={28} />,
               },
               {
                 title: "Template Scheda Settimanale",
                 desc: "Il planner settimanale per tracciare volume, intensità e recupero.",
                 action: "Crea Scheda",
                 to: "/create",
-                icon: <Target size={32} />,
+                icon: <Target size={28} />,
               },
             ].map((res, i) => (
               <motion.div
@@ -908,20 +905,17 @@ const CalisthenicsRoom: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                whileHover={{ scale: 1.01 }}
-                className="bg-linear-to-br from-zinc-900 to-zinc-950 border border-white/5 rounded-[2.5rem] p-8 relative overflow-hidden group"
+                className="card card-hover p-6 md:p-8 relative overflow-hidden group"
               >
-                <div className="absolute -right-8 -top-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                  <Crown size={180} />
-                </div>
+                <div className="card-lift" />
                 <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center mb-6 text-red-500">
+                  <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6 text-red-500">
                     {res.icon}
                   </div>
-                  <h3 className="text-xl font-black mb-3 leading-tight">{res.title}</h3>
-                  <p className="text-zinc-500 text-sm mb-8 leading-relaxed">{res.desc}</p>
-                  <Link to={res.to} className="inline-flex items-center gap-3 px-6 py-3 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black rounded-2xl transition-all text-xs tracking-widest uppercase shadow-lg shadow-red-900/20">
-                    {res.action} <ArrowRight size={14} />
+                  <h3 className="text-lg font-bold mb-2 tracking-tight text-white">{res.title}</h3>
+                  <p className="body-copy text-sm mb-6">{res.desc}</p>
+                  <Link to={res.to} className="btn-primary-sm">
+                    {res.action} <ArrowRight size={14} aria-hidden />
                   </Link>
                 </div>
               </motion.div>
@@ -931,9 +925,9 @@ const CalisthenicsRoom: React.FC = () => {
 
         {/* Masterclass Video */}
         <section>
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-1 h-8 bg-red-600 rounded-full" />
-            <h2 className="text-2xl font-black uppercase tracking-tight">Masterclass Video</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-1 h-8 bg-red-600 rounded-full" aria-hidden />
+            <h2 className="text-xl font-bold tracking-tight text-white">Masterclass video</h2>
           </div>
 
           <div className="space-y-3">
@@ -944,26 +938,26 @@ const CalisthenicsRoom: React.FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: moduleIndex * 0.1 }}
-                className="bg-zinc-900/40 border border-white/5 rounded-2xl overflow-hidden group hover:border-red-500/20 transition-all"
+                className="card overflow-hidden group hover:border-red-500/20 transition-colors"
               >
                 <button
                   onClick={() => setExpandedModule(expandedModule === moduleIndex ? -1 : moduleIndex)}
                   className="w-full p-5 flex items-center justify-between"
                 >
                   <div className="flex items-center gap-4 text-left">
-                    <div className="w-14 h-14 rounded-xl bg-zinc-900 border border-white/5 flex items-center justify-center text-red-500 font-black text-lg group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 transition-all duration-300">
+                    <div className="w-12 h-12 rounded-xl bg-zinc-900 border hairline flex items-center justify-center text-red-500 font-bold text-lg group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 transition-colors duration-300">
                       {moduleIndex + 1}
                     </div>
                     <div>
-                      <h3 className="font-black text-white uppercase tracking-tight text-sm">{module.title}</h3>
-                      <p className="text-[10px] font-bold text-zinc-600 tracking-widest uppercase">{module.lessons.length} lezioni</p>
+                      <h3 className="font-bold text-white tracking-tight text-sm">{module.title}</h3>
+                      <p className="meta-mono mt-0.5">{module.lessons.length} lezioni</p>
                     </div>
                   </div>
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${expandedModule === moduleIndex ? "bg-red-600/20" : "bg-white/5"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${expandedModule === moduleIndex ? "bg-red-600/20" : "bg-white/5"}`}>
                     {expandedModule === moduleIndex ? (
-                      <ChevronDown size={18} className="text-red-500" />
+                      <ChevronDown size={18} className="text-red-500" aria-hidden />
                     ) : (
-                      <ChevronRight size={18} className="text-zinc-600" />
+                      <ChevronRight size={18} className="text-zinc-600" aria-hidden />
                     )}
                   </div>
                 </button>
@@ -976,16 +970,16 @@ const CalisthenicsRoom: React.FC = () => {
                     {module.lessons.map((lesson, lessonIndex) => (
                       <div
                         key={lessonIndex}
-                        className="flex items-center justify-between p-4 bg-zinc-950/40 rounded-xl border border-white/10 hover:border-white/10 hover:bg-zinc-950/70 transition-all group/lesson"
+                        className="flex items-center justify-between p-4 rounded-xl border hairline bg-zinc-950/40 hover:bg-zinc-950/70 transition-colors group/lesson"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-red-600/10 flex items-center justify-center text-red-500 group-hover/lesson:bg-red-600 group-hover/lesson:text-white transition-all">
-                            <PlayCircle size={16} />
+                          <div className="w-8 h-8 rounded-lg bg-red-600/10 flex items-center justify-center text-red-500 group-hover/lesson:bg-red-600 group-hover/lesson:text-white transition-colors">
+                            <PlayCircle size={16} aria-hidden />
                           </div>
                           <span className="text-sm font-bold text-zinc-300 group-hover/lesson:text-white transition-colors">{lesson.title}</span>
                         </div>
-                        <span className="text-[10px] font-black text-zinc-700 uppercase tracking-widest flex items-center gap-1.5">
-                          <Clock size={10} /> {lesson.duration}
+                        <span className="meta-mono flex items-center gap-1.5">
+                          <Clock size={10} aria-hidden /> {lesson.duration}
                         </span>
                       </div>
                     ))}
@@ -998,10 +992,10 @@ const CalisthenicsRoom: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <footer className="py-16 border-t border-white/5 text-center">
-        <div className="max-w-5xl mx-auto px-6">
-          <Link to="/" className="inline-flex items-center gap-2 text-zinc-600 hover:text-white text-xs font-black uppercase tracking-[0.3em] transition-all">
-            Torna alla Home <ArrowRight size={14} />
+      <footer className="section-padding border-t hairline text-center">
+        <div className="container-max max-w-5xl">
+          <Link to="/" className="btn-ghost text-sm">
+            Torna alla home <ArrowRight size={14} aria-hidden />
           </Link>
         </div>
       </footer>
