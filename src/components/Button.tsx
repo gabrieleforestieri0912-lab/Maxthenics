@@ -30,6 +30,8 @@ interface ButtonAsButton extends BaseProps {
   disabled?: boolean;
   loading?: boolean;
   onClick?: () => void;
+  onBlur?: () => void;
+  onFocus?: () => void;
   ariaLabel?: string;
 }
 
@@ -60,12 +62,14 @@ export default function Button(props: ButtonProps) {
     );
   }
 
-  const { type = "button", disabled = false, loading = false, onClick, ariaLabel } = props as ButtonAsButton;
+  const { type = "button", disabled = false, loading = false, onClick, onBlur, onFocus, ariaLabel } = props as ButtonAsButton;
 
   return (
     <button
       type={type}
       onClick={onClick}
+      onBlur={onBlur}
+      onFocus={onFocus}
       disabled={disabled || loading}
       aria-label={ariaLabel}
       aria-busy={loading || undefined}
