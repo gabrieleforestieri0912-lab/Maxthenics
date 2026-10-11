@@ -103,7 +103,7 @@ function Navbar() {
           }}
           transition={{ duration: 0.4, ease: "easeInOut" }}
           style={{ borderRadius: 24 }}
-          className="w-full backdrop-blur-xl border border-zinc-200 dark:border-zinc-200 dark:border-white/10 pointer-events-auto"
+          className="w-full backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 pointer-events-auto"
         >
           <div className="flex items-center justify-between h-14">
           {/* Logo */}

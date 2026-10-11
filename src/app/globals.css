@@ -18,6 +18,7 @@
   :root {
     --brand-red: #dc2626;
     --brand-orange: #f97316;
+    color-scheme: dark;
   }
 
   html {
@@ -63,15 +64,18 @@
     margin: 0;
   }
 
-  /* Custom Scrollbar */
+  /* Custom Scrollbar: sempre a tema scuro */
+  html {
+    scrollbar-color: #27272a #09090b;
+  }
   ::-webkit-scrollbar {
     width: 10px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-zinc-100 dark:bg-zinc-950;
+    @apply bg-zinc-950;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-zinc-300 rounded-full border-2 border-zinc-100 hover:bg-red-600 transition-colors dark:bg-zinc-800 dark:border-zinc-950;
+    @apply bg-zinc-800 rounded-full border-2 border-zinc-950 hover:bg-red-600 transition-colors;
   }
 }
 
