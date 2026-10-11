@@ -6,6 +6,7 @@ import SEO from "../components/SEO";
 import FAQ from "../components/FAQ";
 import Features from "../components/Features";
 import ProgramShowcase from "../components/ProgramShowcase";
+import SthenoxSpotlight from "../components/SthenoxSpotlight";
 import Button from "../components/Button";
 import {
   Zap,
@@ -261,6 +262,9 @@ const Home: React.FC = () => {
 
       {/* General Programs Showcase */}
       <ProgramShowcase />
+
+      {/* Sthenox AI Coach */}
+      <SthenoxSpotlight />
 
       {/* Calisthenics Room Section - Full Text */}
       <section id="coaching" className="section-padding relative overflow-hidden">

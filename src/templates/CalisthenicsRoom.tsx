@@ -402,20 +402,27 @@ const CalisthenicsRoom: React.FC = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.15 }}
-                            className="group relative card card-hover p-6 md:p-8 cursor-default"
+                            tabIndex={0}
+                            onFocus={() => setHoveredStep(i)}
+                            onBlur={() => setHoveredStep(null)}
+                            className="group relative card card-hover p-6 md:p-8 cursor-default hover:border-red-500/50 hover:shadow-[0_20px_50px_-12px_rgba(220,38,38,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                           >
                             <div className="card-lift" />
                             <div className="relative z-10">
                               <div className="flex items-center justify-between mb-4">
-                                <span className="meta-mono text-base">{item.step}</span>
+                                <span className="meta-mono text-base group-hover:text-red-500 transition-colors">{item.step}</span>
                                 <span className="meta-mono group-hover:text-red-500/80 transition-colors">{item.brief}</span>
                               </div>
-                              <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5 text-red-500 group-hover:scale-110 transition-transform">
+                              <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5 text-red-500 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 group-hover:shadow-lg group-hover:shadow-red-900/40 transition-all duration-300">
                                 {item.icon}
                               </div>
                               <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2 tracking-tight">{item.title}</h3>
                               <p className="body-copy text-sm">{item.desc}</p>
+                              <span className="mt-5 flex items-center gap-1.5 meta-mono opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 transition-all duration-300">
+                                {t("Passa sopra per i dettagli", "Hover for details")} <ChevronRight size={12} aria-hidden />
+                              </span>
                             </div>
+                            <span aria-hidden className="absolute bottom-0 left-6 right-6 h-0.5 rounded-full bg-linear-to-r from-red-600 to-orange-500 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
                           </motion.div>
                         </div>
                       ))}
@@ -464,10 +471,10 @@ const CalisthenicsRoom: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.15 }}
-                  className="group"
+                  className="group transition-transform duration-300 hover:-translate-y-1 focus-within:-translate-y-1"
                 >
                   <div className="text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-white dark:bg-zinc-900/80 border hairline flex items-center justify-center mx-auto mb-6 group-hover:border-red-500/40 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-900 transition-colors duration-300">
+                    <div className="w-16 h-16 rounded-2xl bg-white dark:bg-zinc-900/80 border hairline flex items-center justify-center mx-auto mb-6 group-hover:border-red-500/50 group-hover:bg-red-600/[0.08] dark:group-hover:bg-red-600/10 group-hover:shadow-[0_16px_40px_-12px_rgba(220,38,38,0.45)] transition-all duration-300">
                       {React.cloneElement(item.icon as any, { size: 32, className: "text-red-500 group-hover:scale-110 transition-transform duration-300" })}
                     </div>
                     <h3 className="text-lg font-bold mb-2 tracking-tight text-zinc-900 dark:text-white">{item.title}</h3>
@@ -505,9 +512,9 @@ const CalisthenicsRoom: React.FC = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.04 }}
-                      className="flex items-start gap-4 p-4 rounded-xl bg-zinc-900/[0.02] dark:bg-white/[0.02] border hairline hover:border-red-500/20 hover:bg-red-500/5 transition-colors duration-300 group"
+                      className="flex items-start gap-4 p-4 rounded-xl bg-zinc-900/[0.02] dark:bg-white/[0.02] border hairline hover:border-red-500/30 hover:bg-red-500/[0.07] hover:shadow-lg hover:shadow-red-900/10 hover:-translate-y-0.5 transition-all duration-300 group"
                     >
-                      <div className="w-7 h-7 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                      <div className="w-7 h-7 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 group-hover:shadow-md transition-transform duration-300">
                         <CheckCircle size={16} className="text-green-500" />
                       </div>
                       <span className="text-sm font-bold leading-snug text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
@@ -538,7 +545,7 @@ const CalisthenicsRoom: React.FC = () => {
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
                           transition={{ delay: 0.2 + i * 0.1 }}
-                          className="flex items-center gap-4 p-5 card group hover:border-amber-500/30 hover:bg-amber-500/5 transition-colors"
+                          className="flex items-center gap-4 p-5 card group hover:-translate-y-0.5 hover:border-amber-500/40 hover:bg-amber-500/[0.07] hover:shadow-lg hover:shadow-amber-900/20 transition-all duration-300"
                         >
                           <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                             <Crown size={20} className="text-amber-500" />
@@ -660,8 +667,8 @@ const CalisthenicsRoom: React.FC = () => {
                   transition={{ delay: i * 0.12 }}
                   className={`relative card card-hover flex flex-col justify-between overflow-hidden group ${
                     plan.highlight
-                      ? "border-red-400 bg-red-600 shadow-2xl shadow-red-900/40 md:scale-105 z-10"
-                      : ""
+                      ? "border-red-400 bg-red-600 shadow-2xl shadow-red-900/40 hover:shadow-red-900/60 md:scale-105 z-10 transition-shadow duration-300"
+                      : "hover:shadow-[0_24px_60px_-16px_rgba(220,38,38,0.4)]"
                   }`}
                 >
                   {/* Background effects */}
@@ -758,6 +765,7 @@ const CalisthenicsRoom: React.FC = () => {
                       }`}
                     >
                       {plan.cta}
+                      <ArrowRight size={16} aria-hidden className="transition-transform duration-300 group-hover:translate-x-1" />
                     </button>
                   </div>
                 </motion.div>
@@ -813,9 +821,9 @@ const CalisthenicsRoom: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="card card-hover group p-6"
+                  className="card card-hover group p-6 hover:border-red-500/40 hover:shadow-[0_18px_40px_-16px_rgba(220,38,38,0.4)]"
                 >
-                  <h3 className="font-bold text-zinc-900 dark:text-white tracking-tight mb-2 text-sm">{faq.q}</h3>
+                  <h3 className="font-bold text-zinc-900 dark:text-white tracking-tight mb-2 text-sm group-hover:text-red-500 transition-colors">{faq.q}</h3>
                   <p className="prose-block">{faq.a}</p>
                 </motion.div>
               ))}
@@ -947,7 +955,7 @@ const CalisthenicsRoom: React.FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: moduleIndex * 0.1 }}
-                className="card overflow-hidden group hover:border-red-500/20 transition-colors"
+                className="card overflow-hidden group hover:border-red-500/30 hover:shadow-lg hover:shadow-red-900/10 transition-all duration-300"
               >
                 <button
                   onClick={() => setExpandedModule(expandedModule === moduleIndex ? -1 : moduleIndex)}
@@ -979,7 +987,7 @@ const CalisthenicsRoom: React.FC = () => {
                     {module.lessons.map((lesson, lessonIndex) => (
                       <div
                         key={lessonIndex}
-                        className="flex items-center justify-between p-4 rounded-xl border hairline bg-zinc-100 dark:bg-zinc-950/40 hover:bg-zinc-200 dark:hover:bg-zinc-950/70 transition-colors group/lesson"
+                        className="flex items-center justify-between p-4 rounded-xl border hairline bg-zinc-100 dark:bg-zinc-950/40 hover:bg-zinc-200 dark:hover:bg-zinc-950/70 hover:border-red-500/30 hover:translate-x-1 transition-all duration-200 group/lesson"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-lg bg-red-600/10 flex items-center justify-center text-red-500 group-hover/lesson:bg-red-600 group-hover/lesson:text-white transition-colors">
