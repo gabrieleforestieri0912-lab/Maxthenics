@@ -1,6 +1,5 @@
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   BookOpen,
@@ -270,6 +269,8 @@ function MacroCard({
 const Guide: React.FC = () => {
   const [activeSection, setActiveSection] = useState("introduction");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [dockOffset, setDockOffset] = useState(0);
+  const asideRef = useRef<HTMLElement | null>(null);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -293,6 +294,35 @@ const Guide: React.FC = () => {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  // La sidebar e fissa, ma si solleva quando arriva al footer
+  // invece di scivolarci sopra.
+  useEffect(() => {
+    let raf = 0;
+    const compute = () => {
+      const footer = document.getElementById("site-footer");
+      if (!footer) {
+        setDockOffset((prev) => (prev === 0 ? prev : 0));
+        return;
+      }
+      const height = isSidebarOpen ? (asideRef.current?.offsetHeight ?? 0) : 44;
+      const bottom = 96 + height;
+      const shift = Math.max(0, bottom + 16 - footer.getBoundingClientRect().top);
+      setDockOffset((prev) => (prev === shift ? prev : shift));
+    };
+    const schedule = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(compute);
+    };
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      cancelAnimationFrame(raf);
+    };
+  }, [isSidebarOpen]);
+
   return (
     <>
       <SEO
@@ -306,7 +336,9 @@ const Guide: React.FC = () => {
 
       <div className="page-shell flex">
         <aside
+          ref={asideRef}
           aria-label="Indice della guida"
+          style={dockOffset > 0 ? { transform: `translateY(-${dockOffset}px)` } : undefined}
           className={`fixed left-4 top-24 z-40 w-72 card shadow-2xl shadow-black/50 max-h-[calc(100vh-8rem)] ${
             isSidebarOpen ? "flex" : "hidden"
           }`}
@@ -392,6 +424,7 @@ const Guide: React.FC = () => {
           <button
             onClick={() => setIsSidebarOpen(true)}
             aria-label={t("Apri indice", "Open index")}
+            style={dockOffset > 0 ? { transform: `translateY(-${dockOffset}px)` } : undefined}
             className="fixed top-24 left-4 z-40 p-2.5 rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors duration-300 ease-out shadow-xl"
           >
             <ChevronRight className="w-5 h-5" aria-hidden />

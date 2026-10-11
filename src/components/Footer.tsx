@@ -80,7 +80,7 @@ function Footer() {
   };
 
   return (
-    <footer className="relative bg-white border-t border-zinc-200 pt-20 lg:pt-28 pb-12 overflow-hidden dark:bg-black dark:border-black">
+    <footer id="site-footer" className="relative bg-white border-t border-zinc-200 pt-20 lg:pt-28 pb-12 overflow-hidden dark:bg-black dark:border-black">
 
       <div className="container-max relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12 mb-16">

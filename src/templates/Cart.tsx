@@ -230,7 +230,7 @@ const Cart: React.FC = () => {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="card bg-white dark:bg-zinc-900/60 p-6 lg:sticky lg:top-28">
+              <div className="card p-6 lg:sticky lg:top-28">
                 <h3 className="text-base font-bold tracking-tight text-zinc-900 dark:text-white">{t("Riepilogo", "Summary")}</h3>
 
                 <dl className="mt-6 space-y-3">
