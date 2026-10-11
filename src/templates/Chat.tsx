@@ -516,9 +516,9 @@ const Chat: React.FC = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             onClick={() => setIsSidebarOpen(true)}
-            className="fixed top-6 left-6 z-50 p-3 card hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-2xl group"
+            className="fixed top-6 left-6 z-50 p-3 card hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-300 ease-out shadow-2xl group"
           >
-            <Menu size={20} className="text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
+              <Menu size={20} className="text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors duration-300 ease-out" />
           </motion.button>
         )}
 
@@ -540,7 +540,7 @@ const Chat: React.FC = () => {
                   alt="Maxthenics"
                   width={36}
                   height={36}
-                  className="rounded-xl object-contain group-hover:scale-110 transition-transform"
+                  className="rounded-xl object-contain group-hover:scale-110 transition-transform duration-300 ease-out"
                 />
                 <span className="text-lg font-bold tracking-tight uppercase">
                   MAX<span className="text-red-600">THENICS</span>
@@ -549,7 +549,7 @@ const Chat: React.FC = () => {
               <button
                 onClick={() => setIsSidebarOpen(false)}
                 aria-label={t("Chiudi indice chat", "Close chat index")}
-                className="p-2 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+                className="p-2 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors duration-300 ease-out text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
               >
                 <ChevronLeft size={20} />
               </button>
@@ -578,7 +578,7 @@ const Chat: React.FC = () => {
                 <div key={chat._id} className="relative group/item">
                   <button
                     onClick={() => selectChat(chat._id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-bold transition-colors group border ${activeChatId === chat._id
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-sm font-bold transition-colors duration-300 ease-out group border ${activeChatId === chat._id
                       ? "bg-red-600/10 text-red-500 border-red-500/20"
                       : "text-zinc-500 hover:bg-zinc-900/5 dark:hover:bg-white/5 hover:text-zinc-700 dark:hover:text-zinc-300 border-transparent"
                       }`}
@@ -604,14 +604,14 @@ const Chat: React.FC = () => {
                     <button
                       onClick={(e) => { e.stopPropagation(); startRename(chat._id, chat.title); }}
                       title={t("Rinomina", "Rename")}
-                      className="p-1.5 text-zinc-400 dark:text-zinc-700 hover:text-amber-500 opacity-0 group-hover/item:opacity-100 transition-colors"
+                      className="p-1.5 text-zinc-400 dark:text-zinc-700 hover:text-amber-500 opacity-0 group-hover/item:opacity-100 transition-colors duration-300 ease-out"
                     >
                       <Pencil size={12} />
                     </button>
                     <button
                       onClick={(e) => handleDeleteChat(e, chat._id)}
                       title={t("Elimina chat", "Delete chat")}
-                      className="p-1.5 text-zinc-400 dark:text-zinc-700 hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-colors"
+                      className="p-1.5 text-zinc-400 dark:text-zinc-700 hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-colors duration-300 ease-out"
                     >
                       <Trash2 size={12} />
                     </button>
@@ -656,7 +656,7 @@ const Chat: React.FC = () => {
                 <button
                   onClick={handleLogout}
                   aria-label={t("Esci", "Logout")}
-                  className="p-2 text-zinc-400 dark:text-zinc-700 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors"
+                  className="p-2 text-zinc-400 dark:text-zinc-700 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors duration-300 ease-out"
                 >
                   <LogOut size={14} />
                 </button>
@@ -725,7 +725,7 @@ const Chat: React.FC = () => {
                       onClick={() => navigateSearchResult('up')}
                       disabled={searchResults.length === 0}
                       aria-label={t("Risultato precedente", "Previous result")}
-                      className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white disabled:opacity-30 transition-colors"
+                      className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white disabled:opacity-30 transition-colors duration-300 ease-out"
                     >
                       <ChevronDown size={14} className="rotate-180" />
                     </button>
@@ -733,7 +733,7 @@ const Chat: React.FC = () => {
                       onClick={() => navigateSearchResult('down')}
                       disabled={searchResults.length === 0}
                       aria-label={t("Risultato successivo", "Next result")}
-                      className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white disabled:opacity-30 transition-colors"
+                      className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white disabled:opacity-30 transition-colors duration-300 ease-out"
                     >
                       <ChevronDown size={14} />
                     </button>
@@ -741,7 +741,7 @@ const Chat: React.FC = () => {
                   <button
                     onClick={() => { setShowSearch(false); setSearchQuery(""); setSearchResults([]); }}
                     aria-label={t("Chiudi ricerca", "Close search")}
-                    className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                    className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out"
                   >
                     <X size={14} />
                   </button>
@@ -760,7 +760,7 @@ const Chat: React.FC = () => {
                 <>
                   <button
                     onClick={() => setShowSearch(true)}
-                    className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
+                    className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors duration-300 ease-out"
                     title={t("Cerca", "Search")}
                   >
                     <Search size={15} />
@@ -768,7 +768,7 @@ const Chat: React.FC = () => {
                   <div className="relative" ref={exportMenuRef}>
                     <button
                       onClick={() => setExportMenuOpen(!exportMenuOpen)}
-                      className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
+                      className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors duration-300 ease-out"
                       title={t("Esporta", "Export")}
                     >
                       <Download size={15} />
@@ -783,14 +783,14 @@ const Chat: React.FC = () => {
                         >
                           <button
                             onClick={handleExportText}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 transition-colors text-left border-b border-zinc-200 dark:border-white/10"
+                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 transition-colors duration-300 ease-out text-left border-b border-zinc-200 dark:border-white/10"
                           >
                             <Copy size={14} />
                             {t("Copia chat (testo)", "Copy chat (text)")}
                           </button>
                           <button
                             onClick={handleExportMarkdown}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 transition-colors text-left"
+                            className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 transition-colors duration-300 ease-out text-left"
                           >
                             <Download size={14} />
                             {t("Scarica Markdown", "Download Markdown")}
@@ -968,7 +968,7 @@ const Chat: React.FC = () => {
                                       {/* Copy button */}
                                       <button
                                         onClick={() => copyMessage(msg.content, globalIdx)}
-                                        className="p-1 text-zinc-500 dark:text-zinc-700 hover:text-zinc-700 dark:hover:text-zinc-400 transition-colors"
+                                        className="p-1 text-zinc-500 dark:text-zinc-700 hover:text-zinc-700 dark:hover:text-zinc-400 transition-colors duration-300 ease-out"
                                         title={t("Copia messaggio", "Copy message")}
                                       >
                                         {copiedMessageId === globalIdx ? (
@@ -982,7 +982,7 @@ const Chat: React.FC = () => {
                                       {msg.role === "user" && !isStreaming && (
                                         <button
                                           onClick={() => startEdit(globalIdx, msg.content)}
-                                          className="p-1 text-zinc-500 dark:text-zinc-700 hover:text-amber-500 transition-colors"
+                                          className="p-1 text-zinc-500 dark:text-zinc-700 hover:text-amber-500 transition-colors duration-300 ease-out"
                                           title={t("Modifica messaggio", "Edit message")}
                                         >
                                           <Pencil size={10} />
@@ -993,7 +993,7 @@ const Chat: React.FC = () => {
                                       {msg.role === "assistant" && !isStreaming && !isLoading && globalIdx === messages.length - 1 && (
                                         <button
                                           onClick={() => regenerate()}
-                                          className="p-1 text-zinc-500 dark:text-zinc-700 hover:text-blue-500 transition-colors"
+                                          className="p-1 text-zinc-500 dark:text-zinc-700 hover:text-blue-500 transition-colors duration-300 ease-out"
                                           title={t("Rigenera risposta", "Regenerate response")}
                                         >
                                           <RefreshCw size={10} />
@@ -1011,7 +1011,7 @@ const Chat: React.FC = () => {
                                         aria-pressed={msg.feedback === "up"}
                                         title={t("Utile", "Helpful")}
                                         aria-label={t("Risposta utile", "Helpful response")}
-                                        className={`p-1.5 border rounded-lg transition-colors disabled:opacity-40 ${
+                                        className={`p-1.5 border rounded-lg transition-colors duration-300 ease-out disabled:opacity-40 ${
                                           msg.feedback === "up"
                                             ? "bg-green-500/10 border-green-500/40 text-green-500"
                                             : "bg-white dark:bg-zinc-900/60 border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-600 hover:text-green-500 hover:border-green-500/30"
@@ -1025,7 +1025,7 @@ const Chat: React.FC = () => {
                                         aria-pressed={msg.feedback === "down"}
                                         title={t("Non utile", "Not helpful")}
                                         aria-label={t("Risposta non utile", "Unhelpful response")}
-                                        className={`p-1.5 border rounded-lg transition-colors disabled:opacity-40 ${
+                                        className={`p-1.5 border rounded-lg transition-colors duration-300 ease-out disabled:opacity-40 ${
                                           msg.feedback === "down"
                                             ? "bg-red-500/10 border-red-500/40 text-red-500"
                                             : "bg-white dark:bg-zinc-900/60 border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-600 hover:text-red-500 hover:border-red-500/30"
@@ -1061,7 +1061,7 @@ const Chat: React.FC = () => {
                           transition={{ delay: idx * 0.05 }}
                           onClick={() => handleSuggestionClick(followUp)}
                           disabled={isLoading || isStreaming || isOffline}
-                          className="px-3 py-2 card text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:border-red-500/30 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors text-left flex items-center gap-2 whitespace-nowrap disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                          className="px-3 py-2 card text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:border-red-500/30 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors duration-300 ease-out text-left flex items-center gap-2 whitespace-nowrap disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                         >
                           <Plus size={10} className="shrink-0 text-zinc-400 dark:text-zinc-700" />
                           {followUp}
@@ -1146,9 +1146,9 @@ const Chat: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               onClick={scrollToBottom}
-              className="absolute bottom-40 right-8 z-20 p-3 card hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-2xl group"
+              className="absolute bottom-40 right-8 z-20 p-3 card hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors duration-300 ease-out shadow-2xl group"
             >
-              <ChevronDown size={18} className="text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
+              <ChevronDown size={18} className="text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors duration-300 ease-out" />
             </motion.button>
           )}
 

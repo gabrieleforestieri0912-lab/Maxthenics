@@ -101,7 +101,7 @@ const Features = () => {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.3 }}
-              className="group grid grid-cols-[auto_1fr] md:grid-cols-[64px_48px_1fr_1.5fr] gap-4 md:gap-6 items-start py-7 border-b border-zinc-200 dark:border-white/10 hover:bg-zinc-900/5 dark:hover:bg-zinc-900/60 transition-colors px-2 md:px-4 -mx-2 md:-mx-4"
+              className="group grid grid-cols-[auto_1fr] md:grid-cols-[64px_48px_1fr_1.5fr] gap-4 md:gap-6 items-start py-7 border-b border-zinc-200 dark:border-white/10 hover:bg-zinc-900/5 dark:hover:bg-zinc-900/60 transition-colors duration-300 ease-out px-2 md:px-4 -mx-2 md:-mx-4"
             >
               <span className="font-mono text-xs text-zinc-500 dark:text-zinc-600 pt-1">{feature.num}</span>
               <div className="hidden md:flex w-11 h-11 rounded-lg bg-zinc-200 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 items-center justify-center shrink-0">

@@ -98,7 +98,7 @@ const SthenoxSpotlight = () => {
                     >
                       <div className="card-lift" aria-hidden />
                       <div className="relative flex items-start gap-3">
-                        <span className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0 text-red-500 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 group-hover:shadow-lg group-hover:shadow-red-900/40 transition-all duration-300">
+                        <span className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0 text-red-500 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 group-hover:shadow-lg group-hover:shadow-red-900/40 transition-all duration-300 ease-out">
                           <Icon size={17} aria-hidden />
                         </span>
                         <span>
@@ -199,7 +199,7 @@ const SthenoxSpotlight = () => {
                       key={s}
                       to="/chat"
                       onClick={() => setIsChatOpen(false)}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-900/[0.03] dark:bg-white/[0.03] px-3 py-1.5 text-[11px] font-bold text-zinc-500 hover:text-zinc-900 hover:border-red-500/40 hover:bg-red-600/[0.06] dark:hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-900/[0.03] dark:bg-white/[0.03] px-3 py-1.5 text-[11px] font-bold text-zinc-500 hover:text-zinc-900 hover:border-red-500/40 hover:bg-red-600/[0.06] dark:hover:text-white transition-colors duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                     >
                       <CornerDownRight size={10} aria-hidden />
                       {t(s, s)}

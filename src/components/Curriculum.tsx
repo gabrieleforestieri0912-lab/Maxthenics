@@ -118,7 +118,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
           >
             <button
               onClick={() => setOpenSection(isOpen ? null : section.id)}
-              className="w-full p-4 sm:p-5 flex items-center gap-4 text-left hover:bg-zinc-900/[0.03] dark:hover:bg-white/[0.03] transition-colors"
+              className="w-full p-4 sm:p-5 flex items-center gap-4 text-left hover:bg-zinc-900/[0.03] dark:hover:bg-white/[0.03] transition-colors duration-300 ease-out"
             >
               <span className="text-[11px] font-black text-red-500 tracking-widest shrink-0">
                 {String(si + 1).padStart(2, "0")}
@@ -161,7 +161,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                       return (
                         <div
                           key={lesson.id}
-                          className={`rounded-xl border transition-colors ${
+                          className={`rounded-xl border transition-colors duration-300 ease-out ${
                             locked
                               ? "border-zinc-200 dark:border-white/5 bg-zinc-100 dark:bg-zinc-950/40"
                               : done
@@ -240,7 +240,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                                     onToggleLesson(lesson.id);
                                   }
                                 }}
-                                className={`shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center transition-all ${
+                                className={`shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center transition-all duration-300 ease-out ${
                                   done
                                     ? "bg-green-500 border-green-500 text-white"
                                     : "border-zinc-300 dark:border-white/15 text-zinc-400 dark:text-zinc-600 hover:border-green-500/50 hover:text-green-400"
@@ -280,7 +280,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                                       onOpenWorkout && (
                                         <button
                                           onClick={onOpenWorkout}
-                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-[11px] font-black uppercase tracking-widest transition-colors"
+                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-[11px] font-black uppercase tracking-widest transition-colors duration-300 ease-out"
                                         >
                                           <Dumbbell size={12} />
                                           {t(
@@ -295,7 +295,7 @@ const Curriculum: React.FC<CurriculumProps> = ({
                                           onClick={() =>
                                             onOpenExercise(lesson.exerciseId)
                                           }
-                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-700 dark:bg-white/10 dark:hover:bg-white/15 text-white text-[11px] font-black uppercase tracking-widest transition-colors"
+                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-700 dark:bg-white/10 dark:hover:bg-white/15 text-white text-[11px] font-black uppercase tracking-widest transition-colors duration-300 ease-out"
                                         >
                                           <Play size={12} />
                                           {t(

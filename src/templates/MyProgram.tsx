@@ -469,7 +469,7 @@ const MyProgram: React.FC = () => {
                 )}
               </div>
               {isEditable && (
-                <button onClick={() => handleRemoveWeek(weekIdx)} className="text-red-500 hover:text-red-400 transition">
+                <button onClick={() => handleRemoveWeek(weekIdx)} className="text-red-500 hover:text-red-400 transition-smooth">
                   <Trash2 size={20} />
                 </button>
               )}
@@ -494,7 +494,7 @@ const MyProgram: React.FC = () => {
                     <h3 className="text-xl font-bold text-zinc-900 dark:text-white">{day.name}</h3>
                   )}
                   {isEditable && (
-                    <button onClick={() => handleRemoveDay(weekIdx, dayIdx)} className="text-red-500 hover:text-red-400 transition">
+                    <button onClick={() => handleRemoveDay(weekIdx, dayIdx)} className="text-red-500 hover:text-red-400 transition-smooth">
                       <X size={20} />
                     </button>
                   )}
@@ -519,7 +519,7 @@ const MyProgram: React.FC = () => {
                         <h4 className="text-lg font-semibold text-red-500">{workout.name}</h4>
                       )}
                       {isEditable && (
-                        <button onClick={() => handleRemoveWorkout(weekIdx, dayIdx, workoutIdx)} className="text-red-500 hover:text-red-400 transition ml-4">
+                        <button onClick={() => handleRemoveWorkout(weekIdx, dayIdx, workoutIdx)} className="text-red-500 hover:text-red-400 transition-smooth ml-4">
                           <X size={18} />
                         </button>
                       )}
@@ -550,7 +550,7 @@ const MyProgram: React.FC = () => {
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                             <div className="flex-1 md:w-1/3 flex items-center gap-2">
                               <div
-                                className="cursor-grab active:cursor-grabbing p-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                                className="cursor-grab active:cursor-grabbing p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out shrink-0"
                                 onMouseDown={(e) => e.stopPropagation()}
                               >
                                 <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" className="text-zinc-500">
@@ -570,7 +570,7 @@ const MyProgram: React.FC = () => {
                                   />
                                   <button
                                     onClick={() => openExerciseBrowser(weekIdx, dayIdx, workoutIdx)}
-                                    className="text-zinc-500 hover:text-red-500 transition shrink-0"
+                                    className="text-zinc-500 hover:text-red-500 transition-smooth shrink-0"
                                     title={t("Cerca esercizio nel database", "Search exercise in the database")}
                                   >
                                     <Search size={16} />
@@ -616,7 +616,7 @@ const MyProgram: React.FC = () => {
                             {isEditable && (
                               <button
                                 onClick={() => handleRemoveExercise(weekIdx, dayIdx, workoutIdx, exerciseIdx)}
-                                className="text-red-500 hover:text-red-400 transition ml-2 shrink-0"
+                                className="text-red-500 hover:text-red-400 transition-smooth ml-2 shrink-0"
                               >
                                 <X size={16} />
                               </button>
@@ -636,13 +636,13 @@ const MyProgram: React.FC = () => {
                       <div className="flex gap-2 mt-4">
                         <button
                           onClick={() => handleAddExercise(weekIdx, dayIdx, workoutIdx)}
-                          className="flex items-center text-red-500 hover:text-red-400 transition text-sm"
+                          className="flex items-center text-red-500 hover:text-red-400 transition-smooth text-sm"
                         >
                           <Plus size={16} className="mr-1" /> {t("Aggiungi Esercizio", "Add Exercise")}
                         </button>
                         <button
                           onClick={() => openExerciseBrowser(weekIdx, dayIdx, workoutIdx)}
-                          className="flex items-center text-zinc-600 dark:text-zinc-400 hover:text-red-400 transition text-sm"
+                          className="flex items-center text-zinc-600 dark:text-zinc-400 hover:text-red-400 transition-smooth text-sm"
                         >
                           <Search size={14} className="mr-1" /> {t("Da Database", "From Database")}
                         </button>
@@ -652,7 +652,7 @@ const MyProgram: React.FC = () => {
                 ))}
 
                 {isEditable && (
-                  <button onClick={() => handleAddWorkout(weekIdx, dayIdx)} className="flex items-center text-red-500 hover:text-red-400 transition text-sm">
+                  <button onClick={() => handleAddWorkout(weekIdx, dayIdx)} className="flex items-center text-red-500 hover:text-red-400 transition-smooth text-sm">
                     <Plus size={16} className="mr-1" /> {t("Aggiungi Allenamento", "Add Workout")}
                   </button>
                 )}
@@ -660,7 +660,7 @@ const MyProgram: React.FC = () => {
             ))}
 
             {isEditable && (
-              <button onClick={() => handleAddDay(weekIdx)} className="flex items-center text-red-500 hover:text-red-400 transition text-sm">
+              <button onClick={() => handleAddDay(weekIdx)} className="flex items-center text-red-500 hover:text-red-400 transition-smooth text-sm">
                 <Plus size={16} className="mr-1" /> {t("Aggiungi Giorno a Settimana", "Add Day to Week")} {week.weekNumber}
               </button>
             )}
@@ -668,7 +668,7 @@ const MyProgram: React.FC = () => {
         ))}
 
         {isEditable && (
-          <button onClick={handleAddWeek} className="flex items-center text-red-500 hover:text-red-400 transition text-sm mt-4">
+          <button onClick={handleAddWeek} className="flex items-center text-red-500 hover:text-red-400 transition-smooth text-sm mt-4">
             <Plus size={18} className="mr-2" /> {t("Aggiungi Settimana", "Add Week")}
           </button>
         )}
@@ -711,38 +711,38 @@ const MyProgram: React.FC = () => {
             {/* Export dropdown */}
             {program && program.weeks && program.weeks.length > 0 && !isEditing && (
               <div className="relative group">
-                <button className="flex items-center px-3 py-2 rounded-lg text-zinc-900 dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition text-sm">
+                <button className="flex items-center px-3 py-2 rounded-lg text-zinc-900 dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-smooth text-sm">
                   <Download size={16} className="mr-1" /> {t("Esporta", "Export")} <ChevronDown size={14} className="ml-1" />
                 </button>
                 <div className="absolute right-0 top-full mt-1 z-50 w-52 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl shadow-2xl overflow-hidden hidden group-hover:block">
                   <div className="p-2">
                     <p className="text-[9px] text-zinc-500 uppercase tracking-wider px-2 py-1">{t("Semplice (lista piatta)", "Simple (flat list)")}</p>
-                    <button onClick={() => handleExportSimple('txt')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">TXT</button>
-                    <button onClick={() => handleExportSimple('csv')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">CSV</button>
-                    <button onClick={() => handleExportSimple('json')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">JSON</button>
-                    <button onClick={() => handleExportSimple('pdf')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">{t("PDF / Stampa", "PDF / Print")}</button>
+                    <button onClick={() => handleExportSimple('txt')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">TXT</button>
+                    <button onClick={() => handleExportSimple('csv')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">CSV</button>
+                    <button onClick={() => handleExportSimple('json')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">JSON</button>
+                    <button onClick={() => handleExportSimple('pdf')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">{t("PDF / Stampa", "PDF / Print")}</button>
                   </div>
                   <div className="border-t border-zinc-200 dark:border-white/5 p-2">
                     <p className="text-[9px] text-zinc-500 uppercase tracking-wider px-2 py-1">{t("Completo (per settimane)", "Full (by weeks)")}</p>
-                    <button onClick={() => handleExportWeeks('txt')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">TXT</button>
-                    <button onClick={() => handleExportWeeks('csv')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">CSV</button>
-                    <button onClick={() => handleExportWeeks('json')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">JSON</button>
-                    <button onClick={() => handleExportWeeks('pdf')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">{t("PDF / Stampa", "PDF / Print")}</button>
+                    <button onClick={() => handleExportWeeks('txt')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">TXT</button>
+                    <button onClick={() => handleExportWeeks('csv')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">CSV</button>
+                    <button onClick={() => handleExportWeeks('json')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">JSON</button>
+                    <button onClick={() => handleExportWeeks('pdf')} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">{t("PDF / Stampa", "PDF / Print")}</button>
                   </div>
                 </div>
               </div>
             )}
             {!isEditing && program && program.weeks && program.weeks.length > 0 && (
-              <button onClick={handleEditToggle} className="flex items-center px-4 py-2 rounded-lg text-zinc-900 dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition">
+              <button onClick={handleEditToggle} className="flex items-center px-4 py-2 rounded-lg text-zinc-900 dark:text-white bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-smooth">
                 <Edit size={18} className="mr-1" /> {t("Modifica", "Edit")}
               </button>
             )}
             {isEditing && (
               <>
-                <button onClick={handleSaveProgram} disabled={loading} className="flex items-center px-4 py-2 rounded-lg text-white bg-green-600 hover:bg-green-500 transition mr-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <button onClick={handleSaveProgram} disabled={loading} className="flex items-center px-4 py-2 rounded-lg text-white bg-green-600 hover:bg-green-500 transition-smooth mr-2 disabled:opacity-50 disabled:cursor-not-allowed">
                   {loading ? <Loader2 className="w-5 h-5 animate-spin mr-1" /> : <Check size={18} className="mr-1" />} {t("Salva Modifiche", "Save Changes")}
                 </button>
-                <button onClick={handleEditToggle} className="flex items-center px-4 py-2 rounded-lg text-zinc-900 dark:text-white bg-zinc-300 dark:bg-zinc-700 hover:bg-zinc-400 dark:hover:bg-zinc-600 transition">
+                <button onClick={handleEditToggle} className="flex items-center px-4 py-2 rounded-lg text-zinc-900 dark:text-white bg-zinc-300 dark:bg-zinc-700 hover:bg-zinc-400 dark:hover:bg-zinc-600 transition-smooth">
                   {t("Annulla", "Cancel")}
                 </button>
               </>
@@ -760,7 +760,7 @@ const MyProgram: React.FC = () => {
           <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-2xl w-full max-w-3xl max-h-[80vh] flex flex-col shadow-2xl">
             <div className="flex items-center justify-between p-4 border-b border-zinc-300 dark:border-zinc-700">
               <h3 className="text-lg font-bold text-zinc-900 dark:text-white">{t("Database Esercizi", "Exercise Database")}</h3>
-              <button onClick={() => setShowExerciseBrowser(false)} className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition">
+              <button onClick={() => setShowExerciseBrowser(false)} className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-smooth">
                 <X size={20} />
               </button>
             </div>
@@ -779,7 +779,7 @@ const MyProgram: React.FC = () => {
               <div className="flex gap-2 overflow-x-auto pb-1">
                 <button
                   onClick={() => setExerciseFilter(null)}
-                  className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+                  className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors duration-300 ease-out ${
                     !exerciseFilter ? 'bg-red-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                   }`}
                 >
@@ -789,7 +789,7 @@ const MyProgram: React.FC = () => {
                   <button
                     key={d}
                     onClick={() => setExerciseFilter(exerciseFilter === d ? null : d)}
-                    className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+                    className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors duration-300 ease-out ${
                       exerciseFilter === d ? 'bg-red-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                     }`}
                   >
@@ -800,7 +800,7 @@ const MyProgram: React.FC = () => {
                   <button
                     key={m}
                     onClick={() => setExerciseFilter(exerciseFilter === m ? null : m)}
-                    className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+                    className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors duration-300 ease-out ${
                       exerciseFilter === m ? 'bg-red-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
                     }`}
                   >
@@ -819,9 +819,9 @@ const MyProgram: React.FC = () => {
                       addExerciseFromBrowser(ex);
                       setShowExerciseBrowser(false);
                     }}
-                    className="text-left p-3 rounded-xl bg-white dark:bg-zinc-800/50 border border-zinc-300 dark:border-zinc-700/50 hover:border-red-500/30 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all group"
+                    className="text-left p-3 rounded-xl bg-white dark:bg-zinc-800/50 border border-zinc-300 dark:border-zinc-700/50 hover:border-red-500/30 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all duration-300 ease-out group"
                   >
-                    <p className="font-semibold text-zinc-900 dark:text-white text-sm group-hover:text-red-400 transition-colors">{ex.name}</p>
+                    <p className="font-semibold text-zinc-900 dark:text-white text-sm group-hover:text-red-400 transition-colors duration-300 ease-out">{ex.name}</p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {ex.muscleGroups.primary.slice(0, 2).map(m => (
                         <span key={m} className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-400/70">{m}</span>

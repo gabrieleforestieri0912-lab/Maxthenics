@@ -133,7 +133,7 @@ const ProgramCard: React.FC<{
 
       <div className="relative z-20 flex flex-col grow p-5">
         <h3
-          className="text-base font-bold tracking-tight text-white group-hover:text-red-500 transition-colors cursor-pointer"
+          className="text-base font-bold tracking-tight text-white group-hover:text-red-500 transition-colors duration-300 ease-out cursor-pointer"
           onClick={() => navigate(`/program/${program.id}`)}
         >
           {display.localizedTitle}

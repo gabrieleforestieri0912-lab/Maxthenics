@@ -156,7 +156,7 @@ const PurchaseHistoryPage: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="card hover:bg-white dark:hover:bg-zinc-900/60 transition-colors"
+                className="card hover:bg-white dark:hover:bg-zinc-900/60 transition-colors duration-300 ease-out"
               >
                 <div className="p-6 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
                   <div className="flex items-start gap-4 xl:w-1/3">

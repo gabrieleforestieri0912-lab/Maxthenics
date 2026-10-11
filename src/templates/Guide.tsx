@@ -317,7 +317,7 @@ const Guide: React.FC = () => {
               <button
                 onClick={() => setIsSidebarOpen(false)}
                 aria-label={t("Chiudi indice", "Close index")}
-                className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors p-1"
+                className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out p-1"
               >
                 <ChevronLeft className="w-5 h-5" aria-hidden />
               </button>
@@ -335,7 +335,7 @@ const Guide: React.FC = () => {
                       <button
                         onClick={() => scrollToSection(section.subsections[0].id)}
                         aria-current={sectionActive ? "true" : undefined}
-                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm font-bold transition-colors border ${
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left text-sm font-bold transition-colors duration-300 ease-out border ${
                           sectionActive
                             ? sa.activeItem
                             : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-900/5 dark:hover:text-white dark:hover:bg-white/5 border-transparent"
@@ -361,7 +361,7 @@ const Guide: React.FC = () => {
                               <button
                                 onClick={() => scrollToSection(sub.id)}
                                 aria-current={subActive ? "true" : undefined}
-                                className={`w-full rounded-md px-1 py-1 text-left text-xs transition-colors ${
+                                className={`w-full rounded-md px-1 py-1 text-left text-xs transition-colors duration-300 ease-out ${
                                   subActive
                                     ? "font-bold text-white"
                                     : "font-medium text-zinc-500 hover:text-zinc-200"
@@ -392,7 +392,7 @@ const Guide: React.FC = () => {
           <button
             onClick={() => setIsSidebarOpen(true)}
             aria-label={t("Apri indice", "Open index")}
-            className="fixed top-24 left-4 z-40 p-2.5 rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors shadow-xl"
+            className="fixed top-24 left-4 z-40 p-2.5 rounded-xl bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm border border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors duration-300 ease-out shadow-xl"
           >
             <ChevronRight className="w-5 h-5" aria-hidden />
           </button>

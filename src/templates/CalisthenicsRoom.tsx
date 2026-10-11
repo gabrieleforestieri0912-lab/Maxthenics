@@ -434,8 +434,8 @@ const CalisthenicsRoom: React.FC = () => {
                             <div className="card-lift" />
                             <div className="relative z-10">
                               <div className="flex items-center justify-between mb-4">
-                                <span className="meta-mono text-base group-hover:text-red-500 transition-colors">{item.step}</span>
-                                <span className="meta-mono group-hover:text-red-500/80 transition-colors">{item.brief}</span>
+                                <span className="meta-mono text-base group-hover:text-red-500 transition-colors duration-300 ease-out">{item.step}</span>
+                                <span className="meta-mono group-hover:text-red-500/80 transition-colors duration-300 ease-out">{item.brief}</span>
                               </div>
                               <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5 text-red-500 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 group-hover:shadow-lg group-hover:shadow-red-900/40 transition-all duration-300 ease-out">
                                 {item.icon}
@@ -544,7 +544,7 @@ const CalisthenicsRoom: React.FC = () => {
                       <div className="w-7 h-7 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 group-hover:shadow-md transition-transform duration-300 ease-out">
                         <CheckCircle size={16} className="text-green-500" />
                       </div>
-                      <span className="text-sm font-bold leading-snug text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                      <span className="text-sm font-bold leading-snug text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors duration-300 ease-out">
                         {f.text}
                       </span>
                     </motion.div>
@@ -574,7 +574,7 @@ const CalisthenicsRoom: React.FC = () => {
                           transition={{ delay: 0.2 + i * 0.1 }}
                           className="flex items-center gap-4 p-5 card group hover:-translate-y-0.5 hover:border-amber-500/40 hover:bg-amber-500/[0.07] hover:shadow-lg hover:shadow-amber-900/20 transition-all duration-300 ease-out"
                         >
-                          <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                          <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 ease-out">
                             <Crown size={20} className="text-amber-500" />
                           </div>
                           <span className="text-zinc-900 dark:text-white font-bold text-sm md:text-base tracking-tight">{bonus}</span>
@@ -850,7 +850,7 @@ const CalisthenicsRoom: React.FC = () => {
                   transition={{ delay: i * 0.1 }}
                   className="card card-hover group p-6 hover:border-red-500/40 hover:shadow-[0_18px_40px_-16px_rgba(220,38,38,0.4)]"
                 >
-                  <h3 className="font-bold text-zinc-900 dark:text-white tracking-tight mb-2 text-sm group-hover:text-red-500 transition-colors">{faq.q}</h3>
+                  <h3 className="font-bold text-zinc-900 dark:text-white tracking-tight mb-2 text-sm group-hover:text-red-500 transition-colors duration-300 ease-out">{faq.q}</h3>
                   <p className="prose-block">{faq.a}</p>
                 </motion.div>
               ))}
@@ -982,14 +982,14 @@ const CalisthenicsRoom: React.FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: moduleIndex * 0.1 }}
-                className="card overflow-hidden group hover:border-red-500/30 hover:shadow-lg hover:shadow-red-900/10 transition-all duration-300"
+                className="card overflow-hidden group hover:border-red-500/30 hover:shadow-lg hover:shadow-red-900/10 transition-all duration-300 ease-out"
               >
                 <button
                   onClick={() => setExpandedModule(expandedModule === moduleIndex ? -1 : moduleIndex)}
                   className="w-full p-5 flex items-center justify-between"
                 >
                   <div className="flex items-center gap-4 text-left">
-                    <div className="w-12 h-12 rounded-xl bg-zinc-200 dark:bg-zinc-900 border hairline flex items-center justify-center text-red-500 font-bold text-lg group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 transition-colors duration-300">
+                    <div className="w-12 h-12 rounded-xl bg-zinc-200 dark:bg-zinc-900 border hairline flex items-center justify-center text-red-500 font-bold text-lg group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 transition-colors duration-300 ease-out">
                       {moduleIndex + 1}
                     </div>
                     <div>

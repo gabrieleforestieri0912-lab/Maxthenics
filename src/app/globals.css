@@ -144,7 +144,7 @@
 
 /* Buttons */
 @utility btn-base {
-  @apply inline-flex items-center justify-center gap-2 font-bold transition-all duration-150 select-none;
+  @apply inline-flex items-center justify-center gap-2 font-bold transition-all duration-300 ease-out select-none;
 }
 
 @utility btn-primary {
@@ -214,6 +214,16 @@
   text-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
 }
 
+/* ──────────────────────────────────────────────────────────────
+   Canonical motion system — hover unificato di tutto il progetto
+   - transition-smooth: default per OGNI interazione hover/focus
+     (bottoni, card, righe, icone, link). 300ms ease-out.
+   - Zoom immagini: duration-500/700 ease-out (effetto cinematografico).
+   - Mai transition senza duration/ease su stati hover.
+   ────────────────────────────────────────────────────────────── */
+@utility transition-smooth {
+  @apply transition-all duration-300 ease-out;
+}
 @utility mask-gradient {
   mask-image: linear-gradient(to bottom, black, transparent);
 }

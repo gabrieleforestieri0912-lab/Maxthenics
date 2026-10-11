@@ -20,7 +20,7 @@ export default function LanguageToggle({ compact = false }: { compact?: boolean 
           type="button"
           onClick={() => setLocale(l)}
           aria-pressed={locale === l}
-          className={`${base} rounded-lg font-black uppercase tracking-widest transition-all ${
+          className={`${base} rounded-lg font-black uppercase tracking-widest transition-all duration-300 ease-out ${
             locale === l
               ? "bg-white text-black"
               : "text-zinc-400 hover:text-white"

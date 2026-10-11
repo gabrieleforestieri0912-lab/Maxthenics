@@ -180,9 +180,9 @@ const ProgramDetails: React.FC = () => {
         <div className="flex items-center justify-between gap-4 mb-10">
           <Link
             to="/programs"
-            className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors font-bold text-sm group"
+            className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors duration-300 ease-out font-bold text-sm group"
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" aria-hidden />
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300 ease-out" aria-hidden />
             {t("Torna all'Accademia", "Back to the Academy")}
           </Link>
           <div className="flex items-center gap-2">
@@ -320,7 +320,7 @@ const ProgramDetails: React.FC = () => {
                 alt={program.localizedTitle}
                 fill
                 sizes="(max-width: 1024px) 100vw, 40vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-linear-to-t from-zinc-950/70 to-transparent" />
             </div>

@@ -62,7 +62,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ url, title, text, compact = f
       onClick={handleShare}
       title={t("Condividi programma", "Share program")}
       aria-label={t("Condividi programma", "Share program")}
-      className={`inline-flex items-center gap-2 rounded-xl border font-black uppercase tracking-widest transition-all ${
+      className={`inline-flex items-center gap-2 rounded-xl border font-black uppercase tracking-widest transition-all duration-300 ease-out ${
         compact ? "text-[11px] px-2.5 py-1.5" : "text-[11px] px-3.5 py-2"
       } ${
         copied

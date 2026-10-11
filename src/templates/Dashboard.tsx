@@ -106,7 +106,7 @@ const DashboardProgramGrid: React.FC = () => {
         </p>
         <button
           onClick={() => navigate("/create")}
-          className="bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-6 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all shadow-lg shadow-red-900/20"
+          className="bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white px-6 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all duration-300 ease-out shadow-lg shadow-red-900/20"
         >
           {t("Crea il Tuo Primo Programma", "Create Your First Program")}
         </button>
@@ -129,7 +129,7 @@ const DashboardProgramGrid: React.FC = () => {
         return (
           <div
             key={p.id + i}
-            className="flex items-center gap-5 p-5 rounded-2xl bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-white/5 hover:border-red-500/15 transition-all group"
+            className="flex items-center gap-5 p-5 rounded-2xl bg-white dark:bg-zinc-950/40 border border-zinc-200 dark:border-white/5 hover:border-red-500/15 transition-all duration-300 ease-out group"
           >
             <div
               className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${lvlCls}`}
@@ -156,7 +156,7 @@ const DashboardProgramGrid: React.FC = () => {
             </div>
             <button
               onClick={() => navigate("/my-workouts")}
-              className="text-[10px] font-black uppercase tracking-wider text-red-500 hover:text-red-400 group-hover:gap-2 gap-1.5 flex items-center transition-all shrink-0"
+              className="text-[10px] font-black uppercase tracking-wider text-red-500 hover:text-red-400 group-hover:gap-2 gap-1.5 flex items-center transition-all duration-300 ease-out shrink-0"
             >
               {t("Apri", "Open")} <ChevronRight size={12} />
             </button>
@@ -276,7 +276,7 @@ const Dashboard: React.FC = () => {
                 { label: t("Giorni di Training", "Training Days"), value: "12", icon: Activity },
                 { label: t("Messaggi AI", "AI Messages"), value: "42", icon: MessageSquare },
               ].map((stat) => (
-                <div key={stat.label} className="card hover:bg-zinc-100 dark:hover:bg-zinc-900/50 transition-colors p-5">
+                <div key={stat.label} className="card hover:bg-zinc-100 dark:hover:bg-zinc-900/50 transition-colors duration-300 ease-out p-5">
                   <stat.icon className="text-red-500 mb-4" size={20} aria-hidden />
                   <p className="text-2xl font-bold text-zinc-900 dark:text-white">{stat.value}</p>
                   <p className="meta-mono mt-1">{stat.label}</p>
@@ -290,7 +290,7 @@ const Dashboard: React.FC = () => {
                 <h2 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-white">{t("I miei programmi", "My programs")}</h2>
                 <Link
                   to="/my-workouts"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-400 transition-colors"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-400 transition-colors duration-300 ease-out"
                 >
                   {t("Vedi tutti", "See all")}
                   <ChevronRight size={14} aria-hidden />
@@ -328,21 +328,21 @@ const Dashboard: React.FC = () => {
                   <li key={item.label}>
                     <Link
                       to={item.path}
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-zinc-900/5 dark:hover:bg-white/5 transition-colors group"
+                      className="flex items-center justify-between p-3 rounded-lg hover:bg-zinc-900/5 dark:hover:bg-white/5 transition-colors duration-300 ease-out group"
                     >
                       <span className="flex items-center gap-3">
                         <item.icon
                           size={16}
-                          className="text-zinc-500 group-hover:text-red-500 transition-colors"
+                          className="text-zinc-500 group-hover:text-red-500 transition-colors duration-300 ease-out"
                           aria-hidden
                         />
-                        <span className="text-sm font-bold text-zinc-600 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                        <span className="text-sm font-bold text-zinc-600 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors duration-300 ease-out">
                           {item.label}
                         </span>
                       </span>
                       <ChevronRight
                         size={14}
-                        className="text-zinc-400 dark:text-zinc-700 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors"
+                        className="text-zinc-400 dark:text-zinc-700 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors duration-300 ease-out"
                         aria-hidden
                       />
                     </Link>

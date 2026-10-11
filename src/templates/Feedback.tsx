@@ -95,11 +95,11 @@ const Feedback: React.FC = () => {
       <div className="container-max max-w-2xl">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors mb-8 group"
+          className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out mb-8 group"
         >
           <ArrowLeft
             size={15}
-            className="group-hover:-translate-x-1 transition-transform"
+            className="group-hover:-translate-x-1 transition-transform duration-300 ease-out"
             aria-hidden
           />
           <span className="meta-mono">Dashboard</span>
@@ -161,7 +161,7 @@ const Feedback: React.FC = () => {
                         setSelectedCategory(cat);
                         setIsDropdownOpen(false);
                       }}
-                      className={`w-full px-4 py-3 text-left text-sm font-bold transition-colors flex items-center justify-between ${
+                      className={`w-full px-4 py-3 text-left text-sm font-bold transition-colors duration-300 ease-out flex items-center justify-between ${
                         selectedCategory.id === cat.id
                           ? "bg-red-600 text-white"
                           : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-900/5 dark:hover:bg-white/5 hover:text-zinc-900 dark:hover:text-white"

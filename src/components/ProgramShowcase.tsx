@@ -25,7 +25,7 @@ const ProgramCard = ({ program, index }: { program: ShowcaseProgram; index: numb
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.08, duration: 0.35 }}
-      className="group relative bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 rounded-xl overflow-hidden flex flex-col h-full hover:border-zinc-300 dark:hover:border-white/25 transition-colors"
+      className="group relative bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 rounded-xl overflow-hidden flex flex-col h-full hover:border-zinc-300 dark:hover:border-white/25 transition-colors duration-300 ease-out"
     >
 
       <Link to="/programs" className="flex flex-col h-full">
@@ -135,7 +135,7 @@ const ProgramShowcase = () => {
               )}
             </p>
           </div>
-          <Link to="/programs" className="shrink-0 inline-flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-white border border-zinc-300 dark:border-white/15 rounded-lg px-5 py-3 hover:border-zinc-500 dark:hover:border-white/30 transition-colors">
+          <Link to="/programs" className="shrink-0 inline-flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-white border border-zinc-300 dark:border-white/15 rounded-lg px-5 py-3 hover:border-zinc-500 dark:hover:border-white/30 transition-colors duration-300 ease-out">
             {t("Tutti i programmi", "All programs")} <ArrowRight size={15} />
           </Link>
         </div>

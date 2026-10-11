@@ -83,7 +83,7 @@ export function PasswordInput({
         type="button"
         onClick={onToggle}
         aria-label={visible ? t("Nascondi password", "Hide password") : t("Mostra password", "Show password")}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out"
       >
         <span className="sr-only">{visible ? t("Nascondi", "Hide") : t("Mostra", "Show")}</span>
         <svg
@@ -191,10 +191,10 @@ export default function AuthShell({
       <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-20 sm:px-6">
         <Link
           to="/"
-          className="absolute top-6 left-6 sm:top-8 sm:left-8 inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors group"
+          className="absolute top-6 left-6 sm:top-8 sm:left-8 inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out group"
         >
           <ArrowLeft
-            className="w-4 h-4 group-hover:-translate-x-1 transition-transform"
+            className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300 ease-out"
             aria-hidden
           />
           {t("Torna alla Home", "Back home")}
@@ -223,7 +223,7 @@ export default function AuthShell({
           <div className="mt-6 text-center">
             <p className="text-zinc-500 dark:text-zinc-400 text-xs">
               {footerLead}{" "}
-              <Link to={footerActionTo} className="text-red-500 font-bold hover:text-red-400 transition-colors">
+              <Link to={footerActionTo} className="text-red-500 font-bold hover:text-red-400 transition-colors duration-300 ease-out">
                 {footerActionLabel}
               </Link>
             </p>

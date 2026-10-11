@@ -436,7 +436,7 @@ const MyWorkouts: React.FC = () => {
                   <button
                     onClick={() => setSearchQuery("")}
                     aria-label={t("Cancella ricerca", "Clear search")}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out"
                   >
                     <XCircle className="w-4 h-4" aria-hidden />
                   </button>
@@ -456,7 +456,7 @@ const MyWorkouts: React.FC = () => {
                     type="button"
                     aria-pressed={filterLevel === f.val}
                     onClick={() => setFilterLevel(filterLevel === f.val ? null : f.val)}
-                    className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-colors border ${
+                    className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-colors duration-300 ease-out border ${
                       filterLevel === f.val
                         ? "bg-red-600 text-white border-red-500"
                         : "bg-white dark:bg-zinc-950/60 text-zinc-500 border-zinc-200 dark:border-white/10 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-400 dark:hover:border-white/25"
@@ -532,7 +532,7 @@ const MyWorkouts: React.FC = () => {
                     exit={{ opacity: 0, y: -12 }}
                     layout
                     transition={{ duration: 0.3, delay: idx * 0.05 }}
-                    className={`relative group card bg-white dark:bg-zinc-900/40 overflow-hidden hover:border-red-500/20 transition-all duration-300 hover:bg-zinc-100 dark:hover:bg-zinc-900/70 ${
+                    className={`relative group card bg-white dark:bg-zinc-900/40 overflow-hidden hover:border-red-500/20 transition-all duration-300 ease-out hover:bg-zinc-100 dark:hover:bg-zinc-900/70 ${
                       viewMode === "list" ? "" : ""
                     }`}
                   >
@@ -566,14 +566,14 @@ const MyWorkouts: React.FC = () => {
                         <div className="flex gap-0.5 shrink-0">
                           <button
                             onClick={() => handleEdit(p.id, programIndex)}
-                            className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-all"
+                            className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-all duration-300 ease-out"
                             title={t("Modifica", "Edit")}
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDelete(p.id, programIndex)}
-                            className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-600/10 rounded-xl transition-all"
+                            className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-600/10 rounded-xl transition-all duration-300 ease-out"
                             title={t("Elimina", "Delete")}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -581,7 +581,7 @@ const MyWorkouts: React.FC = () => {
                           <div className="relative">
                             <button
                               onClick={() => setExportOpenId(isExportOpen ? null : p.id)}
-                              className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                              className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all duration-300 ease-out"
                               title={t("Esporta", "Export")}
                             >
                               <Download className="w-3.5 h-3.5" />
@@ -593,38 +593,38 @@ const MyWorkouts: React.FC = () => {
                                   <div className="p-1.5">
                                     <p className="text-[9px] text-zinc-500 uppercase tracking-wider px-2 py-1 font-bold">{t("Esporta semplice", "Simple export")}</p>
                                     <button onClick={() => handleExport("txt", p)}
-                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">
+                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">
                                       <FileText size={13} className="text-zinc-500" /> TXT
                                     </button>
                                     <button onClick={() => handleExport("csv", p)}
-                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">
+                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">
                                       <FileText size={13} className="text-zinc-500" /> CSV
                                     </button>
                                     <button onClick={() => handleExport("json", p)}
-                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">
+                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">
                                       <FileJson size={13} className="text-zinc-500" /> JSON
                                     </button>
                                     <button onClick={() => handleExport("pdf", p)}
-                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">
+                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">
                                       <Printer size={13} className="text-zinc-500" /> {t("PDF / Stampa", "PDF / Print")}
                                     </button>
                                   </div>
                                   <div className="border-t border-zinc-200 dark:border-white/5 p-1.5">
                                     <p className="text-[9px] text-zinc-500 uppercase tracking-wider px-2 py-1 font-bold">{t("Completo (settimane)", "Full (weeks)")}</p>
                                     <button onClick={() => handleExport("weeks-txt", p)}
-                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">
+                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">
                                       <FileText size={13} className="text-zinc-500" /> TXT
                                     </button>
                                     <button onClick={() => handleExport("weeks-csv", p)}
-                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">
+                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">
                                       <FileText size={13} className="text-zinc-500" /> CSV
                                     </button>
                                     <button onClick={() => handleExport("weeks-json", p)}
-                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">
+                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">
                                       <FileJson size={13} className="text-zinc-500" /> JSON
                                     </button>
                                     <button onClick={() => handleExport("weeks-pdf", p)}
-                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors">
+                                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white rounded-lg transition-colors duration-300 ease-out">
                                       <Printer size={13} className="text-zinc-500" /> {t("PDF / Stampa", "PDF / Print")}
                                     </button>
                                   </div>
@@ -770,7 +770,7 @@ const MyWorkouts: React.FC = () => {
                       {/* Expand / Collapse */}
                       <button
                         onClick={() => setExpandedId(isExpanded ? null : p.id)}
-                        className="w-full mt-1 text-[10px] font-bold text-zinc-600 hover:text-zinc-400 transition-colors flex items-center gap-1 pt-2"
+                        className="w-full mt-1 text-[10px] font-bold text-zinc-600 hover:text-zinc-400 transition-colors duration-300 ease-out flex items-center gap-1 pt-2"
                       >
                         {isExpanded ? (
                           <>
@@ -781,7 +781,7 @@ const MyWorkouts: React.FC = () => {
                           <>
                                 <span
                                   onClick={() => handleEdit(p.id, programIndex)}
-                                  className="text-red-500 hover:text-red-400 text-sm font-bold transition-colors mr-2"
+                                  className="text-red-500 hover:text-red-400 text-sm font-bold transition-colors duration-300 ease-out mr-2"
                                   title={t("Modifica", "Edit")}
                                 >
                                   {t("Modifica", "Edit")}

@@ -247,7 +247,7 @@ const Home: React.FC = () => {
                   {t("Genera il tuo protocollo", "Generate your protocol")}
                   <ArrowRight
                     size={16}
-                    className="group-hover:translate-x-1 transition-transform"
+                    className="group-hover:translate-x-1 transition-transform duration-300 ease-out"
                     aria-hidden
                   />
                 </Button>
@@ -324,7 +324,7 @@ const Home: React.FC = () => {
                 {t("Richiedi accesso", "Request access")}
                 <ArrowRight
                   size={16}
-                  className="group-hover:translate-x-1 transition-transform"
+                  className="group-hover:translate-x-1 transition-transform duration-300 ease-out"
                   aria-hidden
                 />
               </Button>

@@ -591,7 +591,7 @@ function buildDayExercises(
 const GripHandle: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => (
   <div
     {...props}
-    className={`cursor-grab active:cursor-grabbing p-1.5 opacity-0 group-hover:opacity-100 transition-opacity ${props.className || ''}`}
+    className={`cursor-grab active:cursor-grabbing p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out ${props.className || ''}`}
     onClick={(e) => e.stopPropagation()}
   >
     <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" className="text-zinc-500">
@@ -653,7 +653,7 @@ const WorkoutTable: React.FC<WorkoutTableProps> = ({ exercise, exerciseIndex, hi
         onDragEnd={onDragEnd}
       >
       <div
-        className="p-3 sm:p-4 flex items-center justify-between hover:bg-zinc-900/5 dark:hover:bg-white/5 cursor-pointer transition-colors"
+        className="p-3 sm:p-4 flex items-center justify-between hover:bg-zinc-900/5 dark:hover:bg-white/5 cursor-pointer transition-colors duration-300 ease-out"
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center gap-2">
@@ -804,7 +804,7 @@ const WeekTabs: React.FC<WeekTabsProps> = ({ plan, weekIndex, setWeekIndex }) =>
         <button
           key={wk.week}
           onClick={() => setWeekIndex(wi)}
-          className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-300 ease-out ${
             wi === weekIndex
               ? 'bg-red-600 text-zinc-900 dark:text-white shadow-lg shadow-red-900/30'
               : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-300 dark:hover:bg-zinc-700 hover:text-zinc-900 dark:hover:text-white'
@@ -890,8 +890,8 @@ const ProgramContent: React.FC = () => {
       <div className="page-shell px-6 lg:px-8">
         <div className="container-max max-w-5xl">
           <div className="flex items-center justify-between gap-4 mb-6">
-            <Link to="/programs" className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors font-bold text-sm group">
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" aria-hidden />
+            <Link to="/programs" className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out font-bold text-sm group">
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300 ease-out" aria-hidden />
               {t('Torna ai Programmi', 'Back to Programs')}
             </Link>
           </div>
@@ -1088,7 +1088,7 @@ const ProgramContent: React.FC = () => {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-300 ease-out ${
                   activeTab === tab.key
                     ? 'bg-red-600 text-white'
                     : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800'

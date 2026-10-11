@@ -17,9 +17,9 @@ function CartBackLink() {
   return (
     <Link
       to="/programs"
-      className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors font-bold text-sm group"
+      className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out font-bold text-sm group"
     >
-      <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" aria-hidden />
+      <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300 ease-out" aria-hidden />
       {t("Programmi", "Programs")}
     </Link>
   );
@@ -186,7 +186,7 @@ const Cart: React.FC = () => {
               size="sm"
               onClick={handleClearCart}
               onBlur={() => setConfirmClear(false)}
-              className={confirmClear ? "text-red-500" : "text-zinc-500 hover:text-red-500"}
+              className={confirmClear ? "text-red-500" : "text-zinc-500 hover:text-red-500 transition-colors duration-300 ease-out"}
             >
               <Trash2 className="w-4 h-4" aria-hidden />
               {confirmClear ? t("Confermi?", "Confirm?") : t("Svuota", "Clear")}
@@ -220,7 +220,7 @@ const Cart: React.FC = () => {
                     size="sm"
                     onClick={() => removeFromCart(item.id)}
                     ariaLabel={t(`Rimuovi ${item.title} dal carrello`, `Remove ${item.title} from cart`)}
-                    className="w-full sm:w-auto text-zinc-500 hover:text-red-500"
+                    className="w-full sm:w-auto text-zinc-500 hover:text-red-500 transition-colors duration-300 ease-out"
                   >
                     <Trash2 className="w-4 h-4" aria-hidden />
                     <span className="sm:hidden">{t("Rimuovi", "Remove")}</span>
@@ -267,7 +267,7 @@ const Cart: React.FC = () => {
 
                 <Link
                   to="/programs"
-                  className="mt-4 block text-center text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                  className="mt-4 block text-center text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out"
                 >
                   {t("Continua lo shopping", "Continue shopping")}
                 </Link>

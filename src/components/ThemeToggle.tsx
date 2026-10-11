@@ -26,7 +26,7 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
           aria-pressed={theme === value}
           title={label}
           aria-label={label}
-          className={`${size} rounded-lg transition-colors ${
+          className={`${size} rounded-lg transition-colors duration-300 ease-out ${
             theme === value
               ? "bg-zinc-900 text-white dark:bg-white dark:text-black"
               : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"

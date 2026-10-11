@@ -264,7 +264,7 @@ const HowItWorks: React.FC = () => {
                   onMouseEnter={() => setActiveIndex(index)}
                   onFocus={() => setActiveIndex(index)}
                   onClick={() => setActiveIndex(index)}
-                  className={`w-full p-5 rounded-xl border text-left transition-colors duration-150 cursor-pointer flex items-start gap-4 ${
+                  className={`w-full p-5 rounded-xl border text-left transition-colors duration-300 ease-out cursor-pointer flex items-start gap-4 ${
                     isActive
                       ? 'border-red-600/60 bg-zinc-100 dark:bg-zinc-900'
                       : 'border-zinc-200 bg-white hover:border-zinc-400 dark:border-white/10 dark:bg-zinc-950 dark:hover:border-white/25'

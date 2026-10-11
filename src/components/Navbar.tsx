@@ -121,9 +121,9 @@ function Navbar() {
                 className="h-7 w-auto"
                 priority
               />
-              <span className="text-base sm:text-xl font-black tracking-tighter text-zinc-900 group-hover:text-red-500 transition-colors duration-300 dark:text-white">
+              <span className="text-base sm:text-xl font-black tracking-tighter text-zinc-900 group-hover:text-red-500 transition-colors duration-300 ease-out dark:text-white">
                 MAX
-                <span className="text-red-600 group-hover:text-zinc-900 transition-colors duration-300 dark:group-hover:text-white">
+                <span className="text-red-600 group-hover:text-zinc-900 transition-colors duration-300 ease-out dark:group-hover:text-white">
                   THENICS
                 </span>
               </span>
@@ -136,17 +136,17 @@ function Navbar() {
               <Link
                 key={link.name}
                 to={link.to}
-                className="text-[13px] font-medium text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors relative group px-2 py-1"
+                className="text-[13px] font-medium text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out relative group px-2 py-1"
               >
                 {link.name}
-                <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-red-600 transition-all group-hover:w-full"></span>
+                <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-red-600 transition-all duration-300 ease-out group-hover:w-full"></span>
               </Link>
             ))}
 
             {/* Cart Icon */}
             <Link
               to="/cart"
-              className="relative p-1.5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"
+              className="relative p-1.5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all duration-300 ease-out"
             >
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
@@ -201,7 +201,7 @@ function Navbar() {
                         <Link
                           to="/my-program"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
+                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors duration-300 ease-out"
                         >
                           <Layout className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
                           <span className="text-sm text-zinc-600 dark:text-zinc-300">
@@ -211,7 +211,7 @@ function Navbar() {
                         <Link
                           to="/my-workouts"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
+                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors duration-300 ease-out"
                         >
                           <Dumbbell className="w-4 h-4 text-red-500" />
                           <span className="text-sm text-zinc-600 dark:text-zinc-300">
@@ -221,7 +221,7 @@ function Navbar() {
                         <Link
                           to="/create"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
+                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors duration-300 ease-out"
                         >
                           <Plus className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
                           <span className="text-sm text-zinc-600 dark:text-zinc-300">
@@ -231,7 +231,7 @@ function Navbar() {
                         <Link
                           to="/calisthenics-room"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors"
+                          className="flex items-center gap-3 p-3 hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-colors duration-300 ease-out"
                         >
                           <Crown className="w-4 h-4 text-red-500" />
                           <span className="text-sm text-zinc-600 dark:text-zinc-300">
@@ -244,7 +244,7 @@ function Navbar() {
                             logout();
                             navigate("/login");
                           }}
-                          className="w-full flex items-center gap-3 p-3 hover:bg-red-600/10 rounded-xl transition-colors text-left"
+                          className="w-full flex items-center gap-3 p-3 hover:bg-red-600/10 rounded-xl transition-colors duration-300 ease-out text-left"
                         >
 <LogOut className="w-4 h-4 text-red-500" />
                           <span className="text-sm text-red-500">{t("Esci", "Logout")}</span>
@@ -256,7 +256,7 @@ function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="bg-red-600 hover:bg-red-500 text-white px-5 py-2 rounded-xl font-bold text-xs transition-all hover:shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:-translate-y-0.5"
+                className="bg-red-600 hover:bg-red-500 text-white px-5 py-2 rounded-xl font-bold text-xs transition-all duration-300 ease-out hover:shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:-translate-y-0.5"
               >
                 {t("ACCEDI", "LOGIN")}
               </Link>
@@ -267,7 +267,7 @@ function Navbar() {
           <div className="flex nav:hidden items-center gap-2 relative z-50">
             <Link
               to="/cart"
-              className="relative p-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+              className="relative p-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out"
               onClick={() => setIsOpen(false)}
             >
               <ShoppingCart className="w-5 h-5" />
@@ -280,7 +280,7 @@ function Navbar() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white p-2 transition-transform active:scale-90"
+              className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white p-2 transition-transform duration-300 ease-out active:scale-90"
               aria-expanded={isOpen}
             >
               {isOpen ? (
@@ -310,7 +310,7 @@ function Navbar() {
                 <div key={link.name}>
                   <Link
                     to={link.to}
-                    className="block py-3 text-2xl sm:text-3xl font-black text-zinc-900 hover:text-red-500 transition-colors uppercase tracking-tighter dark:text-white"
+                    className="block py-3 text-2xl sm:text-3xl font-black text-zinc-900 hover:text-red-500 transition-colors duration-300 ease-out uppercase tracking-tighter dark:text-white"
                     onClick={() => setIsOpen(false)}
                   >
                     {link.name}
@@ -338,7 +338,7 @@ function Navbar() {
                     <div className="grid grid-cols-2 gap-2.5">
                       <Link
                         to="/create"
-                        className="flex items-center justify-center gap-2 py-3 bg-zinc-900/5 hover:bg-zinc-900/10 text-zinc-900 rounded-xl text-[11px] font-bold border border-zinc-200 dark:border-white/10 transition-all dark:bg-white/5 dark:hover:bg-white/10 dark:text-white"
+                        className="flex items-center justify-center gap-2 py-3 bg-zinc-900/5 hover:bg-zinc-900/10 text-zinc-900 rounded-xl text-[11px] font-bold border border-zinc-200 dark:border-white/10 transition-all duration-300 ease-out dark:bg-white/5 dark:hover:bg-white/10 dark:text-white"
                         onClick={() => setIsOpen(false)}
                       >
                         <Plus size={15} />
@@ -346,7 +346,7 @@ function Navbar() {
                       </Link>
                       <Link
                         to="/my-workouts"
-                        className="flex items-center justify-center gap-2 py-3 bg-red-600/10 hover:bg-red-600/20 text-red-400 rounded-xl text-[11px] font-bold border border-red-500/20 transition-all"
+                        className="flex items-center justify-center gap-2 py-3 bg-red-600/10 hover:bg-red-600/20 text-red-400 rounded-xl text-[11px] font-bold border border-red-500/20 transition-all duration-300 ease-out"
                         onClick={() => setIsOpen(false)}
                       >
                         <Dumbbell size={15} />
@@ -368,7 +368,7 @@ function Navbar() {
                 <div>
                   <Link
                     to="/login"
-                    className="block w-full text-center bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-black text-base uppercase tracking-widest shadow-2xl shadow-red-900/40"
+                    className="block w-full text-center bg-red-600 hover:bg-red-500 text-white py-4 rounded-2xl font-black text-base uppercase tracking-widest shadow-2xl shadow-red-900/40 transition-colors duration-300 ease-out"
                     onClick={() => setIsOpen(false)}
                   >
                     {t("Inizia Ora", "Start Now")}

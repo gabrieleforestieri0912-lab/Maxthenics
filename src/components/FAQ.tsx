@@ -23,7 +23,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ faq, isOpen, onToggle, index }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.06 }}
-      className={`rounded-2xl border transition-all duration-300 ${
+      className={`rounded-2xl border transition-all duration-300 ease-out ${
         isOpen
           ? "bg-red-500/5 border-red-500/20 shadow-[0_0_30px_-10px_rgba(220,38,38,0.2)]"
           : "bg-white dark:bg-zinc-900/30 border-zinc-200 dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 hover:border-zinc-300 dark:hover:border-white/10"
@@ -35,7 +35,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ faq, isOpen, onToggle, index }) => {
       >
         <div className="flex items-center gap-4 min-w-0">
           <div
-            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${
+            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ease-out ${
               isOpen
                 ? "bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.3)]"
                 : "bg-zinc-200 dark:bg-zinc-800 group-hover:bg-zinc-300 dark:group-hover:bg-zinc-700"
@@ -45,7 +45,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ faq, isOpen, onToggle, index }) => {
           </div>
           <div className="min-w-0">
             <span
-              className={`block text-sm sm:text-base font-bold truncate transition-colors duration-300 ${
+              className={`block text-sm sm:text-base font-bold truncate transition-colors duration-300 ease-out ${
                 isOpen ? "text-zinc-900 dark:text-white" : "text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white"
               }`}
             >
@@ -165,7 +165,7 @@ const FAQ = () => {
             </p>
             <Link
               to="/feedback"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black rounded-xl text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-lg shadow-red-900/30"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white font-black rounded-xl text-xs uppercase tracking-widest transition-all duration-300 ease-out hover:scale-105 active:scale-95 shadow-lg shadow-red-900/30"
             >
               <Sparkles size={14} />
               {t("Contattaci", "Contact us")}

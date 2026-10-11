@@ -100,7 +100,7 @@ function CodeBlock({ language, code }: { language?: string; code: string }) {
         <button
           type="button"
           onClick={copy}
-          className="meta-mono flex items-center gap-1.5 rounded-lg px-2 py-1 transition-colors hover:text-zinc-900 hover:dark:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+          className="meta-mono flex items-center gap-1.5 rounded-lg px-2 py-1 transition-colors duration-300 ease-out hover:text-zinc-900 hover:dark:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
         >
           {copied ? (
             <>

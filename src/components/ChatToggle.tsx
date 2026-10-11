@@ -223,7 +223,7 @@ export default function ChatToggle() {
               [isCornerRight ? "right" : "left"]: GAP,
             }}
           >
-            <div className="relative bg-white/95 dark:bg-zinc-950/95 border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white text-xs font-medium px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-xl flex items-center gap-2.5 max-w-[260px] hover:border-red-500/40 transition-colors">
+            <div className="relative bg-white/95 dark:bg-zinc-950/95 border border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white text-xs font-medium px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-xl flex items-center gap-2.5 max-w-[260px] hover:border-red-500/40 transition-colors duration-300 ease-out">
               <div className="p-1.5 rounded-lg bg-red-500/10 text-red-500 shrink-0">
                 <Bot size={15} />
               </div>
@@ -246,7 +246,7 @@ export default function ChatToggle() {
         onMouseDown={handleMouseDown}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="fixed z-50 rounded-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-red-500/40 transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950"
+        className="fixed z-50 rounded-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-red-500/40 transition-colors duration-300 ease-out select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950"
         style={{
           width: BTN_SIZE,
           height: BTN_SIZE,

@@ -207,12 +207,12 @@ const StepProgress: React.FC<StepProgressProps> = ({ step, setStep }) => {
           key={s.n}
           type="button"
           onClick={() => s.n <= step && setStep(s.n)}
-          className={`flex items-center gap-4 w-full text-left transition-all group ${
+          className={`flex items-center gap-4 w-full text-left transition-all duration-300 ease-out group ${
             s.n > step ? "opacity-40 cursor-default" : "cursor-pointer hover:opacity-100"
           }`}
         >
           <div
-            className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm transition-all shrink-0 ${
+            className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm transition-all duration-300 ease-out shrink-0 ${
               done
                 ? "bg-red-600 text-white shadow-lg shadow-red-900/30"
                 : active
@@ -330,7 +330,7 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
           return (
             <div
               key={i}
-              className="group bg-white dark:bg-zinc-900/60 backdrop-blur-sm p-5 rounded-2xl border border-zinc-200 dark:border-white/10 hover:border-red-500/25 transition-all duration-300 hover:bg-zinc-100 dark:hover:bg-zinc-900/80"
+              className="group bg-white dark:bg-zinc-900/60 backdrop-blur-sm p-5 rounded-2xl border border-zinc-200 dark:border-white/10 hover:border-red-500/25 transition-all duration-300 ease-out hover:bg-zinc-100 dark:hover:bg-zinc-900/80"
             >
               {/* Header row */}
               <div className="flex justify-between items-start gap-3">
@@ -356,17 +356,17 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
                     {p.goals ? `"${p.goals.length > 60 ? p.goals.slice(0, 60) + "..." : p.goals}"` : t("Senza obiettivi", "No goals")}
                   </p>
                 </div>
-                <div className="flex gap-0.5 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-0.5 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 ease-out">
                   <button
                     onClick={() => handleEdit(i)}
-                    className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-all"
+                    className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-900/5 dark:hover:bg-white/5 rounded-xl transition-all duration-300 ease-out"
                     title={t("Modifica programma", "Edit program")}
                   >
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => handleDelete(i)}
-                    className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-red-500 hover:bg-red-600/10 rounded-xl transition-all"
+                    className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-red-500 hover:bg-red-600/10 rounded-xl transition-all duration-300 ease-out"
                     title={t("Elimina programma", "Delete program")}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -374,7 +374,7 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
                   <div className="relative">
                     <button
                       onClick={() => setOpenExportIdx(openExportIdx === i ? null : i)}
-                      className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                      className="p-2 text-zinc-600 dark:text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all duration-300 ease-out"
                       title={t("Esporta", "Export")}
                     >
                       <Download className="w-3.5 h-3.5" />
@@ -385,21 +385,21 @@ const SavedProgramsPanel: React.FC<SavedProgramsPanelProps> = ({
                         <div className="absolute right-0 top-full mt-1 z-50 w-44 bg-zinc-200 dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl shadow-2xl overflow-hidden">
                           <button
                             onClick={() => handleExport("txt", p)}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out"
                           >
                             <FileText size={14} className="text-zinc-500" />
                             {t("Esporta TXT", "Export TXT")}
                           </button>
                           <button
                             onClick={() => handleExport("json", p)}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out"
                           >
                             <FileJson size={14} className="text-zinc-500" />
                             {t("Esporta JSON", "Export JSON")}
                           </button>
                           <button
                             onClick={() => handleExport("pdf", p)}
-                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out"
                           >
                             <Printer size={14} className="text-zinc-500" />
                             {t("Stampa / PDF", "Print / PDF")}
@@ -806,7 +806,7 @@ const Create: React.FC = () => {
           <p className="text-zinc-500 text-sm mb-6">{t("Devi accedere per generare il tuo programma personalizzato.", "You need to log in to generate your custom program.")}</p>
           <Link
             to="/login"
-            className="inline-block px-8 py-3 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-900/30"
+            className="inline-block px-8 py-3 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 ease-out shadow-lg shadow-red-900/30"
           >
             {t("Accedi", "Log in")}
           </Link>
@@ -843,7 +843,7 @@ const Create: React.FC = () => {
                     key={g.val}
                     type="button"
                     onClick={() => setGender(g.val)}
-                    className={`p-3.5 rounded-2xl border transition-all text-center ${
+                    className={`p-3.5 rounded-2xl border transition-all duration-300 ease-out text-center ${
                       gender === g.val
                         ? "bg-red-600/10 border-red-600/40 shadow-[0_0_16px_rgba(220,38,38,0.1)]"
                         : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
@@ -1038,7 +1038,7 @@ const Create: React.FC = () => {
                     key={exp.val}
                     type="button"
                     onClick={() => setExperience(exp.val)}
-                    className={`flex-1 py-4 rounded-2xl border transition-all text-center group ${
+                    className={`flex-1 py-4 rounded-2xl border transition-all duration-300 ease-out text-center group ${
                       experience === exp.val
                         ? "bg-red-600/12 border-red-600/40 shadow-[0_0_20px_rgba(220,38,38,0.1)]"
                         : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
@@ -1046,12 +1046,12 @@ const Create: React.FC = () => {
                   >
                     <exp.icon
                       size={22}
-                      className={`mx-auto mb-1.5 transition-colors ${
+                      className={`mx-auto mb-1.5 transition-colors duration-300 ease-out ${
                         exp.color
                       } ${experience === exp.val ? "scale-110" : "opacity-50 group-hover:opacity-80"}`}
                       aria-hidden
                     />
-                    <p className={`text-xs font-bold transition-colors ${experience === exp.val ? "text-zinc-900 dark:text-white" : "text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"}`}>
+                    <p className={`text-xs font-bold transition-colors duration-300 ease-out ${experience === exp.val ? "text-zinc-900 dark:text-white" : "text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"}`}>
                       {t(exp.label.it, exp.label.en)}
                     </p>
                     <p className="text-[10px] text-zinc-600 mt-0.5">{t(exp.desc.it, exp.desc.en)}</p>
@@ -1128,7 +1128,7 @@ const Create: React.FC = () => {
                       key={d.val}
                       type="button"
                       onClick={() => setSessionDuration(d.val)}
-                      className={`flex-1 py-3.5 rounded-2xl border transition-all text-center ${
+                      className={`flex-1 py-3.5 rounded-2xl border transition-all duration-300 ease-out text-center ${
                         sessionDuration === d.val
                           ? "bg-red-600/12 border-red-600/40 shadow-[0_0_16px_rgba(220,38,38,0.1)]"
                           : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
@@ -1155,7 +1155,7 @@ const Create: React.FC = () => {
                     key={tr.val}
                     type="button"
                     onClick={() => setTrainingType(tr.val)}
-                    className={`p-3 rounded-2xl border-2 transition-all text-center group ${
+                    className={`p-3 rounded-2xl border-2 transition-all duration-300 ease-out text-center group ${
                       trainingType === tr.val
                         ? "bg-red-600/10 border-red-600/40 shadow-[0_0_20px_rgba(220,38,38,0.12)]"
                         : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
@@ -1163,7 +1163,7 @@ const Create: React.FC = () => {
                   >
                     <tr.icon
                       size={20}
-                      className={`mx-auto mb-1 transition-colors ${
+                      className={`mx-auto mb-1 transition-colors duration-300 ease-out ${
                         trainingType === tr.val
                           ? "text-red-500"
                           : "text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"
@@ -1190,7 +1190,7 @@ const Create: React.FC = () => {
                     key={eq.val}
                     type="button"
                     onClick={() => setEquipment(eq.val)}
-                    className={`p-3 rounded-2xl border transition-all text-center group ${
+                    className={`p-3 rounded-2xl border transition-all duration-300 ease-out text-center group ${
                       equipment === eq.val
                         ? "bg-red-600/10 border-red-600/40 shadow-[0_0_16px_rgba(220,38,38,0.1)]"
                         : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
@@ -1221,7 +1221,7 @@ const Create: React.FC = () => {
                     key={opt.value}
                     type="button"
                     onClick={() => setIntensity(opt.value)}
-                    className={`p-4 rounded-2xl border transition-all text-left group ${
+                    className={`p-4 rounded-2xl border transition-all duration-300 ease-out text-left group ${
                       intensity === opt.value
                         ? "bg-red-600/10 border-red-600/40 shadow-[0_0_20px_rgba(220,38,38,0.1)]"
                         : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
@@ -1266,15 +1266,15 @@ const Create: React.FC = () => {
                     key={opt.val}
                     type="button"
                     onClick={() => setFocus(opt.val)}
-                    className={`p-4 rounded-2xl border-2 transition-all text-center relative overflow-hidden group ${
+                    className={`p-4 rounded-2xl border-2 transition-all duration-300 ease-out text-center relative overflow-hidden group ${
                       focus === opt.val ? "border-red-600/50 shadow-lg shadow-red-900/10" : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/15"
                     }`}
                   >
-                    <div className={`absolute inset-0 bg-linear-to-br ${opt.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
+                    <div className={`absolute inset-0 bg-linear-to-br ${opt.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out`} />
                     <div className="relative z-10">
                       <opt.icon
                         size={20}
-                        className={`mb-1.5 transition-colors ${
+                        className={`mb-1.5 transition-colors duration-300 ease-out ${
                           focus === opt.val
                             ? "text-red-500"
                             : "text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"
@@ -1319,7 +1319,7 @@ const Create: React.FC = () => {
                       key={bf.label.it}
                       type="button"
                       onClick={() => toggleBodyFocus(label)}
-                      className={`p-3 rounded-xl border transition-all text-center ${
+                      className={`p-3 rounded-xl border transition-all duration-300 ease-out text-center ${
                         active
                           ? "bg-red-600/12 border-red-600/40 text-zinc-900 dark:text-white shadow-[0_0_12px_rgba(220,38,38,0.1)]"
                           : "bg-white dark:bg-zinc-950/40 border-zinc-200 dark:border-white/5 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-white/10"
@@ -1327,7 +1327,7 @@ const Create: React.FC = () => {
                     >
                       <bf.icon
                         size={16}
-                        className={`mx-auto transition-colors ${
+                        className={`mx-auto transition-colors duration-300 ease-out ${
                           active
                             ? "text-red-500"
                             : "text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300"
@@ -1599,7 +1599,7 @@ const Create: React.FC = () => {
                       <button
                         type="button"
                         onClick={prevStep}
-                        className="flex-1 bg-zinc-200 dark:bg-zinc-800/60 hover:bg-zinc-300 dark:hover:bg-zinc-700/80 text-zinc-900 dark:text-white py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 border border-zinc-200 dark:border-white/5"
+                        className="flex-1 bg-zinc-200 dark:bg-zinc-800/60 hover:bg-zinc-300 dark:hover:bg-zinc-700/80 text-zinc-900 dark:text-white py-4 rounded-2xl font-bold transition-all duration-300 ease-out flex items-center justify-center gap-2 border border-zinc-200 dark:border-white/5"
                       >
                         <ChevronLeft className="w-5 h-5" />
                         {t("Indietro", "Back")}
@@ -1610,7 +1610,7 @@ const Create: React.FC = () => {
                         type="button"
                         onClick={nextStep}
                         disabled={!canNext}
-                        className={`flex-1 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white py-4 rounded-2xl font-black transition-all shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed ${
+                        className={`flex-1 bg-linear-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white py-4 rounded-2xl font-black transition-all duration-300 ease-out shadow-lg shadow-red-900/20 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed ${
                           step === totalSteps - 1 ? "from-red-600 via-orange-600 to-red-600 bg-[length:200%_100%] animate-gradient" : ""
                         }`}
                       >
@@ -1621,7 +1621,7 @@ const Create: React.FC = () => {
                       <button
                         type="submit"
                         disabled={isGenerating}
-                        className="w-full bg-linear-to-r from-red-600 via-orange-600 to-red-600 bg-[length:200%_100%] hover:bg-right text-white py-6 rounded-2xl font-black text-lg transition-all hover:scale-[1.01] shadow-2xl shadow-red-900/40 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed animate-gradient"
+                        className="w-full bg-linear-to-r from-red-600 via-orange-600 to-red-600 bg-[length:200%_100%] hover:bg-right text-white py-6 rounded-2xl font-black text-lg transition-all duration-300 ease-out hover:scale-[1.01] shadow-2xl shadow-red-900/40 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed animate-gradient"
                       >
                         {isGenerating ? (
                           <>

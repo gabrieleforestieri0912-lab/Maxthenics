@@ -15,3 +15,4 @@ Dopo ogni commit, eseguire sempre `git push` sulla remote di tracking corrente.
 - Niente emoji come icone: usare solo icone `lucide-react`.
 - Usare i token canonici di `src/app/globals.css` (`card`, `card-hover`, `btn-*`, `page-title`, `eyebrow`, `meta-mono`, `prose-*`) e i componenti condivisi (`Button`, `PageHeader`, `SectionHeading`, `EmptyState`, `MetaPill`, `AuthShell`, `LegalPage`) invece di riscrivere le classi a mano.
 - In Tailwind v4 usare `bg-linear-*` (non `bg-gradient-to-*`).
+- Hover unificato: ogni stato `hover:`/`group-hover:` deve avere `transition-smooth` (300ms ease-out, token canonico in `globals.css`); solo gli zoom su immagini usano `duration-500/700 ease-out`. Mai transizioni senza duration/ease, mai `transition` che includa transform su elementi mossi da framer-motion o drag.

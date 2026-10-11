@@ -92,7 +92,7 @@ function Footer() {
                 alt="Maxthenics"
                 width={32}
                 height={32}
-                className="h-8 sm:h-10 w-auto group-hover:scale-110 transition-transform duration-500"
+                className="h-8 sm:h-10 w-auto group-hover:scale-110 transition-transform duration-500 ease-out"
                 priority
               />
               <span className="text-xl sm:text-2xl font-black tracking-tighter text-zinc-900 dark:text-white">
@@ -119,7 +119,7 @@ function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white border border-zinc-200 flex items-center justify-center text-zinc-500 hover:text-zinc-900 hover:border-zinc-400 transition-colors group dark:bg-black dark:border-white/10 dark:hover:text-white dark:hover:border-white/30"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white border border-zinc-200 flex items-center justify-center text-zinc-500 hover:text-zinc-900 hover:border-zinc-400 transition-colors duration-300 ease-out group dark:bg-black dark:border-white/10 dark:hover:text-white dark:hover:border-white/30"
                 >
                   {social.icon}
                 </a>
@@ -137,12 +137,12 @@ function Footer() {
                 <li key={link.name}>
                   <Link
                     to={link.to}
-                    className="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors flex items-center group"
+                    className="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out flex items-center group"
                   >
                     {link.name}
                     <ArrowUpRight
                       size={10}
-                      className="ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all"
+                      className="ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all duration-300 ease-out"
                     />
                   </Link>
                 </li>
@@ -159,12 +159,12 @@ function Footer() {
                 <li key={link.name}>
                   <Link
                     to={link.to}
-                    className="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors flex items-center group"
+                    className="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out flex items-center group"
                   >
                     {link.name}
                     <ArrowUpRight
                       size={10}
-                      className="ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all"
+                      className="ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all duration-300 ease-out"
                     />
                   </Link>
                 </li>
@@ -181,12 +181,12 @@ function Footer() {
                 <li key={link.name}>
                   <Link
                     to={link.to}
-                    className="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors flex items-center group"
+                    className="text-xs sm:text-sm text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors duration-300 ease-out flex items-center group"
                   >
                     {link.name}
                     <ArrowUpRight
                       size={10}
-                      className="ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all"
+                      className="ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all duration-300 ease-out"
                     />
                   </Link>
                 </li>

@@ -111,7 +111,7 @@ const Login: React.FC = () => {
           label={t("Password", "Password")}
           htmlFor="password"
           action={
-            <Link to="/feedback" className="text-xs text-red-500 hover:text-red-400 transition-colors">
+            <Link to="/feedback" className="text-xs text-red-500 hover:text-red-400 transition-colors duration-300 ease-out">
               {t("Dimenticata?", "Forgot?")}
             </Link>
           }
