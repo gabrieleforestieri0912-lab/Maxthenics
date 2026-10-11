@@ -28,16 +28,6 @@ const ProgramCard = ({ program, index }: { program: ShowcaseProgram; index: numb
       className="group relative bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/10 rounded-xl overflow-hidden flex flex-col h-full hover:border-zinc-300 dark:hover:border-white/25 transition-colors"
     >
 
-      {program.price === 0 ? (
-        <div className="absolute top-4 right-4 z-10 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[11px] font-bold px-2.5 py-1 rounded-md">
-          {t("Gratis", "Free")}
-        </div>
-      ) : (
-        <div className="absolute top-4 right-4 z-10 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-white/15 text-zinc-600 dark:text-zinc-200 text-[11px] font-mono px-2.5 py-1 rounded-md">
-          €{program.price}
-        </div>
-      )}
-
       <Link to="/programs" className="flex flex-col h-full">
         {/* Image Container */}
         <div className="relative h-52 overflow-hidden border-b border-zinc-200 dark:border-white/10">
