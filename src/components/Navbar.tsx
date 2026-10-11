@@ -32,7 +32,7 @@ function Navbar() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { cartCount } = useCart();
 
@@ -158,7 +158,9 @@ function Navbar() {
               )}
             </Link>
 
-            {user ? (
+            {authLoading ? (
+              <div aria-hidden="true" className="h-8 w-[84px] animate-pulse rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+            ) : user ? (
               <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -320,7 +322,9 @@ function Navbar() {
             </div>
 
             <div className="sticky bottom-0 px-6 pb-8 space-y-4 bg-zinc-50 dark:bg-zinc-950">
-              {user ? (
+              {authLoading ? (
+                <div aria-hidden="true" className="h-[132px] animate-pulse rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+              ) : user ? (
                   <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-10 h-10 bg-zinc-200 dark:bg-zinc-800 rounded-xl flex items-center justify-center border border-zinc-300 dark:border-white/5 shrink-0">
