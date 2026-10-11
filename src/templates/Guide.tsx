@@ -410,15 +410,8 @@ const Guide: React.FC = () => {
                 })}
               </ul>
             </nav>
-
-            <div className="p-4 border-t border-zinc-200 dark:border-white/10 shrink-0">
-              <Button to="/programs" size="sm" className="w-full">
-                {t("Vedi i programmi", "See programs")}
-                <ChevronRight className="w-4 h-4" aria-hidden />
-              </Button>
-            </div>
-          </div>
-        </aside>
+        </div>
+      </aside>
 
         {!isSidebarOpen && (
           <button
