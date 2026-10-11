@@ -2,8 +2,8 @@
 /* eslint-disable react-hooks/immutability */
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   Crown,
@@ -47,34 +47,37 @@ interface Plan {
   highlight?: boolean;
 }
 
-const StepPopup = ({ item, index, anchorEl, onClose }: {
+const StepPopup = ({ item, index, anchorEl, onEnter, onClose }: {
   item: any;
   index: number;
   anchorEl: HTMLDivElement;
+  onEnter: () => void;
   onClose: () => void;
 }) => {
-  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
 
-  useEffect(() => {
+  // Posizionato prima del paint: niente salto dal primo frame.
+  useLayoutEffect(() => {
     const rect = anchorEl.getBoundingClientRect();
     const gap = 16;
-    if (index === 2) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPos({ top: rect.top, left: rect.left - gap - 260 });
-    } else {
-      setPos({ top: rect.top, left: rect.right + gap });
-    }
+    const width = 260;
+    const rawLeft = index === 2 ? rect.left - gap - width : rect.right + gap;
+    const left = Math.max(12, Math.min(rawLeft, window.innerWidth - width - 12));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPos({ top: Math.max(12, rect.top), left });
   }, [anchorEl, index]);
+
+  if (!pos) return null;
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: index === 2 ? -10 : 10, scale: 0.97 }}
+      initial={{ opacity: 0, x: index === 2 ? -12 : 12, scale: 0.97 }}
       animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: index === 2 ? -10 : 10, scale: 0.97 }}
-      transition={{ duration: 0.2 }}
+      exit={{ opacity: 0, x: index === 2 ? -12 : 12, scale: 0.97 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
       className="fixed z-50 hidden lg:block"
       style={{ top: pos.top, left: pos.left, width: 260 }}
-      onMouseEnter={() => {}} // keep visible when inside popup
+      onMouseEnter={onEnter}
       onMouseLeave={onClose}
     >
       <div className="bg-white dark:bg-zinc-900 border border-red-500/20 rounded-2xl p-5 shadow-2xl shadow-black/60">
@@ -113,6 +116,21 @@ const CalisthenicsRoom: React.FC = () => {
   const [hoveredCardEl, setHoveredCardEl] = useState<HTMLDivElement | null>(null);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const closeTimer = useRef<number | null>(null);
+
+  // Chiusura ritardata: attraversare lo spazio tra card e popup non fa flicker.
+  const openStep = (i: number) => {
+    if (closeTimer.current) {
+      window.clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+    setHoveredStep(i);
+  };
+
+  const scheduleClose = () => {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setHoveredStep(null), 140);
+  };
 
   useEffect(() => {
     if (hoveredStep !== null) {
@@ -121,6 +139,12 @@ const CalisthenicsRoom: React.FC = () => {
       setHoveredCardEl(null);
     }
   }, [hoveredStep]);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    };
+  }, []);
 
   const courseModules: Module[] = [
     {
@@ -394,8 +418,8 @@ const CalisthenicsRoom: React.FC = () => {
                           key={i}
                           ref={(el) => { cardRefs.current[i] = el; }}
                           className="relative"
-                          onMouseEnter={() => setHoveredStep(i)}
-                          onMouseLeave={() => setHoveredStep(null)}
+                          onMouseEnter={() => openStep(i)}
+                          onMouseLeave={scheduleClose}
                         >
                           <motion.div
                             initial={{ opacity: 0, y: 30 }}
@@ -403,8 +427,8 @@ const CalisthenicsRoom: React.FC = () => {
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.15 }}
                             tabIndex={0}
-                            onFocus={() => setHoveredStep(i)}
-                            onBlur={() => setHoveredStep(null)}
+                            onFocus={() => openStep(i)}
+                            onBlur={scheduleClose}
                             className="group relative card card-hover p-6 md:p-8 cursor-default hover:border-red-500/50 hover:shadow-[0_20px_50px_-12px_rgba(220,38,38,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                           >
                             <div className="card-lift" />
@@ -413,30 +437,33 @@ const CalisthenicsRoom: React.FC = () => {
                                 <span className="meta-mono text-base group-hover:text-red-500 transition-colors">{item.step}</span>
                                 <span className="meta-mono group-hover:text-red-500/80 transition-colors">{item.brief}</span>
                               </div>
-                              <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5 text-red-500 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 group-hover:shadow-lg group-hover:shadow-red-900/40 transition-all duration-300">
+                              <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5 text-red-500 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-500 group-hover:shadow-lg group-hover:shadow-red-900/40 transition-all duration-300 ease-out">
                                 {item.icon}
                               </div>
                               <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2 tracking-tight">{item.title}</h3>
                               <p className="body-copy text-sm">{item.desc}</p>
-                              <span className="mt-5 flex items-center gap-1.5 meta-mono opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 transition-all duration-300">
+                              <span className="mt-5 flex items-center gap-1.5 meta-mono opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 transition-all duration-300 ease-out">
                                 {t("Passa sopra per i dettagli", "Hover for details")} <ChevronRight size={12} aria-hidden />
                               </span>
                             </div>
-                            <span aria-hidden className="absolute bottom-0 left-6 right-6 h-0.5 rounded-full bg-linear-to-r from-red-600 to-orange-500 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+                            <span aria-hidden className="absolute bottom-0 left-6 right-6 h-0.5 rounded-full bg-linear-to-r from-red-600 to-orange-500 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out" />
                           </motion.div>
                         </div>
                       ))}
                     </div>
 
                     {/* Floating popup positioned next to hovered card */}
-                    {hoveredStep !== null && hoveredCardEl && (
-                      <StepPopup
-                        item={steps[hoveredStep]}
-                        index={hoveredStep}
-                        anchorEl={hoveredCardEl}
-                        onClose={() => setHoveredStep(null)}
-                      />
-                    )}
+                    <AnimatePresence>
+                      {hoveredStep !== null && hoveredCardEl && (
+                        <StepPopup
+                          item={steps[hoveredStep]}
+                          index={hoveredStep}
+                          anchorEl={hoveredCardEl}
+                          onEnter={() => openStep(hoveredStep)}
+                          onClose={scheduleClose}
+                        />
+                      )}
+                    </AnimatePresence>
                   </>
                 );
               })()}
@@ -471,10 +498,10 @@ const CalisthenicsRoom: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.15 }}
-                  className="group transition-transform duration-300 hover:-translate-y-1 focus-within:-translate-y-1"
+                  className="group transition-transform duration-300 ease-out hover:-translate-y-1 focus-within:-translate-y-1"
                 >
                   <div className="text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-white dark:bg-zinc-900/80 border hairline flex items-center justify-center mx-auto mb-6 group-hover:border-red-500/50 group-hover:bg-red-600/[0.08] dark:group-hover:bg-red-600/10 group-hover:shadow-[0_16px_40px_-12px_rgba(220,38,38,0.45)] transition-all duration-300">
+                    <div className="w-16 h-16 rounded-2xl bg-white dark:bg-zinc-900/80 border hairline flex items-center justify-center mx-auto mb-6 group-hover:border-red-500/50 group-hover:bg-red-600/[0.08] dark:group-hover:bg-red-600/10 group-hover:shadow-[0_16px_40px_-12px_rgba(220,38,38,0.45)] transition-all duration-300 ease-out">
                       {React.cloneElement(item.icon as any, { size: 32, className: "text-red-500 group-hover:scale-110 transition-transform duration-300" })}
                     </div>
                     <h3 className="text-lg font-bold mb-2 tracking-tight text-zinc-900 dark:text-white">{item.title}</h3>
@@ -512,9 +539,9 @@ const CalisthenicsRoom: React.FC = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.04 }}
-                      className="flex items-start gap-4 p-4 rounded-xl bg-zinc-900/[0.02] dark:bg-white/[0.02] border hairline hover:border-red-500/30 hover:bg-red-500/[0.07] hover:shadow-lg hover:shadow-red-900/10 hover:-translate-y-0.5 transition-all duration-300 group"
+                      className="flex items-start gap-4 p-4 rounded-xl bg-zinc-900/[0.02] dark:bg-white/[0.02] border hairline hover:border-red-500/30 hover:bg-red-500/[0.07] hover:shadow-lg hover:shadow-red-900/10 hover:-translate-y-0.5 transition-all duration-300 ease-out group"
                     >
-                      <div className="w-7 h-7 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 group-hover:shadow-md transition-transform duration-300">
+                      <div className="w-7 h-7 rounded-full bg-green-500/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 group-hover:shadow-md transition-transform duration-300 ease-out">
                         <CheckCircle size={16} className="text-green-500" />
                       </div>
                       <span className="text-sm font-bold leading-snug text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
@@ -545,7 +572,7 @@ const CalisthenicsRoom: React.FC = () => {
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
                           transition={{ delay: 0.2 + i * 0.1 }}
-                          className="flex items-center gap-4 p-5 card group hover:-translate-y-0.5 hover:border-amber-500/40 hover:bg-amber-500/[0.07] hover:shadow-lg hover:shadow-amber-900/20 transition-all duration-300"
+                          className="flex items-center gap-4 p-5 card group hover:-translate-y-0.5 hover:border-amber-500/40 hover:bg-amber-500/[0.07] hover:shadow-lg hover:shadow-amber-900/20 transition-all duration-300 ease-out"
                         >
                           <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                             <Crown size={20} className="text-amber-500" />
@@ -667,7 +694,7 @@ const CalisthenicsRoom: React.FC = () => {
                   transition={{ delay: i * 0.12 }}
                   className={`relative card card-hover flex flex-col justify-between overflow-hidden group ${
                     plan.highlight
-                      ? "border-red-400 bg-red-600 shadow-2xl shadow-red-900/40 hover:shadow-red-900/60 md:scale-105 z-10 transition-shadow duration-300"
+                      ? "border-red-400 bg-red-600 shadow-2xl shadow-red-900/40 hover:shadow-red-900/60 md:scale-105 z-10 transition-shadow duration-300 ease-out"
                       : "hover:shadow-[0_24px_60px_-16px_rgba(220,38,38,0.4)]"
                   }`}
                 >
@@ -765,7 +792,7 @@ const CalisthenicsRoom: React.FC = () => {
                       }`}
                     >
                       {plan.cta}
-                      <ArrowRight size={16} aria-hidden className="transition-transform duration-300 group-hover:translate-x-1" />
+                      <ArrowRight size={16} aria-hidden className="transition-transform duration-300 ease-out group-hover:translate-x-1" />
                     </button>
                   </div>
                 </motion.div>
@@ -987,7 +1014,7 @@ const CalisthenicsRoom: React.FC = () => {
                     {module.lessons.map((lesson, lessonIndex) => (
                       <div
                         key={lessonIndex}
-                        className="flex items-center justify-between p-4 rounded-xl border hairline bg-zinc-100 dark:bg-zinc-950/40 hover:bg-zinc-200 dark:hover:bg-zinc-950/70 hover:border-red-500/30 hover:translate-x-1 transition-all duration-200 group/lesson"
+                        className="flex items-center justify-between p-4 rounded-xl border hairline bg-zinc-100 dark:bg-zinc-950/40 hover:bg-zinc-200 dark:hover:bg-zinc-950/70 hover:border-red-500/30 hover:translate-x-1 transition-all duration-300 ease-out group/lesson"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-lg bg-red-600/10 flex items-center justify-center text-red-500 group-hover/lesson:bg-red-600 group-hover/lesson:text-white transition-colors">

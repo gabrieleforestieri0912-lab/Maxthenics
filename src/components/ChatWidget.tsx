@@ -3,10 +3,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
-  X, Trash2, ArrowRight, History, Plus, ChevronDown,
+  X, Trash2, History, Plus, ChevronDown,
   Copy, Check, Pencil, RefreshCw, Download, CheckCheck,
-  Sparkles, CornerDownRight, Eye,
+  CornerDownRight, Eye,
 } from "lucide-react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useChatContext, IMessage, Corner } from "../context/ChatContext";
@@ -311,9 +312,13 @@ const ChatWidgetContent = () => {
 
                 <div className="relative flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-linear-to-br from-red-600 to-orange-500 flex items-center justify-center shadow-lg shadow-red-900/30">
-                      <Sparkles size={15} className="text-white" />
-                    </div>
+                    <Image
+                      src="/maxthenics.png"
+                      alt="Sthenox"
+                      width={32}
+                      height={32}
+                      className="h-8 w-8 rounded-xl object-contain shrink-0"
+                    />
                     <div className="flex flex-col">
                       <span className="text-[13px] font-bold text-zinc-900 dark:text-white tracking-tight leading-none">Sthenox AI</span>
                       <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-[0.15em] mt-0.5" role="status">
@@ -387,29 +392,30 @@ const ChatWidgetContent = () => {
                 )}
                 {messages.length === 0 && !isLoading ? (
                   <div className="flex flex-col items-center justify-center h-full text-center px-4">
-                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-                      <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-red-600/20 to-orange-500/20 border border-red-500/10 flex items-center justify-center mx-auto mb-5">
-                        <Sparkles size={28} className="text-red-500" />
-                      </div>
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+                      <Image
+                        src="/maxthenics.png"
+                        alt="Sthenox"
+                        width={64}
+                        height={64}
+                        className="h-14 w-14 rounded-2xl object-contain mx-auto mb-4"
+                      />
                       <h2 className="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight mb-2">
                         {t("Come posso", "How can I")} <span className="text-red-500">{t("aiutarti", "help you")}</span>?
                       </h2>
                       <p className="text-zinc-500 text-xs font-medium">{t("Scegli un argomento o scrivi la tua domanda", "Pick a topic or write your question")}</p>
                     </motion.div>
-                    <div className="grid grid-cols-1 gap-2 w-full max-w-xs">
+                    <div className="grid grid-cols-2 gap-1.5 w-full max-w-[300px]">
                       {QUICK_SUGGESTIONS.map((suggestion) => (
                         <motion.button key={suggestion}
                           onClick={() => { if (!isLoading && !isStreaming && !isOffline) sendMessage(t(suggestion, suggestion)); }}
                           disabled={isLoading || isStreaming || isOffline}
-                          className="w-full p-3 bg-zinc-900/[0.03] dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.06] rounded-2xl text-left text-[11px] font-bold text-zinc-500 hover:text-zinc-900 hover:border-red-500/30 hover:bg-red-600/[0.04] dark:hover:text-white transition-colors flex items-center justify-between group disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                          className="p-2 bg-zinc-900/[0.03] dark:bg-white/[0.03] border border-zinc-200 dark:border-white/[0.06] rounded-xl text-left text-[10px] leading-snug font-bold text-zinc-500 hover:text-zinc-900 hover:border-red-500/30 hover:bg-red-600/[0.04] dark:hover:text-white transition-colors duration-200 ease-out flex items-center gap-1.5 group disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                         >
-                          <span className="flex items-center gap-2.5">
-                            <span className="w-5 h-5 rounded-lg bg-zinc-900/[0.04] dark:bg-white/[0.04] flex items-center justify-center text-zinc-400 dark:text-zinc-600">
-                              <CornerDownRight size={10} />
-                            </span>
-                            {t(suggestion, suggestion)}
+                          <span className="w-4 h-4 rounded-md bg-zinc-900/[0.04] dark:bg-white/[0.04] flex items-center justify-center text-zinc-400 dark:text-zinc-600 shrink-0">
+                            <CornerDownRight size={9} />
                           </span>
-                          <ArrowRight size={12} className="text-zinc-300 dark:text-zinc-700 group-hover:text-red-400 transition-colors" />
+                          <span className="min-w-0">{t(suggestion, suggestion)}</span>
                         </motion.button>
                       ))}
                     </div>
